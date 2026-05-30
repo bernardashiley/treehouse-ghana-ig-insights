@@ -1,0 +1,6 @@
+x,y,n,pearson_r,spearman_rho,interpretation
+caption_length,engagement_score,219,0.055,0.305,Correlation is directional and based only on public fields; it does not prove causation.
+hashtag_count,engagement_score,219,0.124,0.124,Correlation is directional and based only on public fields; it does not prove causation.
+mention_count,engagement_score,219,-0.02,0.346,Correlation is directional and based only on public fields; it does not prove causation.
+views,engagement_score,219,0.929,0.717,Correlation is directional and based only on public fields; it does not prove causation.
+likes,comments,219,0.406,0.36,Correlation is directional and based only on public fields; it does not prove causation.

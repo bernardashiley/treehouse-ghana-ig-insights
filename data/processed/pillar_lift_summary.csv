@@ -1,0 +1,12 @@
+pillar,n,avg_engagement_score,lift_vs_baseline_pct,top_20_hit_rate_pct,ci_low,ci_high,strongest_example_url,interpretation
+cocktails/drinks,11,289.59,101.7,27.3,56.86,532.39,https://www.instagram.com/p/DNn3u9_Mt6A/,"Drinks content can support nightlife, after-work, and group-visit occasions."
+events/live music/DJ,8,251.93,75.5,25,66.95,555.72,https://www.instagram.com/p/Ct9Niq7gYWk/,"Event content needs clear dates, artists, times, and booking instructions."
+ambience/decor/vibe,15,232.75,62.1,40,108.68,388.09,https://www.instagram.com/p/DLAi1YBsAZs/,Vibe-led content sells the venue experience and should be paired with reservation details.
+dinner/nightlife,17,197.94,37.9,35.3,54.72,393.07,https://www.instagram.com/p/DVyiMbpiIkL/,"Evening content should highlight atmosphere, availability, and weekly rituals."
+promotions/offers,2,143.81,0.2,100,143.81,143.81,https://www.instagram.com/p/DTH5haVDIMh/,Offers should be tested with clear expiry dates and measurable response prompts.
+food,111,133.73,-6.9,15.3,82.43,188.53,https://www.instagram.com/p/DN7_M4B2HMT/,Use appetising food visuals with direct menu and booking prompts.
+general brand/content,33,80.36,-44,15.2,42.65,128.02,https://www.instagram.com/p/DTYWwIHjCIw/,"General brand content; use stronger occasion, menu, or booking cues."
+price/value,2,79.84,-44.4,0,79.84,79.84,https://www.instagram.com/p/DYPsWk5tSgG/,Price questions can be reduced with menu previews and package framing.
+birthdays/celebrations,6,76.73,-46.6,0,43.99,109.47,https://www.instagram.com/p/DJJoEtFCxh_/,Celebration intent can convert into group bookings and packages.
+date night/romance,12,76.07,-47,25,39.98,120.85,https://www.instagram.com/p/CzWcDSpMoh9/,Position Treehouse as an occasion venue with couple-focused calls to action.
+reservations/bookings,2,35.54,-75.2,0,35.54,35.54,https://www.instagram.com/p/DIjAIJSCNB3/,Booking language should be more visible on high-performing posts.

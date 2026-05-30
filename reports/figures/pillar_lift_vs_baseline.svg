@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="430" viewBox="0 0 920 430">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="16" y="30" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2933">Content pillar lift vs baseline (%)</text>
+<g font-family="Arial, sans-serif"><text x="16" y="75" font-size="13" fill="#28323c">cocktails/drinks</text>
+<rect x="260" y="61" width="628" height="18" fill="#2f6f73"/>
+<text x="896" y="75" font-size="12" fill="#28323c">101.7</text>
+<text x="16" y="109" font-size="13" fill="#28323c">events/live music/DJ</text>
+<rect x="260" y="95" width="466" height="18" fill="#2f6f73"/>
+<text x="734" y="109" font-size="12" fill="#28323c">75.5</text>
+<text x="16" y="143" font-size="13" fill="#28323c">ambience/decor/vibe</text>
+<rect x="260" y="129" width="383" height="18" fill="#2f6f73"/>
+<text x="651" y="143" font-size="12" fill="#28323c">62.1</text>
+<text x="16" y="177" font-size="13" fill="#28323c">dinner/nightlife</text>
+<rect x="260" y="163" width="234" height="18" fill="#2f6f73"/>
+<text x="502" y="177" font-size="12" fill="#28323c">37.9</text>
+<text x="16" y="211" font-size="13" fill="#28323c">promotions/offers</text>
+<rect x="260" y="197" width="1" height="18" fill="#2f6f73"/>
+<text x="269" y="211" font-size="12" fill="#28323c">0.2</text>
+<text x="16" y="245" font-size="13" fill="#28323c">food</text>
+<rect x="260" y="231" width="-43" height="18" fill="#2f6f73"/>
+<text x="225" y="245" font-size="12" fill="#28323c">-6.9</text>
+<text x="16" y="279" font-size="13" fill="#28323c">general brand/content</text>
+<rect x="260" y="265" width="-272" height="18" fill="#2f6f73"/>
+<text x="-4" y="279" font-size="12" fill="#28323c">-44</text>
+<text x="16" y="313" font-size="13" fill="#28323c">price/value</text>
+<rect x="260" y="299" width="-274" height="18" fill="#2f6f73"/>
+<text x="-6" y="313" font-size="12" fill="#28323c">-44.4</text>
+<text x="16" y="347" font-size="13" fill="#28323c">birthdays/celebrations</text>
+<rect x="260" y="333" width="-288" height="18" fill="#2f6f73"/>
+<text x="-20" y="347" font-size="12" fill="#28323c">-46.6</text>
+<text x="16" y="381" font-size="13" fill="#28323c">date night/romance</text>
+<rect x="260" y="367" width="-290" height="18" fill="#2f6f73"/>
+<text x="-22" y="381" font-size="12" fill="#28323c">-47</text></g>
+</svg>

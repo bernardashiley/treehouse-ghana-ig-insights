@@ -1,0 +1,4 @@
+scenario,posts_per_month,mean_comments_per_post,contact_rate_pct,booking_rate_pct,bookings_p10,bookings_p50,bookings_p90,bookings_mean,prob_0_bookings_pct,prob_ge3_bookings_pct,prob_ge10_bookings_pct
+pessimistic,6,0.38,5,20,0,0,0,0,100,0,0
+central,6,0.38,12,30,0,0,0,0,100,0,0
+optimistic,6,0.38,20,45,0,0,0,0,100,0,0

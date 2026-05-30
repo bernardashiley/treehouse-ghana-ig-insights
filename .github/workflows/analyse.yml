@@ -1,0 +1,102 @@
+name: 🌿 Treehouse Ghana Analysis
+
+# Run on every push to main, on any PR, and manually via the Actions tab
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  analyse:
+    name: Run Analysis & Generate Reports
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed to commit outputs back to the repo
+
+    steps:
+      # ── Checkout ─────────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── Node.js ──────────────────────────────────────────────────────────────
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # ── Analysis pipeline ────────────────────────────────────────────────────
+      # advanced_analysis.js reads from data/processed/ CSVs (committed to repo)
+      # so it runs without the raw Apify data files.
+      - name: Run advanced statistical analysis
+        run: node src/advanced_analysis.js
+
+      # generate_report.js reads analysis_summary.json (committed to repo)
+      - name: Generate technical report (Markdown + LaTeX)
+        run: node src/generate_report.js
+
+      # generate_stakeholder_report.js reads all processed CSVs
+      - name: Generate stakeholder report (Markdown + LaTeX + SVG charts)
+        run: node src/generate_stakeholder_report.js
+
+      # ── Compile LaTeX to PDF ─────────────────────────────────────────────────
+      - name: Install Tectonic (fast LaTeX engine)
+        uses: wtfjoke/setup-tectonic@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compile stakeholder report to PDF
+        run: |
+          cd reports
+          tectonic stakeholder_report.tex 2>&1 || echo "⚠ LaTeX PDF compilation skipped (non-fatal)"
+
+      - name: Compile technical report to PDF
+        run: |
+          cd reports
+          tectonic treehouse_ghana_instagram_insights.tex 2>&1 || echo "⚠ LaTeX PDF compilation skipped (non-fatal)"
+
+      # ── Upload all report outputs as downloadable artifacts ──────────────────
+      - name: Upload reports as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: treehouse-ghana-reports-${{ github.run_number }}
+          path: |
+            reports/stakeholder_report.md
+            reports/stakeholder_report.tex
+            reports/stakeholder_report.pdf
+            reports/treehouse_ghana_instagram_insights.md
+            reports/treehouse_ghana_instagram_insights.tex
+            reports/treehouse_ghana_instagram_insights.pdf
+            reports/advanced_analysis_report.md
+            reports/figures/
+          retention-days: 90
+
+      # ── Commit generated outputs back to repo ────────────────────────────────
+      # Only runs on direct pushes (not PRs) to avoid commit loops.
+      # [skip ci] prevents this commit from re-triggering the workflow.
+      - name: Commit generated outputs back to repo
+        if: github.event_name == 'push'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            data/processed/adv_eda_summary.csv \
+            data/processed/adv_hypothesis_tests.csv \
+            data/processed/adv_bootstrap_cis.csv \
+            data/processed/adv_mc_strategies.csv \
+            data/processed/adv_mc_forecast.csv \
+            data/processed/adv_mc_conversion.csv \
+            data/processed/adv_mc_pillar_mix.csv \
+            data/processed/adv_mc_risk.csv \
+            reports/stakeholder_report.md \
+            reports/stakeholder_report.tex \
+            reports/advanced_analysis_report.md \
+            reports/treehouse_ghana_instagram_insights.md \
+            reports/treehouse_ghana_instagram_insights.tex \
+            reports/figures/ \
+            || true
+          git diff --staged --quiet || \
+            git commit -m "ci: regenerate analysis and reports [skip ci]"
+          git push || echo "Nothing to push"

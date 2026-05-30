@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="494"
+  viewBox="0 0 760 494" role="img" aria-label="Best posting days by average engagement">
+<title>Best posting days by average engagement</title>
+<rect width="100%" height="100%" fill="#FFFFFF"/>
+
+<text x="130" y="30" font-family="Arial, Helvetica, sans-serif" font-size="20"
+  font-weight="bold" fill="#1B3A2D" text-anchor="start">Best Days to Post</text>
+<text x="130" y="52" font-family="Arial, Helvetica, sans-serif" font-size="13"
+  font-weight="normal" fill="#6B7280" text-anchor="start">Average engagement score by day of the week your post goes out</text>
+<rect x="130" y="90" width="550" height="28" fill="#2D6A4F" rx="3"/>
+<text x="122" y="110" font-family="Arial, Helvetica, sans-serif" font-size="14"
+  font-weight="bold" fill="#1F2937" text-anchor="end">Monday</text>
+<text x="687" y="110" font-family="Arial, Helvetica, sans-serif" font-size="12"
+  font-weight="normal" fill="#6B7280" text-anchor="start">199 avg</text>
+<text x="650" y="112" font-family="Arial, Helvetica, sans-serif" font-size="14"
+  font-weight="normal" fill="#1F2937" text-anchor="start">🥇</text>
+<rect x="130" y="142" width="498" height="28" fill="#52B788" rx="3"/>
+<text x="122" y="162" font-family="Arial, Helvetica, sans-serif" font-size="14"
+  font-weight="bold" fill="#1F2937" text-anchor="end">Tuesday</text>
+<text x="635" y="162" font-family="Arial, Helvetica, sans-serif" font-size="12"
+  font-weight="normal" fill="#6B7280" text-anchor="start">180 avg</text>
+<text x="598" y="164" font-family="Arial, Helvetica, sans-serif" font-size="14"
+  font-weight="normal" fill="#1F2937" text-anchor="start">🥈</text>
+<rect x="130" y="194" width="408" height="28" fill="#52B788" rx="3"/>
+<text x="122" y="214" font-family="Arial, Helvetica, sans-serif" font-size="14"
+  font-weight="bold" fill="#1F2937" text-anchor="end">Friday</text>
+<text x="545" y="214" font-family="Arial, Helvetica, sans-serif" font-size="12"
+  font-weight="normal" fill="#6B7280" text-anchor="start">148 avg</text>
+<text x="508" y="216" font-family="Arial, Helvetica, sans-serif" font-size="14"
+  font-weight="normal" fill="#1F2937" text-anchor="start">🥉</text>
+<rect x="130" y="246" width="391" height="28" fill="#95D5B2" rx="3"/>
+<text x="122" y="266" font-family="Arial, Helvetica, sans-serif" font-size="14"
+  font-weight="normal" fill="#1F2937" text-anchor="end">Thursday</text>
+<text x="528" y="266" font-family="Arial, Helvetica, sans-serif" font-size="12"
+  font-weight="normal" fill="#6B7280" text-anchor="start">141 avg</text>
+<rect x="130" y="298" width="334" height="28" fill="#95D5B2" rx="3"/>
+<text x="122" y="318" font-family="Arial, Helvetica, sans-serif" font-size="14"
+  font-weight="normal" fill="#1F2937" text-anchor="end">Sunday</text>
+<text x="471" y="318" font-family="Arial, Helvetica, sans-serif" font-size="12"
+  font-weight="normal" fill="#6B7280" text-anchor="start">121 avg</text>
+<rect x="130" y="350" width="288" height="28" fill="#D1D5DB" rx="3"/>
+<text x="122" y="370" font-family="Arial, Helvetica, sans-serif" font-size="14"
+  font-weight="normal" fill="#1F2937" text-anchor="end">Saturday</text>
+<text x="425" y="370" font-family="Arial, Helvetica, sans-serif" font-size="12"
+  font-weight="normal" fill="#6B7280" text-anchor="start">104 avg</text>
+<rect x="130" y="402" width="262" height="28" fill="#D1D5DB" rx="3"/>
+<text x="122" y="422" font-family="Arial, Helvetica, sans-serif" font-size="14"
+  font-weight="normal" fill="#1F2937" text-anchor="end">Wednesday</text>
+<text x="399" y="422" font-family="Arial, Helvetica, sans-serif" font-size="12"
+  font-weight="normal" fill="#6B7280" text-anchor="start">95 avg</text>
+
+<text x="380" y="484" font-family="Arial, Helvetica, sans-serif" font-size="12"
+  font-weight="bold" fill="#2D6A4F" text-anchor="middle">Tip: Publish your most important content on Monday or Tuesday</text>
+</svg>

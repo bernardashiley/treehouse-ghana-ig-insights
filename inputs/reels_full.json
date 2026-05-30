@@ -1,0 +1,9 @@
+{
+  "resultsType": "reels",
+  "directUrls": [
+    "https://www.instagram.com/treehousegh/"
+  ],
+  "resultsLimit": 150,
+  "onlyPostsNewerThan": "18 months",
+  "addParentData": true
+}
