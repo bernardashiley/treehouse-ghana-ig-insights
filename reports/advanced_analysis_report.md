@@ -1,6 +1,6 @@
 # Treehouse Ghana — Advanced Statistical & Predictive Analysis
 
-*Date: 2026-05-30 · Seed: 20260530 · Simulations: 10,000 per test · n = 150 unique posts/reels (69 duplicate shortcodes removed before analysis)*
+*Date: 2026-05-31 · Seed: 20260530 · Simulations: 10,000 per test · n = 150 unique posts/reels (69 duplicate shortcodes removed before analysis)*
 
 ---
 

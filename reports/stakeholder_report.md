@@ -1,5 +1,5 @@
 # Treehouse Ghana — Instagram Performance Report
-*Prepared 2026-05-30 · Based on 135 posts, 84 reels, 21 external mentions and 106 audience comments*
+*Prepared 2026-05-31 · Based on 135 posts, 84 reels, 21 external mentions and 106 audience comments*
 
 ---
 
@@ -129,4 +129,4 @@ Take these steps in order. Each one builds on the last.
 
 This report is based entirely on **public** Instagram data — posts, reels, comments and mentions visible to anyone. It does not use your private Instagram analytics (reach, impressions, saves, shares, profile visits). For a complete picture, combine these findings with your native Instagram Insights.
 
-*Analysis by: data pipeline in this repository. Charts and numbers update automatically when the analysis is re-run. Last generated: 2026-05-30.*
+*Analysis by: data pipeline in this repository. Charts and numbers update automatically when the analysis is re-run. Last generated: 2026-05-31.*
