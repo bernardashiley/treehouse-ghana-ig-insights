@@ -57,6 +57,11 @@ jobs:
           cd reports
           tectonic treehouse_ghana_instagram_insights.tex 2>&1 || echo "⚠ LaTeX PDF compilation skipped (non-fatal)"
 
+      - name: Compile combined full report to PDF
+        run: |
+          cd reports
+          tectonic combined_report.tex 2>&1 || echo "⚠ Combined report compilation skipped (non-fatal)"
+
       # ── Upload all report outputs as downloadable artifacts ──────────────────
       - name: Upload reports as artifacts
         uses: actions/upload-artifact@v4
@@ -70,6 +75,8 @@ jobs:
             reports/treehouse_ghana_instagram_insights.tex
             reports/treehouse_ghana_instagram_insights.pdf
             reports/advanced_analysis_report.md
+            reports/combined_report.tex
+            reports/combined_report.pdf
             reports/figures/
           retention-days: 90
 
@@ -95,6 +102,7 @@ jobs:
             reports/advanced_analysis_report.md \
             reports/treehouse_ghana_instagram_insights.md \
             reports/treehouse_ghana_instagram_insights.tex \
+            reports/combined_report.tex \
             reports/figures/ \
             || true
           git diff --staged --quiet || \
