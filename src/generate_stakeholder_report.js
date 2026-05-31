@@ -657,6 +657,10 @@ function makeLatex(data) {
   const ownedN    = num(eda.find(r => r.label === 'owned_account')?.n) || 0;
   const smallSample = ownedN > 0 && ownedN < 40;
   const tooFewReels = reelN < 5;
+  const tx = s => String(s).replace(/[\\{}$&#_%]/g, c => '\\' + c)
+    .replace(/\^/g, '\\textasciicircum{}').replace(/~/g, '\\textasciitilde{}')
+    .replace(/>/g, '\\textgreater{}').replace(/</g, '\\textless{}');
+
   const PL = { 'food':'food and dining','cocktails/drinks':'cocktails and drinks','ambience/decor/vibe':'ambience',
     'dinner/nightlife':'dinner and nightlife','events/live music/DJ':'events and live music','general brand/content':'general brand',
     'date night/romance':'date night','birthdays/celebrations':'birthdays and celebrations','reservations/bookings':'reservations',
@@ -668,10 +672,6 @@ function makeLatex(data) {
     : (reelMean > postMean)
       ? `\\textbf{Short videos attract more engagement than feed posts on average} and reach beyond existing followers; expanding video is a clear opportunity.`
       : `\\textbf{Feed posts outperform short videos for this account.} Keep investing in strong post formats; treat video as an experiment to grow reach.`;
-
-  const tx = s => String(s).replace(/[\\{}$&#_%]/g, c => '\\' + c)
-    .replace(/\^/g, '\\textasciicircum{}').replace(/~/g, '\\textasciitilde{}')
-    .replace(/>/g, '\\textgreater{}').replace(/</g, '\\textless{}');
 
   // "Nice" round tick step (~4 ticks) so axis labels never crowd/collide.
   const niceStep = (range) => {
