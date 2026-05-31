@@ -1,17 +1,19 @@
 {
-  "name": "treehouse-ghana-ig-insights",
-  "version": "1.0.0",
+  "name": "ig-intelligence-pipeline",
+  "version": "2.0.0",
   "private": true,
-  "description": "Reproducible public Instagram engagement analysis for Treehouse Ghana.",
+  "description": "Config-driven, reproducible public Instagram intelligence pipeline (Apify scrape to signed PDF). Worked example: Treehouse Ghana.",
   "type": "commonjs",
   "scripts": {
+    "init":        "node src/init.js",
     "analyse":     "node src/analyse.js",
-    "report":      "node src/generate_report.js",
     "advanced":    "node src/advanced_analysis.js",
+    "report":      "node src/generate_report.js",
     "stakeholder": "node src/generate_stakeholder_report.js",
+    "combined":    "node src/generate_combined_report.js",
+    "audit":       "node scripts/validity_audit.js",
     "build":       "npm run analyse && npm run report",
-    "ci":          "npm run advanced && npm run report && npm run stakeholder",
-    "all":         "npm run build && npm run advanced && npm run stakeholder"
+    "all":         "npm run analyse && npm run advanced && npm run stakeholder && npm run combined"
   },
   "engines": {
     "node": ">=20"

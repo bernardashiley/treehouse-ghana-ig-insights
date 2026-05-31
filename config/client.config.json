@@ -1,0 +1,54 @@
+{
+  "_readme": "Edit this file only — every script reads from here. See README for field descriptions.",
+
+  "client": {
+    "name":             "Treehouse Ghana",
+    "short_name":       "treehousegh",
+    "handle":           "treehousegh",
+    "data_prefix":      "treehouse",
+    "instagram_url":    "https://www.instagram.com/treehousegh/",
+    "category":         "Restaurant and Venue",
+    "location":         "Osu, Nyaniba Estate, Accra, Ghana",
+    "bio":              "Al fresco dining in the heart of Accra. Open daily from noon to 11pm.",
+    "phone":            "+233 599 400 737",
+    "whatsapp":         "+233 599 400 737",
+    "menu_url":         "bit.ly/Treehouseghmenu",
+    "maps_url":         "maps.app.goo.gl/WvGiuui3trW1",
+    "booking_platform": "WhatsApp or phone"
+  },
+
+  "report": {
+    "prepared_by":    "Bernard Ashiley",
+    "organisation":   "Odwira and Whitehall",
+    "classification": "Confidential",
+    "date":           "auto"
+  },
+
+  "brand": {
+    "primary_hex":   "1B3A2D",
+    "accent_hex":    "C9A84C",
+    "mid_hex":       "2D6A4F",
+    "light_hex":     "D8F3DC",
+    "blue_hex":      "2E86AB",
+    "purple_hex":    "7B2D8B",
+    "grey_hex":      "4B5563",
+    "rule_hex":      "D1D5DB"
+  },
+
+  "scrape": {
+    "posts_limit":        300,
+    "reels_limit":        150,
+    "mentions_limit":     150,
+    "months_back":        18,
+    "comments_top_n":     25,
+    "comments_per_post":  50
+  },
+
+  "analysis": {
+    "mc_seed":               20260530,
+    "mc_iterations":         10000,
+    "bootstrap_iterations":  5000,
+    "alpha":                 0.05,
+    "bonferroni_tests":      6
+  }
+}

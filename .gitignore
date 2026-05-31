@@ -5,6 +5,8 @@ config.ps1
 *token*
 *credentials*
 
+config/*.backup-*.json
+
 node_modules/
 npm-debug.log*
 yarn-debug.log*

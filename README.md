@@ -18,6 +18,36 @@ PDFs are generated automatically by CI and available as **workflow artifacts** �
 
 ---
 
+## 🔁 Reusable for Any Client (Config-Driven)
+
+This is a **product, not a one-off**. To run the entire pipeline for a new client, you change configuration — never source code.
+
+```bash
+# 1. Scaffold a new client (interactive, or pass name + handle)
+npm run init "Bloom Cafe Accra" bloomcafeaccra
+#    → writes config/client.config.json and inputs/*.json targeting the handle
+
+# 2. (If a different industry) edit config/pillar_rules.json keyword lists
+
+# 3. Collect data with Apify (see scrape commands printed by init)
+
+# 4. Run the whole pipeline
+npm run all          # analyse → advanced stats → stakeholder + combined reports
+
+# 5. Commit & push — CI compiles every report to PDF
+```
+
+**Two files control everything:**
+
+| File | Controls |
+|---|---|
+| `config/client.config.json` | Client name, handle, contact, brand colours, firm/sign-off, scrape limits, MC seed & iterations |
+| `config/pillar_rules.json` | Content-pillar and comment-intent keyword classification (per industry) |
+
+Every script (`analyse`, `advanced`, `stakeholder`, `combined`) reads from these. The fixed MC seed makes results bit-identical on re-run. `npm run audit` runs the independent statistical-validity checks.
+
+---
+
 ## 🔬 What This Project Does
 
 1. **Collects** public Instagram data via the [Apify Instagram Scraper](https://apify.com/apify/instagram-scraper) — posts, reels, mentions and comments.

@@ -20,42 +20,16 @@ const {
   topN,
 } = require("./utils");
 
+const { loadRules } = require("./config");
+
 const processedDir = path.join(ROOT, "data", "processed");
 const figuresDir = path.join(ROOT, "reports", "figures");
 ensureDir(processedDir);
 ensureDir(figuresDir);
 
-const pillarRules = [
-  ["food", ["food", "menu", "dish", "meal", "eat", "taste", "jollof", "waakye", "chicken", "beef", "fish", "seafood", "pasta", "pizza", "grill", "kitchen", "chef", "dessert"]],
-  ["cocktails/drinks", ["cocktail", "drink", "wine", "beer", "bar", "mocktail", "shots", "champagne", "bottle", "sip"]],
-  ["ambience/decor/vibe", ["ambience", "ambiance", "decor", "vibe", "aesthetic", "beautiful", "space", "garden", "view", "atmosphere", "cozy"]],
-  ["date night/romance", ["date", "romantic", "romance", "couple", "love", "valentine", "bae"]],
-  ["birthdays/celebrations", ["birthday", "celebration", "celebrate", "party", "anniversary", "surprise", "cake"]],
-  ["brunch/lunch", ["brunch", "lunch", "afternoon", "midday"]],
-  ["dinner/nightlife", ["dinner", "night", "evening", "nightlife", "friday", "saturday"]],
-  ["events/live music/DJ", ["event", "live", "music", "dj", "decks", "band", "performance", "soul", "fridays", "show"]],
-  ["customer/influencer/social proof", ["guest", "customer", "influencer", "tag", "repost", "review", "experience", "visited"]],
-  ["promotions/offers", ["promo", "offer", "discount", "special", "deal", "free", "happy hour"]],
-  ["reservations/bookings", ["reserve", "reservation", "book", "booking", "call", "whatsapp", "table"]],
-  ["location/parking/access", ["location", "where", "address", "parking", "directions", "access", "osuse", "east legon", "accra"]],
-  ["service/wait time", ["service", "wait", "waiting", "staff", "slow", "manager", "served"]],
-  ["price/value", ["price", "cost", "expensive", "cheap", "value", "menu price", "how much", "affordable"]],
-];
-
-const commentIntentRules = [
-  ["booking/reservation intent", ["reserve", "reservation", "book", "booking", "table", "available", "slot"]],
-  ["menu/food curiosity", ["menu", "food", "dish", "what is", "taste", "eat", "serve"]],
-  ["price/value concern", ["price", "how much", "cost", "expensive", "affordable", "cheap"]],
-  ["location/access question", ["where", "location", "address", "directions", "parking"]],
-  ["event interest", ["event", "dj", "music", "friday", "live", "party", "happening"]],
-  ["birthday/celebration intent", ["birthday", "celebrate", "anniversary", "party", "surprise"]],
-  ["date-night/romantic ambience", ["date", "romantic", "love", "couple", "bae"]],
-  ["positive food praise", ["delicious", "tasty", "food", "meal", "yum", "nice food"]],
-  ["positive ambience praise", ["beautiful", "vibe", "ambience", "ambiance", "place", "decor", "atmosphere"]],
-  ["drinks/cocktails praise", ["drink", "cocktail", "bar", "wine", "sip"]],
-  ["service issue/complaint", ["bad", "poor", "slow", "wait", "rude", "complaint", "issue", "terrible"]],
-  ["generic praise", ["nice", "great", "amazing", "love", "wow", "good", "best", "awesome"]],
-];
+// Classification rules are loaded from config/pillar_rules.json so the pipeline
+// can be retargeted to a new client or industry without editing source code.
+const { pillars: pillarRules, intents: commentIntentRules } = loadRules();
 
 function classify(text, rules, fallback) {
   const source = text.toLowerCase();
@@ -530,11 +504,16 @@ function escapeXml(value) {
 }
 
 function main() {
-  const profile = readJson("data/raw/treehouse_profile_details.json", {});
-  const posts = normaliseContent(readJson("data/raw/treehouse_posts_full.json", []), "post");
-  const reels = normaliseContent(readJson("data/raw/treehouse_reels_full.json", []), "reel");
-  const mentions = normaliseContent(readJson("data/raw/treehouse_mentions.json", []), "mention");
-  const comments = normaliseComments(readJson("data/raw/treehouse_comments_top_posts.json", []));
+  // Raw-data filenames are prefixed with the client slug from config, so the
+  // same code processes any client's scrape (e.g. "treehouse_posts_full.json").
+  const { loadConfig } = require("./config");
+  const slug = loadConfig().client.slug;
+  const raw = (suffix) => `data/raw/${slug}_${suffix}.json`;
+  const profile = readJson(raw("profile_details"), {});
+  const posts = normaliseContent(readJson(raw("posts_full"), []), "post");
+  const reels = normaliseContent(readJson(raw("reels_full"), []), "reel");
+  const mentions = normaliseContent(readJson(raw("mentions"), []), "mention");
+  const comments = normaliseComments(readJson(raw("comments_top_posts"), []));
   const ownedContent = [...posts, ...reels];
 
   const profileRows = profileSummary(profile, {

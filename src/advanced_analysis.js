@@ -633,7 +633,17 @@ function effectLabel(d) {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function main() {
-  const rng = makePrng(20260530);
+  // Analysis parameters come from config/client.config.json (analysis block).
+  // The seed is kept constant across clients by default for reproducibility and
+  // cross-client method comparability; override in config if a fresh draw is wanted.
+  let SEED = 20260530, MC = 10000, BOOT = 5000;
+  try {
+    const { loadConfig } = require('./config');
+    const a = loadConfig().analysis;
+    SEED = a.mc_seed; MC = a.mc_iterations; BOOT = a.bootstrap_iterations;
+  } catch (e) { /* fall back to defaults if config absent */ }
+
+  const rng = makePrng(SEED);
 
   ensureDir(path.join(ROOT, 'data', 'processed'));
   ensureDir(path.join(ROOT, 'reports'));
@@ -798,12 +808,12 @@ function main() {
   // ════════════════════════════════════════════════════════════════════════════
   // 3. BOOTSTRAP CIs  (95%, 5000 iterations, deduplicated data)
   // ════════════════════════════════════════════════════════════════════════════
-  const ciRng = makePrng(20260531);
+  const ciRng = makePrng(SEED + 1);
   const ciRows = [];
 
   const addCi = (label, xs, fn) => {
     if (xs.length < 2) { ciRows.push({ label, estimate: 0, lower: 0, upper: 0, n: xs.length, width: 0, includes_zero: true }); return; }
-    const ci = bootstrapCi(xs, fn, ciRng, 5000);
+    const ci = bootstrapCi(xs, fn, ciRng, BOOT);
     ciRows.push({ ...ci, label, includes_zero: ci.lower <= 0 && ci.upper >= 0 });
   };
 
@@ -816,7 +826,7 @@ function main() {
 
   // Difference in means (reels − posts) via paired bootstrap
   const diffSamples = [];
-  for (let i = 0; i < 5000; i++) {
+  for (let i = 0; i < BOOT; i++) {
     const bR = Array.from({ length: reelScores.length },  () => reelScores[Math.floor(ciRng() * reelScores.length)]);
     const bP = Array.from({ length: postScores.length }, () => postScores[Math.floor(ciRng() * postScores.length)]);
     diffSamples.push(mean(bR) - mean(bP));
@@ -844,21 +854,21 @@ function main() {
   // 4. MONTE CARLO SIMULATIONS
   // ════════════════════════════════════════════════════════════════════════════
 
-  const mc1Rng = makePrng(20260601);
-  const mc2Rng = makePrng(20260602);
-  const mc3Rng = makePrng(20260603);
-  const mc4Rng = makePrng(20260604);
-  const mc5Rng = makePrng(20260605);
+  const mc1Rng = makePrng(SEED + 71);
+  const mc2Rng = makePrng(SEED + 72);
+  const mc3Rng = makePrng(SEED + 73);
+  const mc4Rng = makePrng(SEED + 74);
+  const mc5Rng = makePrng(SEED + 75);
 
-  const stratRows = mcStrategyComparison(ownedPillarDist, mc1Rng, 10000);
+  const stratRows = mcStrategyComparison(ownedPillarDist, mc1Rng, MC);
   writeCsv('data/processed/adv_mc_strategies.csv', stratRows);
   console.log('✓ MC1 strategy comparison written');
 
-  const forecastRows = mcForecast(allScores, mc2Rng, 10000);
+  const forecastRows = mcForecast(allScores, mc2Rng, MC);
   writeCsv('data/processed/adv_mc_forecast.csv', forecastRows);
   console.log('✓ MC2 forecast written');
 
-  const conversionRows = mcConversion(ownedScores, meanCommentsPerPost, mc3Rng, 10000);
+  const conversionRows = mcConversion(ownedScores, meanCommentsPerPost, mc3Rng, MC);
   writeCsv('data/processed/adv_mc_conversion.csv', conversionRows);
   console.log('✓ MC3 conversion written');
 
@@ -866,7 +876,7 @@ function main() {
   writeCsv('data/processed/adv_mc_pillar_mix.csv', mixRows);
   console.log('✓ MC4 pillar mix written');
 
-  const riskRows = mcRisk(ownedPillarDist, mc5Rng, 10000);
+  const riskRows = mcRisk(ownedPillarDist, mc5Rng, MC);
   writeCsv('data/processed/adv_mc_risk.csv', riskRows);
   console.log('✓ MC5 risk analysis written');
 

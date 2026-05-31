@@ -1,0 +1,35 @@
+{
+  "_readme": "Customise these keyword lists per client industry. Add/remove pillars freely.",
+
+  "pillars": [
+    { "name": "food",                          "keywords": ["food","menu","dish","meal","eat","taste","jollof","waakye","chicken","beef","fish","seafood","pasta","pizza","grill","kitchen","chef","dessert"] },
+    { "name": "cocktails/drinks",              "keywords": ["cocktail","drink","wine","beer","bar","mocktail","shots","champagne","bottle","sip"] },
+    { "name": "ambience/decor/vibe",           "keywords": ["ambience","ambiance","decor","vibe","aesthetic","beautiful","space","garden","view","atmosphere","cozy"] },
+    { "name": "date night/romance",            "keywords": ["date","romantic","romance","couple","love","valentine","bae"] },
+    { "name": "birthdays/celebrations",        "keywords": ["birthday","celebration","celebrate","party","anniversary","surprise","cake"] },
+    { "name": "brunch/lunch",                  "keywords": ["brunch","lunch","afternoon","midday"] },
+    { "name": "dinner/nightlife",              "keywords": ["dinner","night","evening","nightlife","friday","saturday"] },
+    { "name": "events/live music/DJ",          "keywords": ["event","live","music","dj","decks","band","performance","soul","fridays","show"] },
+    { "name": "customer/influencer/social proof", "keywords": ["guest","customer","influencer","tag","repost","review","experience","visited"] },
+    { "name": "promotions/offers",             "keywords": ["promo","offer","discount","special","deal","free","happy hour"] },
+    { "name": "reservations/bookings",         "keywords": ["reserve","reservation","book","booking","call","whatsapp","table"] },
+    { "name": "location/parking/access",       "keywords": ["location","where","address","parking","directions","access","osuse","east legon","accra"] },
+    { "name": "service/wait time",             "keywords": ["service","wait","waiting","staff","slow","manager","served"] },
+    { "name": "price/value",                   "keywords": ["price","cost","expensive","cheap","value","menu price","how much","affordable"] }
+  ],
+
+  "comment_intents": [
+    { "name": "booking/reservation intent",    "keywords": ["reserve","reservation","book","booking","table","available","slot"] },
+    { "name": "menu/food curiosity",           "keywords": ["menu","food","dish","what is","taste","eat","serve"] },
+    { "name": "price/value concern",           "keywords": ["price","how much","cost","expensive","affordable","cheap"] },
+    { "name": "location/access question",      "keywords": ["where","location","address","directions","parking"] },
+    { "name": "event interest",                "keywords": ["event","dj","music","friday","live","party","happening"] },
+    { "name": "birthday/celebration intent",   "keywords": ["birthday","celebrate","anniversary","party","surprise"] },
+    { "name": "date-night/romantic ambience",  "keywords": ["date","romantic","love","couple","bae"] },
+    { "name": "positive food praise",          "keywords": ["delicious","tasty","food","meal","yum","nice food"] },
+    { "name": "positive ambience praise",      "keywords": ["beautiful","vibe","ambience","ambiance","place","decor","atmosphere"] },
+    { "name": "drinks/cocktails praise",       "keywords": ["drink","cocktail","bar","wine","sip"] },
+    { "name": "service issue/complaint",       "keywords": ["bad","poor","slow","wait","rude","complaint","issue","terrible"] },
+    { "name": "generic praise",                "keywords": ["nice","great","amazing","love","wow","good","best","awesome"] }
+  ]
+}

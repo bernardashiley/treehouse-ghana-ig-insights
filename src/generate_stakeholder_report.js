@@ -944,11 +944,24 @@ function main() {
     console.log(`✓ Chart: ${name}`);
   }
 
+  // Retarget the generated reports to the configured client. The narrative
+  // templates are written with Treehouse Ghana as the worked example; this
+  // substitutes the configured client identity so the same generator serves
+  // any client without editing the templates.
+  let clientName = 'Treehouse Ghana';
+  try {
+    const { loadConfig } = require('./config');
+    clientName = loadConfig().client.name || clientName;
+  } catch (e) { /* keep default if config absent */ }
+  const retarget = (s) => clientName === 'Treehouse Ghana'
+    ? s
+    : s.split('Treehouse Ghana').join(clientName);
+
   // Generate reports
-  writeText('reports/stakeholder_report.md',  makeMarkdown(data));
+  writeText('reports/stakeholder_report.md',  retarget(makeMarkdown(data)));
   console.log('✓ Markdown report: reports/stakeholder_report.md');
 
-  writeText('reports/stakeholder_report.tex', makeLatex(data));
+  writeText('reports/stakeholder_report.tex', retarget(makeLatex(data)));
   console.log('✓ LaTeX report:    reports/stakeholder_report.tex');
 }
 
