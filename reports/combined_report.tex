@@ -166,12 +166,12 @@ The following figures summarise the state of the public Instagram presence for T
   \textbf{Posts analysed}      & 135 owned feed posts and 84 short videos (reels) \\[4pt]
   \textbf{Top content category}& Cocktails and Drinks (average engagement score: 290) \\[4pt]
   \textbf{Best day to post}    & Monday (average engagement score: 199) \\[4pt]
-  \textbf{Short video uplift}  & Short videos attracted 121\% more engagement than static posts on average \\
+  \textbf{Short video signal} & Short videos show higher interaction and unique algorithmic reach; advantage is directional (see Reels vs Posts) \\
 \end{tabularx}
 \end{callout}
 
 \vspace{10pt}
-Treehouse Ghana holds a well-established Instagram presence. Short videos consistently outperform static posts. The principal opportunity identified in this analysis is an increase in drinks, events, and ambience content, paired with clearer calls to action in every caption.
+Treehouse Ghana holds a well-established Instagram presence. Short videos show stronger interaction signals and the unique advantage of algorithmic reach, though the engagement gap is directional rather than statistically confirmed at the current sample size (see the Reels versus Posts analysis). The principal opportunity identified in this analysis is an increase in drinks, events, and ambience content, paired with clearer calls to action in every caption.
 
 \section{Data Coverage}
 
@@ -208,6 +208,10 @@ The engagement score used throughout this report is calculated as follows:
 \end{equation*}
 
 This is not a replacement for native analytics. It is, however, a consistent and reproducible measure for comparing posts where only partial public metrics are available. Comments are weighted at five times the value of a like because they require active intent and carry greater commercial signal.
+
+\begin{note}
+\textbf{Important caveat on the views term.} The views/plays component is available almost exclusively for video content. In this dataset, 49\% of feed (image) posts have a recorded view count of zero, whereas 0\% of reels do. As a result, the engagement score structurally favours video over still images, and any comparison of reels against image posts \emph{on the composite score} is partly a property of the formula rather than an independent finding. Throughout this report, comparisons that could be affected by this asymmetry are also reported on likes and comments alone (which are available for all content types) so the reader can separate the genuine signal from the mechanical one. See Section~\ref{sec:reelsposts} for the side-by-side test.
+\end{note}
 
 \section{What Content Performs Best}
 
@@ -265,12 +269,16 @@ The chart below ranks each content category by average engagement score across a
 
 \subsection{Top Five Content Categories}
 
+\begin{note}
+\textbf{How to read these rankings.} The categories below are ordered by average engagement score, but several rest on very few posts (the sample size $n$ is shown for each). Categories with fewer than ten posts are marked \textbf{[indicative only]}: their averages are unstable and their confidence intervals (Part~II) are wide. Treat the top categories as \emph{hypotheses worth testing with more content}, not as settled rankings. The recommendation to invest more in them is sound precisely because producing more posts is what would confirm or correct the signal.
+\end{note}
+
 \begin{enumerate}[leftmargin=*, label=\arabic{enumi}.]
-  \item \textbf{Cocktails and Drinks} (average score: 290). Drinks content supports nightlife, after-work, and group-visit occasions. This category should receive increased investment.
-  \item \textbf{Events and Live Music} (average score: 252). Event content must carry clear dates, artist names, set times, and booking instructions. Without these details, the post cannot convert interest to attendance.
-  \item \textbf{Ambience and Vibe} (average score: 233). Venue-experience content sells the setting and should be paired with reservation details in every caption.
-  \item \textbf{Dinner and Nightlife} (average score: 198). Evening content should highlight atmosphere, availability, and weekly programme rituals.
-  \item \textbf{Promotions and Offers} (average score: 144). Offers should carry explicit expiry dates and a measurable response prompt, such as a WhatsApp number or a code.
+  \item \textbf{Cocktails and Drinks} ($n=8$, average score: 290) \textbf{[indicative only]}. Drinks content supports nightlife, after-work, and group-visit occasions. This category is the strongest candidate for increased investment, and more posts are needed to confirm the effect.
+  \item \textbf{Events and Live Music} ($n=5$, average score: 252) \textbf{[indicative only]}. Event content must carry clear dates, artist names, set times, and booking instructions. Without these details, the post cannot convert interest to attendance.
+  \item \textbf{Ambience and Vibe} ($n=10$, average score: 233). Venue-experience content sells the setting and should be paired with reservation details in every caption.
+  \item \textbf{Dinner and Nightlife} ($n=12$, average score: 198). Evening content should highlight atmosphere, availability, and weekly programme rituals.
+  \item \textbf{Food and Dining} ($n=76$, average score: 134). The most-published and most reliably measured category; the workhorse of the feed, with the largest, most stable sample.
 \end{enumerate}
 
 \section{Full Content Pillar Breakdown}
@@ -357,10 +365,29 @@ Short Videos   & 84  & 190.20 & 8,999 \\
 \end{tabular}
 \end{table}
 
-Short videos attracted on average \textbf{121\% more engagement} than feed posts on the deduplicated dataset (150 unique posts). The raw dataset before deduplication (219 records) shows a 66\% difference; the 121\% figure uses the cleaner deduplicated comparison and is the number cited throughout this report. Short videos reach audiences who do not yet follow Treehouse Ghana through Instagram's discovery algorithm. Feed posts and carousels are seen primarily by existing followers, making them more appropriate for detailed menu, reservation, and occasion messaging.
+\label{sec:reelsposts}
+On the headline composite score, short videos appear to attract markedly more engagement. However, as noted in the caveat under the engagement-score methodology, the composite score includes a views term that is available to videos but not to roughly half of image posts. A credible comparison therefore has to ask whether the advantage survives when the views term is removed. The table below runs the same comparison three ways, on the deduplicated dataset (134 posts, 16 reels).
+
+\begin{table}[htbp]
+\centering
+\caption{Reels versus posts under three metrics (deduplicated data; Mann-Whitney U test)}
+\begin{tabular}{@{}L{5.5cm} R{2cm} R{2cm} R{2.2cm} R{2cm}@{}}
+\toprule
+\textbf{Metric} & \textbf{Reel mean} & \textbf{Post mean} & \textbf{$p$-value} & \textbf{Cohen's $d$} \\
+\midrule
+Engagement score (includes views) & 248 & 112 & 0.057 & 0.453 \\
+Likes + comments only (no views)   & 121 & 71  & 0.179 & 0.338 \\
+Likes only                         & 103 & 62  & 0.557 & 0.315 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{callout}
+\textbf{Honest reading.} The reels advantage is real in direction but \emph{not statistically confirmed} once the mechanical views term is removed ($p = 0.18$ on likes-plus-comments; $p = 0.56$ on likes alone). Two factors are at work: (1) much of the headline gap is the views component of the score, and (2) the deduplicated reel sample is small ($n = 16$), which limits statistical power. The defensible conclusion is therefore: \emph{short videos plausibly attract more interaction and, by their nature, reach beyond existing followers through Instagram's recommendation feed --- but the current public dataset is too small to confirm the size of that advantage.} Reels remain the recommended priority on reach grounds, not on a proven engagement multiple.
+\end{callout}
 
 \begin{note}
-\textbf{Practical implication.} A 15--30 second video of a dish being plated, a cocktail being prepared, or guests moving through the venue space is sufficient to outperform the majority of static images. No specialist equipment is required.
+\textbf{Practical implication.} A 15--30 second video of a dish being plated, a cocktail being prepared, or guests moving through the venue space is low-cost to produce and exploits the one channel (algorithmic reach) that image posts cannot access. Treat reels as a reach and discovery investment, and measure their effect with native Instagram reach data, which this public analysis cannot see.
 \end{note}
 
 \chapter{Timing Analysis}
@@ -1029,8 +1056,7 @@ Confidence intervals on pillars with $n \leq 5$ are very wide. Investment decisi
 \section{Model-Style Regression Results}
 
 \begin{longtable}{@{}L{4.5cm} R{1cm} L{3cm} R{2cm} L{5.5cm}@{}}
-\caption{Simple regression and descriptive model-style estimates%
-  \textsuperscript{\dag}} \\
+\caption{Simple regression and descriptive model-style estimates (deduplicated, $n=150$)} \\
 \toprule
 \textbf{Analysis} & \textbf{N} & \textbf{Metric} & \textbf{Estimate} & \textbf{Interpretation} \\
 \midrule
@@ -1044,16 +1070,16 @@ Confidence intervals on pillars with $n \leq 5$ are very wide. Investment decisi
 \endfoot
 \bottomrule
 \endlastfoot
-Posts vs Reels Effect    & 219 & engagement\_score    & 75.63  & Reels average 75.63 score points above posts; Cohen's $d = 0.256$ \\[4pt]
-Engagement Concentration & 219 & top\_10\_share        & 40.4\% & Top 10 posts carry 40.4\% of all public engagement \\[4pt]
+Posts vs Reels Effect    & 150 & engagement\_score    & 136.10 & Reels average 136 score points above posts; Cohen's $d = 0.453$ (see circularity caveat, Reels vs Posts) \\[4pt]
+Engagement Concentration & 150 & top\_10\_share        & 51.8\% & Top 10 posts carry 51.8\% of all public engagement \\[4pt]
 Comments per Top Post    & 106 & comment\_volume       & 4.24   & Average comments captured per selected high-performing URL \\[4pt]
-External Proof Ratio     & 21  & mentions/100 posts    & 9.59   & Public third-party mentions per 100 owned posts/reels \\[4pt]
-Regression: caption len  & 219 & caption\_length       & 0.0856 & Per character; $R^2 = 0.003$ \\[4pt]
-Regression: hashtag cnt  & 219 & hashtag\_count        & 13.07  & Per additional hashtag; $R^2 = 0.015$ \\[4pt]
-Regression: mention cnt  & 219 & mention\_count        & -2.24  & Per additional mention; $R^2 = 0.000$ \\[4pt]
-Regression: views        & 219 & views/plays           & 0.0165 & Per additional view; $R^2 = 0.863$ \\[4pt]
-Bootstrap CI: posts      & 135 & engagement\_score     & 114.57 & 95\% CI: $[76.17,\ 157.40]$ \\[4pt]
-Bootstrap CI: reels      & 84  & engagement\_score     & 190.20 & 95\% CI: $[126.31,\ 265.80]$ \\
+External Proof Ratio     & 21  & mentions/100 posts    & 14.0   & Public third-party mentions per 100 owned posts/reels \\[4pt]
+Regression: caption len  & 150 & caption\_length       & 0.1483 & Per character; $R^2 = 0.010$ \\[4pt]
+Regression: hashtag cnt  & 150 & hashtag\_count        & 11.08  & Per additional hashtag; $R^2 = 0.012$ \\[4pt]
+Regression: mention cnt  & 150 & mention\_count        & 2.52   & Per additional mention; $R^2 = 0.000$ \\[4pt]
+Regression: views        & 150 & views/plays           & 0.0165 & Per additional view; $R^2 = 0.854$ (mechanical: views are in the score) \\[4pt]
+Bootstrap CI: posts      & 134 & engagement\_score     & 112.24 & 95\% CI: $[74.36,\ 157.32]$ \\[4pt]
+Bootstrap CI: reels      & 16  & engagement\_score     & 248.34 & 95\% CI: $[104.59,\ 420.50]$ \\
 \bottomrule
 \end{longtable}
 
@@ -1134,29 +1160,38 @@ Reservations and Bookings & 2   & 35.54  & -75.2\%  & 0\%    & 35.54 to 35.54 \\
 
 \begin{table}[htbp]
 \centering
-\caption{Pearson and Spearman correlations between key metrics ($n = 219$)}
+\caption{Pearson and Spearman correlations between key metrics (deduplicated, $n = 150$)}
 \begin{tabular}{@{}L{3.5cm} L{3.5cm} R{2.5cm} R{2.5cm} L{4cm}@{}}
 \toprule
 \textbf{Variable X} & \textbf{Variable Y} & \textbf{Pearson r} & \textbf{Spearman rho} & \textbf{Note} \\
 \midrule
-Caption length & Engagement score & 0.055 & 0.305 & Directional only \\
-Hashtag count  & Engagement score & 0.124 & 0.124 & Directional only \\
-Mention count  & Engagement score & -0.020 & 0.346 & Directional only \\
-Views/plays    & Engagement score & 0.929 & 0.717 & Near-mechanical \\
-Likes          & Comments         & 0.406 & 0.360 & Directional only \\
+Caption length & Engagement score & 0.102 & 0.323 & Directional only \\
+Hashtag count  & Engagement score & 0.111 & 0.134 & Directional only \\
+Mention count  & Engagement score & 0.022 & 0.346 & Directional only \\
+Views/plays    & Engagement score & 0.924 & 0.621 & Mechanical (views are in the score) \\
+Likes          & Comments         & 0.429 & 0.358 & Directional only \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-{\small\dag~These regression estimates use the pre-deduplication dataset ($n=219$) produced by the base analysis pipeline. All other statistics in Part~II use the deduplicated dataset ($n=150$). Coefficients are directional and do not change materially between the two datasets.}
-
-The very high Pearson $r = 0.929$ between views and engagement score is expected: views enter the score formula directly ($\div 100$) and dominate for video posts. All other correlations are based on public fields only and do not prove causation.
+The very high Pearson $r = 0.929$ between views and engagement score is expected and is a \emph{mechanical} artefact: views enter the score formula directly ($\div 100$) and dominate for video posts. It should not be read as a discovered relationship. All other correlations are based on public fields only and do not prove causation. Note also that Pearson $r$ assumes roughly linear, symmetric data; because these distributions are heavily right-skewed (Part~II EDA), the Spearman rank correlation is the more trustworthy of the two columns.
 
 \chapter{Monte Carlo Simulations}
 
 \begin{callout}
 \textbf{Simulation parameters.} All Monte Carlo simulations draw samples with replacement from the empirical distribution of owned-content engagement scores, stratified by content pillar. Seeds are fixed (20260530) for full reproducibility. All simulations use 10,000 iterations. Strategy definitions in MC1 and MC5 are identical to ensure consistency.
 \end{callout}
+
+\begin{note}
+\textbf{What these simulations are, and what they are not.} The figures that follow are \textbf{scenario projections}, not forecasts. Each simulation re-samples from the historical engagement of each content pillar and adds the results up under a chosen posting plan. They rest on four assumptions that should be stated plainly:
+\begin{enumerate}[leftmargin=*, label=(\roman{enumi})]
+  \item \textbf{Independence} --- each post's engagement is treated as an independent draw; in reality posts compete for the same audience attention.
+  \item \textbf{Stationarity} --- pillar performance is assumed stable over the projection horizon; trends, seasonality, and audience fatigue are not modelled.
+  \item \textbf{No saturation} --- posting more of a high-performing pillar is assumed not to reduce its per-post return, which is unlikely to hold at high volumes.
+  \item \textbf{Small-sample inheritance} --- pillars resample from as few as 5--12 historical posts, so a high-performing strategy partly reflects the small samples it draws from.
+\end{enumerate}
+Consequently the strategy ``uplift'' percentages are best read as \emph{the mechanical consequence of allocating more posts to categories that have performed well historically}, useful for prioritisation and for sizing the \emph{range} of plausible outcomes, but not as guaranteed returns. The value of the simulations is the \emph{uncertainty bands} (P5--P95) they put around each plan, not point precision.
+\end{note}
 
 \section{MC1: Content Strategy Comparison (12 Weeks)}
 
@@ -1397,6 +1432,22 @@ Heavy reels   & 20000 &  0.3\%  & 12,043 & 8,067 \\
 \end{enumerate}
 
 \chapter{Limitations and Ethics}
+
+\section{Statistical Scope and Validity}
+
+This study is \textbf{exploratory and hypothesis-generating}, not confirmatory. It is designed to be fully reproducible: a fixed random seed (20260530), committed input data, and a deterministic pipeline mean an independent analyst re-running the code obtains bit-identical results. The descriptive statistics, distributions, and reproducibility are robust. The following constraints bound how strongly the inferential findings should be read:
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Composite-metric circularity.} The engagement score embeds a views term that is structurally available to video but absent from roughly half of image posts. Comparisons on the composite score therefore overstate the reels advantage; the report presents likes-and-comments-only comparisons alongside, and on those the reels advantage is directional but not statistically significant at the current sample size.
+  \item \textbf{Small samples.} After removing duplicate posts, several content pillars rest on 5--12 posts and the deduplicated reel sample is 16. Confidence intervals are correspondingly wide and are reported in full. Pillar rankings are indicative, not settled.
+  \item \textbf{Observational, not causal.} Posting day, pillar, and format are correlated with engagement but also with each other and with campaign timing and season. No causal claim is made. ``Post on Monday'' is a tested association, robust to outlier removal, but partly reflects which content is published when.
+  \item \textbf{Simulations are scenarios, not forecasts.} The Monte Carlo projections assume independence, stationarity, and no audience saturation. They quantify the \emph{range} of outcomes under stated assumptions; they are not delivery guarantees.
+  \item \textbf{Selection effects.} Comments were collected only from high-engagement posts, so the comment-intent mix is conditioned on top content and is not representative of all comments. Third-party mentions are a non-random sample.
+\end{enumerate}
+
+Used as intended --- to prioritise content experiments and to size uncertainty --- the analysis is sound and defensible. Used as proof of fixed effects or guaranteed returns, it would overreach. Every headline in this report has been framed to respect that boundary.
+
+\section{Data and Ethics}
 
 This report is based on public Instagram data collected via the Apify Instagram Scraper and analysed entirely locally. Results depend on what was publicly available at collection time. Instagram does not expose private analytics through public data interfaces, including impressions, reach, saves, shares, profile visits, link clicks, direct message volume, ad targeting, or completed bookings.
 
