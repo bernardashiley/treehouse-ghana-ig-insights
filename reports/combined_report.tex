@@ -175,7 +175,7 @@ Treehouse Ghana holds a well-established Instagram presence. Short videos consis
 
 \section{Data Coverage}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Summary of data collected for analysis}
 \begin{tabular}{@{}L{7cm} R{4cm}@{}}
@@ -214,7 +214,7 @@ This is not a replacement for native analytics. It is, however, a consistent and
 The chart below ranks each content category by average engagement score across all posts in the dataset.
 
 \vspace{8pt}
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \caption{Average engagement score by content pillar}
 \begin{tikzpicture}
@@ -291,16 +291,16 @@ The chart below ranks each content category by average engagement score across a
 \bottomrule
 \endlastfoot
 Cocktails and Drinks       & 11  & 132.00  & 2.91  & 14,304 & 289.59 \\
-Events and Music      & 8   & 121.75  & 2.38  & 11,830 & 251.93 \\
+Events and Live Music      & 8   & 121.75  & 2.38  & 11,830 & 251.93 \\
 Ambience and Vibe          & 15  & 123.07  & 14.20 & 3,869  & 232.75 \\
 Dinner and Nightlife       & 17  & 86.71   & 2.06  & 10,094 & 197.94 \\
-Promotions/Offers      & 2   & 72.00   & 1.00  & 6,681  & 143.81 \\
+Promotions and Offers      & 2   & 72.00   & 1.00  & 6,681  & 143.81 \\
 Food and Dining        & 111 & 61.42   & 0.98  & 6,739  & 133.73 \\
 General Brand          & 33  & 57.15   & 2.79  & 927    & 80.36  \\
 Price and Value            & 2   & 54.00   & 1.00  & 2,084  & 79.84  \\
-Birthdays & 6   & 31.67   & 0.33  & 4,340  & 76.73  \\
-Date Night     & 12  & 49.25   & 0.42  & 2,474  & 76.07  \\
-Reservations  & 2   & 19.00   & 0.00  & 1,654  & 35.54  \\
+Birthdays and Celebrations & 6   & 31.67   & 0.33  & 4,340  & 76.73  \\
+Date Night and Romance & 12  & 49.25   & 0.42  & 2,474  & 76.07  \\
+Reservations and Bookings & 2   & 19.00   & 0.00  & 1,654  & 35.54  \\
 \end{longtable}
 
 \section{Business Interpretation by Pillar}
@@ -320,7 +320,7 @@ Reservations  & 2   & 19.00   & 0.00  & 1,654  & 35.54  \\
 
 \section{Comparative Performance}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \caption{Average engagement score: short videos versus feed posts}
 \begin{tikzpicture}
@@ -344,7 +344,7 @@ Reservations  & 2   & 19.00   & 0.00  & 1,654  & 35.54  \\
 \end{tikzpicture}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Posts versus reels: count and average metrics}
 \begin{tabular}{@{}L{4cm} R{2.5cm} R{3.5cm} R{3.5cm}@{}}
@@ -357,7 +357,7 @@ Short Videos   & 84  & 190.20 & 8,999 \\
 \end{tabular}
 \end{table}
 
-Short videos attracted on average \textbf{66\% more engagement} than feed posts in the raw dataset, and \textbf{121\% more} after accounting for the post-reel duplication identified during data cleaning (see Part III, Section 5.1). Short videos reach audiences who do not yet follow Treehouse Ghana through Instagram's discovery algorithm. Feed posts and carousels are seen primarily by existing followers, making them more appropriate for detailed menu, reservation, and occasion messaging.
+Short videos attracted on average \textbf{121\% more engagement} than feed posts on the deduplicated dataset (150 unique posts). The raw dataset before deduplication (219 records) shows a 66\% difference; the 121\% figure uses the cleaner deduplicated comparison and is the number cited throughout this report. Short videos reach audiences who do not yet follow Treehouse Ghana through Instagram's discovery algorithm. Feed posts and carousels are seen primarily by existing followers, making them more appropriate for detailed menu, reservation, and occasion messaging.
 
 \begin{note}
 \textbf{Practical implication.} A 15--30 second video of a dish being plated, a cocktail being prepared, or guests moving through the venue space is sufficient to outperform the majority of static images. No specialist equipment is required.
@@ -367,7 +367,7 @@ Short videos attracted on average \textbf{66\% more engagement} than feed posts 
 
 \section{Best Days to Post}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \caption{Average engagement score by posting day}
 \begin{tikzpicture}
@@ -398,7 +398,7 @@ Short videos attracted on average \textbf{66\% more engagement} than feed posts 
 \end{tikzpicture}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Full timing analysis by day of week}
 \begin{tabular}{@{}L{2.8cm} R{2cm} R{2.2cm} R{2cm} R{2.2cm}@{}}
@@ -437,7 +437,7 @@ Wednesday & 27 &  94.56 & 55.19 & 0.78 \\
 03:00 & 6  & 62.78  & 27.67  & 5.33 \\
 04:00 & 2  & 31.50  & 29.00  & 0.50 \\
 07:00 & 2  & 80.73  & 64.00  & 1.00 \\
-08:00 & 2  & 61.58  & n/a & 0.00 \\
+08:00 & 2  & 61.58  & {---} & 0.00 \\
 09:00 & 8  & 61.96  & 26.50  & 0.75 \\
 10:00 & 3  & 79.84  & 13.67  & 4.33 \\
 11:00 & 5  & 765.42 & 408.60 & 2.80 \\
@@ -451,7 +451,7 @@ Wednesday & 27 &  94.56 & 55.19 & 0.78 \\
 19:00 & 5  & 32.82  & 7.00   & 0.20 \\
 20:00 & 6  & 65.08  & 45.00  & 1.00 \\
 21:00 & 6  & 208.15 & 115.33 & 13.33 \\
-22:00 & 2  & 8.06   & n/a & 0.00 \\
+22:00 & 2  & 8.06   & {---} & 0.00 \\
 \end{longtable}
 
 \begin{note}
@@ -466,7 +466,7 @@ The comment review uses anonymised text only. Usernames are excluded from all pr
 
 \section{Comment Intent Distribution}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \caption{Comment intent categories (106 comments from top posts)}
 \begin{tikzpicture}
@@ -542,7 +542,7 @@ Booking/Reservation      & 1  & 0.9\%  & Reply with booking link or WhatsApp; sa
 
 The following comment types signal direct business intent. Each represents a warm lead that has not yet been converted.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Commercial comment types and recommended responses}
 \begin{tabular}{@{}L{5cm} L{8cm}@{}}
@@ -573,7 +573,7 @@ Compared with owned posts, mentions are less controllable but generally more cre
 
 \chapter{Caption and Hashtag Analysis}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Caption and hashtag summary statistics}
 \begin{tabular}{@{}L{7cm} R{4cm}@{}}
@@ -593,7 +593,7 @@ Long caption avg. engagement    & 175.51 \\
 
 \section{Most Frequent Hashtags}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Top 15 hashtags by frequency of use}
 \begin{tabular}{@{}L{5cm} R{3cm}@{}}
@@ -625,7 +625,7 @@ Best-performing caption patterns combine one clear occasion cue, one sensory pro
 
 \section{Top Posts by Engagement Score}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Public engagement outliers (IQR cutoff: 227.1)}
 \begin{tabular}{@{}L{2cm} R{2cm} R{1.5cm} R{2cm} R{3.5cm}@{}}
@@ -647,7 +647,7 @@ Video &   462.72 & 250  & 4,272   & @malaikurd at Afroson1C \\
 
 \section{Top Posts by Likes}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Top 10 posts ranked by public likes}
 \begin{tabular}{@{}R{2cm} R{2.2cm} R{2.5cm} L{5cm}@{}}
@@ -670,7 +670,7 @@ Video &   462.72 & 250  & 4,272   & @malaikurd at Afroson1C \\
 
 \section{Top Posts by Comment Count}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Top 10 posts ranked by public comments}
 \begin{tabular}{@{}R{2.2cm} R{1.8cm} R{2.5cm} L{5cm}@{}}
@@ -684,16 +684,16 @@ Video &   462.72 & 250  & 4,272   & @malaikurd at Afroson1C \\
 13 & 114 & 241.96 & Ambience and Vibe \\
 12 & 64  & 137.67 & Dinner and Nightlife \\
 11 & 193 & 248.00 & General Brand \\
-10 & n/a & 114.10 & Food and Dining \\
+10 & {---} & 114.10 & Food and Dining \\
 6  & 67  & 97.00  & General Brand \\
-6  & 74  & 127.51 & Events and Music \\
+6  & 74  & 127.51 & Events and Live Music \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \section{Top Reels by Views and Plays}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Top 10 reels ranked by video views and plays}
 \begin{tabular}{@{}R{2.8cm} R{1.8cm} R{2.2cm} R{2.8cm}@{}}
@@ -708,54 +708,13 @@ Video &   462.72 & 250  & 4,272   & @malaikurd at Afroson1C \\
 45,962  & 472 & 0  &   931.62 \\
 29,331  & 135 & 0  &   428.31 \\
 21,475  & 182 & 1  &   401.75 \\
-21,067  & n/a & 15 &   284.67 \\
+21,067  & {---} & 15 &   284.67 \\
 19,030  & 209 & 6  &   429.30 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \chapter{Strategic Recommendations}
-
-\section{Content Strategy}
-
-\begin{enumerate}[leftmargin=*, label=\arabic{enumi}.]
-  \item Post more of the strongest occasion-led pillars: Cocktails and Drinks, Events and Live Music, and Ambience and Vibe.
-  \item Use short videos as reach and discovery assets. Short food reveals, ambience walk-throughs, event teasers, and customer-proof clips should each include a booking call to action.
-  \item Convert comments into reservations by replying with a consistent booking path and pinning the most useful response.
-  \item Build FAQ Highlights for menu, location, parking and access, birthday bookings, event nights, and the reservation process.
-  \item Make captions more commercially complete: occasion cue, product or experience cue, date and time where relevant, and booking instruction.
-  \item Repost third-party mentions selectively and add context that the original post may not include.
-  \item Track content pillars monthly so the team can identify whether food, ambience, events, or celebrations are driving the strongest public response.
-\end{enumerate}
-
-\section{Four-Week Content Calendar}
-
-\begin{table}[h]
-\centering
-\caption{Suggested four-week content calendar}
-\begin{tabular}{@{}C{1.5cm} L{3.5cm} L{8cm}@{}}
-\toprule
-\textbf{Week} & \textbf{Focus} & \textbf{Suggested Content} \\
-\midrule
-1 & Food and menu confidence   & 2 food reels, 1 carousel with signature dishes, 1 story poll asking what guests want to try \\[4pt]
-2 & Ambience and date night    & 2 ambience reels, 1 date-night post, 1 booking reminder story sequence \\[4pt]
-3 & Events and nightlife       & 1 DJ/live music teaser, 1 event recap reel, 1 caption with date/time/reservation details \\[4pt]
-4 & Social proof/celebrations  & 2 reposts/UGC stories, 1 birthday or group booking post, 1 FAQ Highlight refresh \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\section{Suggested Monthly KPIs}
-
-\begin{itemize}[leftmargin=*]
-  \item Public engagement score by pillar
-  \item Reels plays/views and completion proxies where available in native analytics
-  \item Comment volume and booking-intent comment count
-  \item Reservation CTA clicks or WhatsApp enquiries from Instagram
-  \item Story sticker taps, link clicks, and profile actions from Instagram native analytics
-  \item Number of customer mentions reused as social proof
-  \item Response time to commercial comments and direct messages
-\end{itemize}
 
 \section{Profile and Bio --- Current State}
 
@@ -801,6 +760,48 @@ The core issue is not that these assets are absent --- they exist. The issue is 
   \item Track average engagement score per content type monthly. Commission a refresh of this analysis in 90 days to measure progress.
 \end{enumerate}
 
+
+\section{Content Strategy}
+
+\begin{enumerate}[leftmargin=*, label=\arabic{enumi}.]
+  \item Post more of the strongest occasion-led pillars: Cocktails and Drinks, Events and Live Music, and Ambience and Vibe.
+  \item Use short videos as reach and discovery assets. Short food reveals, ambience walk-throughs, event teasers, and customer-proof clips should each include a booking call to action.
+  \item Convert comments into reservations by replying with a consistent booking path and pinning the most useful response.
+  \item Build FAQ Highlights for menu, location, parking and access, birthday bookings, event nights, and the reservation process.
+  \item Make captions more commercially complete: occasion cue, product or experience cue, date and time where relevant, and booking instruction.
+  \item Repost third-party mentions selectively and add context that the original post may not include.
+  \item Track content pillars monthly so the team can identify whether food, ambience, events, or celebrations are driving the strongest public response.
+\end{enumerate}
+
+\section{Four-Week Content Calendar}
+
+\begin{table}[htbp]
+\centering
+\caption{Suggested four-week content calendar}
+\begin{tabular}{@{}C{1.5cm} L{3.5cm} L{8cm}@{}}
+\toprule
+\textbf{Week} & \textbf{Focus} & \textbf{Suggested Content} \\
+\midrule
+1 & Food and menu confidence   & 2 food reels, 1 carousel with signature dishes, 1 story poll asking what guests want to try \\[4pt]
+2 & Ambience and date night    & 2 ambience reels, 1 date-night post, 1 booking reminder story sequence \\[4pt]
+3 & Events and nightlife       & 1 DJ/live music teaser, 1 event recap reel, 1 caption with date/time/reservation details \\[4pt]
+4 & Social proof/celebrations  & 2 reposts/UGC stories, 1 birthday or group booking post, 1 FAQ Highlight refresh \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Suggested Monthly KPIs}
+
+\begin{itemize}[leftmargin=*]
+  \item Public engagement score by pillar
+  \item Reels plays/views and completion proxies where available in native analytics
+  \item Comment volume and booking-intent comment count
+  \item Reservation CTA clicks or WhatsApp enquiries from Instagram
+  \item Story sticker taps, link clicks, and profile actions from Instagram native analytics
+  \item Number of customer mentions reused as social proof
+  \item Response time to commercial comments and direct messages
+\end{itemize}
+
 %% ============================================================
 %%  PART II: ADVANCED STATISTICAL AND PREDICTIVE ANALYSIS
 %% ============================================================
@@ -810,9 +811,9 @@ The core issue is not that these assets are absent --- they exist. The issue is 
 
 \section{Overview}
 
-This part of the report documents the full statistical and predictive analysis conducted on the public Instagram dataset for Treehouse Ghana. All computations were performed in a reproducible Node.js pipeline with no external dependencies. Monte Carlo simulations used a fixed seed (20260530) and 10000 iterations per test unless otherwise stated. Results are therefore exactly reproducible by re-running the pipeline from the committed data files.
+This part of the report documents the full statistical and predictive analysis conducted on the public Instagram dataset for Treehouse Ghana. All computations were performed in a reproducible Node.js pipeline with no external dependencies. Monte Carlo simulations used a fixed seed (20260530) and 10,000 iterations per test unless otherwise stated. Results are therefore exactly reproducible by re-running the pipeline from the committed data files.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Data quality issues identified and actions taken}
 \begin{tabular}{@{}L{3.8cm} L{4.5cm} L{5cm}@{}}
@@ -834,7 +835,7 @@ After deduplication, the working dataset comprises \textbf{150 unique posts and 
 
 \section{Summary Statistics by Segment}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Descriptive statistics by content segment (150 unique posts)}
 \begin{tabular}{@{}L{3.8cm} R{1cm} R{1.6cm} R{1.8cm} R{1.8cm} R{1.2cm} R{1.6cm} R{1.8cm}@{}}
@@ -872,14 +873,14 @@ All groups are strongly right-skewed (skewness 2--4) with positive excess kurtos
 Food and Dining        & 76  & 108.41 & 17.00 & 65.66  & 408.39  & 2.468 & 4.934 \\
 General Brand          & 26  & 81.01  & 13.17 & 70.50  & 279.48  & 1.742 & 3.078 \\
 Dinner and Nightlife       & 12  & 151.75 & 33.36 & 87.67  & 613.34  & 2.168 & 2.570 \\
-Price and Value            & 1   & 79.84  & ---   & n/a & ---     & 0     & 0     \\
+Price and Value            & 1   & 79.84  & ---   & {---} & ---     & 0     & 0     \\
 Cocktails and Drinks       & 8   & 261.27 & 15.00 & 298.01 & 927.40  & 1.573 & 0.931 \\
-Events and Music      & 5   & 358.17 & 53.87 & 403.90 & 1010.65 & 1.320 & 0.849 \\
+Events and Live Music      & 5   & 358.17 & 53.87 & 403.90 & 1010.65 & 1.320 & 0.849 \\
 Ambience and Vibe          & 10  & 184.47 & 34.41 & 195.64 & 691.28  & 1.528 & 1.488 \\
-Promotions/Offers      & 1   & 143.81 & ---   & n/a & ---     & 0     & 0     \\
-Birthdays & 3   & 76.73  & 48.39 & 97.50  & 126.23  & 0.662 & 0.272 \\
-Date Night     & 7   & 90.18  & 22.81 & 120.10 & 226.34  & 0.978 & 0.850 \\
-Reservations  & 1   & 35.54  & ---   & n/a & ---     & 0     & 0     \\
+Promotions and Offers      & 1   & 143.81 & ---   & {---} & ---     & 0     & 0     \\
+Birthdays and Celebrations & 3   & 76.73  & 48.39 & 97.50  & 126.23  & 0.662 & 0.272 \\
+Date Night and Romance & 7   & 90.18  & 22.81 & 120.10 & 226.34  & 0.978 & 0.850 \\
+Reservations and Bookings & 1   & 35.54  & ---   & {---} & ---     & 0     & 0     \\
 \end{longtable}
 
 \chapter{Hypothesis Tests}
@@ -939,46 +940,43 @@ Mean cocktails: 261.27 versus baseline: 126.75 (difference: +134.52). The effect
 
 \chapter{Bootstrap Confidence Intervals}
 
-All intervals use 5000 bootstrap iterations on the deduplicated dataset ($n = 150$).
+All intervals use 5,000 bootstrap iterations on the deduplicated dataset ($n = 150$).
 
 \section{Segment-Level Confidence Intervals}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \caption{Bootstrap 95\% confidence intervals: mean engagement score by segment}
 \begin{tikzpicture}
 \begin{axis}[
-  xbar,
-  xmin=-50, xmax=500,
-  width=13.5cm, height=6cm,
-  bar width=14pt,
+  xbar, xmin=0, xmax=480,
+  width=13.5cm, height=6.5cm,
+  bar width=10pt,
   xlabel={\small Engagement score},
-  symbolic y coords={
-    Third-party Mean,
-    Owned Mean,
-    Posts Mean,
-    All Content Mean,
-    Short Videos Mean
-  },
+  symbolic y coords={Third-party,Owned,Feed Posts,All Content,Short Videos},
   ytick=data,
   y tick label style={font=\small},
   axis line style={draw=tgrule},
-  enlarge y limits=0.2,
+  enlarge y limits=0.22,
+  legend style={at={(0.98,0.02)},anchor=south east,font=\small},
 ]
-\addplot[fill=tgmid!60, draw=tgmid]
-  plot[error bars/.cd, x dir=both, x explicit]
-  coordinates {
-    (146.30,Third-party Mean)   +- (66.83,0)
-    (118.90,Owned Mean)         +- (53.89,0)
-    (112.24,Posts Mean)         +- (41.48,0)
-    (126.75,All Content Mean)   +- (41.58,0)
-    (248.34,Short Videos Mean)  +- (171.83,0)
-  };
+\addplot[fill=tggrey!30,draw=tggrey] coordinates {
+  (89.54,Third-party)(70.63,Owned)(74.36,Feed Posts)(87.99,All Content)(104.59,Short Videos)
+};
+\addlegendentry{Lower 95\%}
+\addplot[fill=tgmid!80,draw=tgmid] coordinates {
+  (146.30,Third-party)(118.90,Owned)(112.24,Feed Posts)(126.75,All Content)(248.34,Short Videos)
+};
+\addlegendentry{Point estimate}
+\addplot[fill=tgblue!35,draw=tgblue] coordinates {
+  (213.13,Third-party)(177.41,Owned)(157.32,Feed Posts)(171.15,All Content)(420.50,Short Videos)
+};
+\addlegendentry{Upper 95\%}
 \end{axis}
 \end{tikzpicture}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Bootstrap 95\% confidence intervals by segment}
 \begin{tabular}{@{}L{4.5cm} R{2cm} R{2.2cm} R{2.2cm} R{2cm} R{2.2cm}@{}}
@@ -1018,10 +1016,10 @@ Food and Dining        & 76 & 108.41 &  59.18 & 175.48 & 116.30 & No  \\
 General Brand          & 26 &  81.01 &  37.05 & 141.04 & 103.99 & No  \\
 Dinner and Nightlife       & 12 & 151.75 &  39.62 & 352.69 & 313.07 & No  \\
 Cocktails and Drinks       &  8 & 261.27 &  30.43 & 583.88 & 553.45 & No  \\
-Events and Music      &  5 & 358.17 &  64.33 & 786.83 & 722.49 & No  \\
+Events and Live Music      &  5 & 358.17 &  64.33 & 786.83 & 722.49 & No  \\
 Ambience and Vibe          & 10 & 184.47 &  40.66 & 374.21 & 333.55 & No  \\
-Birthdays &  3 &  76.73 &  35.20 & 133.41 &  98.21 & No  \\
-Date Night     &  7 &  90.18 &  37.71 & 156.96 & 119.25 & No  \\
+Birthdays and Celebrations &  3 &  76.73 &  35.20 & 133.41 &  98.21 & No  \\
+Date Night and Romance &  7 &  90.18 &  37.71 & 156.96 & 119.25 & No  \\
 \end{longtable}
 
 Confidence intervals on pillars with $n \leq 5$ are very wide. Investment decisions should not be based on those pillar estimates until sample sizes increase.
@@ -1031,7 +1029,8 @@ Confidence intervals on pillars with $n \leq 5$ are very wide. Investment decisi
 \section{Model-Style Regression Results}
 
 \begin{longtable}{@{}L{4.5cm} R{1cm} L{3cm} R{2cm} L{5.5cm}@{}}
-\caption{Simple regression and descriptive model-style estimates} \\
+\caption{Simple regression and descriptive model-style estimates%
+  \textsuperscript{\dag}} \\
 \toprule
 \textbf{Analysis} & \textbf{N} & \textbf{Metric} & \textbf{Estimate} & \textbf{Interpretation} \\
 \midrule
@@ -1060,7 +1059,7 @@ Bootstrap CI: reels      & 84  & engagement\_score     & 190.20 & 95\% CI: $[126
 
 \section{Pillar Lift versus Baseline}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \caption{Content pillar lift relative to overall baseline (\%)}
 \begin{tikzpicture}
@@ -1109,7 +1108,7 @@ Bootstrap CI: reels      & 84  & engagement\_score     & 190.20 & 95\% CI: $[126
 \end{tikzpicture}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Pillar lift versus baseline with bootstrap 95\% CI}
 \begin{tabular}{@{}L{4cm} R{1.2cm} R{2cm} R{2cm} R{2cm} R{3cm}@{}}
@@ -1117,23 +1116,23 @@ Bootstrap CI: reels      & 84  & engagement\_score     & 190.20 & 95\% CI: $[126
 \textbf{Pillar} & \textbf{N} & \textbf{Avg Score} & \textbf{Lift} & \textbf{Top-20 Rate} & \textbf{95\% CI} \\
 \midrule
 Cocktails and Drinks       & 11  & 289.59 & +101.7\% & 27.3\% & 56.86 to 532.39 \\
-Events and Music      & 8   & 251.93 & +75.5\%  & 25.0\% & 66.95 to 555.72 \\
+Events and Live Music      & 8   & 251.93 & +75.5\%  & 25.0\% & 66.95 to 555.72 \\
 Ambience and Vibe          & 15  & 232.75 & +62.1\%  & 40.0\% & 108.68 to 388.09 \\
 Dinner and Nightlife       & 17  & 197.94 & +37.9\%  & 35.3\% & 54.72 to 393.07 \\
-Promotions/Offers      & 2   & 143.81 & +0.2\%   & 100\%  & 143.81 to 143.81 \\
+Promotions and Offers      & 2   & 143.81 & +0.2\%   & 100\%  & 143.81 to 143.81 \\
 Food and Dining        & 111 & 133.73 & -6.9\%   & 15.3\% & 82.43 to 188.53 \\
 General Brand          & 33  & 80.36  & -44.0\%  & 15.2\% & 42.65 to 128.02 \\
 Price and Value            & 2   & 79.84  & -44.4\%  & 0\%    & 79.84 to 79.84 \\
-Birthdays & 6   & 76.73  & -46.6\%  & 0\%    & 43.99 to 109.47 \\
-Date Night     & 12  & 76.07  & -47.0\%  & 25.0\% & 39.98 to 120.85 \\
-Reservations  & 2   & 35.54  & -75.2\%  & 0\%    & 35.54 to 35.54 \\
+Birthdays and Celebrations & 6   & 76.73  & -46.6\%  & 0\%    & 43.99 to 109.47 \\
+Date Night and Romance & 12  & 76.07  & -47.0\%  & 25.0\% & 39.98 to 120.85 \\
+Reservations and Bookings & 2   & 35.54  & -75.2\%  & 0\%    & 35.54 to 35.54 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \section{Correlation Matrix}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{Pearson and Spearman correlations between key metrics ($n = 219$)}
 \begin{tabular}{@{}L{3.5cm} L{3.5cm} R{2.5cm} R{2.5cm} L{4cm}@{}}
@@ -1149,12 +1148,14 @@ Likes          & Comments         & 0.406 & 0.360 & Directional only \\
 \end{tabular}
 \end{table}
 
+{\small\dag~These regression estimates use the pre-deduplication dataset ($n=219$) produced by the base analysis pipeline. All other statistics in Part~II use the deduplicated dataset ($n=150$). Coefficients are directional and do not change materially between the two datasets.}
+
 The very high Pearson $r = 0.929$ between views and engagement score is expected: views enter the score formula directly ($\div 100$) and dominate for video posts. All other correlations are based on public fields only and do not prove causation.
 
 \chapter{Monte Carlo Simulations}
 
 \begin{callout}
-\textbf{Simulation parameters.} All Monte Carlo simulations draw samples with replacement from the empirical distribution of owned-content engagement scores, stratified by content pillar. Seeds are fixed (20260530) for full reproducibility. All simulations use 10000 iterations. Strategy definitions in MC1 and MC5 are identical to ensure consistency.
+\textbf{Simulation parameters.} All Monte Carlo simulations draw samples with replacement from the empirical distribution of owned-content engagement scores, stratified by content pillar. Seeds are fixed (20260530) for full reproducibility. All simulations use 10,000 iterations. Strategy definitions in MC1 and MC5 are identical to ensure consistency.
 \end{callout}
 
 \section{MC1: Content Strategy Comparison (12 Weeks)}
@@ -1167,9 +1168,9 @@ Three content strategies were compared over a 12-week horizon. The strategy defi
   \item \textbf{Heavy reels}: cocktails/drinks 1.5, events 1, ambience 1.5, dinner/nightlife 1, food 0.5 (66 total posts).
 \end{itemize}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
-\caption{MC1: Expected 12-week engagement under three strategies (10000 simulations)}
+\caption{MC1: Expected 12-week engagement under three strategies (10,000 simulations)}
 \begin{tikzpicture}
 \begin{axis}[
   ybar,
@@ -1209,7 +1210,7 @@ Three content strategies were compared over a 12-week horizon. The strategy defi
 \end{tikzpicture}
 \end{figure}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
 \caption{MC1 results: 12-week engagement score by strategy}
 \begin{tabular}{@{}L{3cm} R{1.8cm} R{2cm} R{2cm} R{2.4cm} R{2.4cm} R{1.2cm} R{2cm}@{}}
@@ -1225,11 +1226,11 @@ Heavy reels   & 66 & 12,004 & 11,896 & 7,877 & 16,451 & 0.218 & +77.2\% \\
 
 The wide P5--P95 range reflects genuine empirical uncertainty from the small historical sample. These bands are directional, not precise delivery guarantees.
 
-\section{MC2: Engagement Forecast (30,60 and 90 Days)}
+\section{MC2: Engagement Forecast (30, 60 and 90 Days)}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
-\caption{MC2: 10000-simulation engagement forecast at three horizons}
+\caption{MC2: 10,000-simulation engagement forecast at three horizons}
 \begin{tabular}{@{}R{2.5cm} R{2.5cm} R{3cm} R{2.5cm} R{2.5cm} R{2.5cm} R{1.5cm}@{}}
 \toprule
 \textbf{Horizon} & \textbf{Exp. Posts} & \textbf{Forecast Mean} & \textbf{P10} & \textbf{P90} & \textbf{Peak P90} & \textbf{CV} \\
@@ -1254,9 +1255,9 @@ The conversion pipeline models the pathway from published post to confirmed book
   \item Estimated posts per month: 6 (derived from 18-month scrape window)
 \end{itemize}
 
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
-\caption{MC3: Monthly booking pipeline under three conversion scenarios (10000 simulations)}
+\caption{MC3: Monthly booking pipeline under three conversion scenarios (10,000 simulations)}
 \begin{tabular}{@{}L{2.5cm} R{1.5cm} R{2cm} R{2.5cm} R{2cm} R{2.2cm} R{2.5cm}@{}}
 \toprule
 \textbf{Scenario} & \textbf{Contact \%} & \textbf{Booking \%} & \textbf{P50 Bookings} & \textbf{P90 Bookings} & \textbf{P(0 bookings)} & \textbf{P($\geq$3 bookings)} \\
@@ -1309,7 +1310,7 @@ The optimiser consistently allocates the largest share to Events and Live Music,
 
 MC5 uses the same strategy definitions as MC1 to allow direct comparison. Expected means align within Monte Carlo noise.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
 \centering
 \caption{MC5: Probability of reaching engagement targets under three strategies}
 \begin{tikzpicture}
@@ -1362,16 +1363,16 @@ MC5 uses the same strategy definitions as MC1 to allow direct comparison. Expect
 \endfoot
 \bottomrule
 \endlastfoot
-Current mix   & 5000  & 80.0\%  & 6,771 &     0 \\
-Current mix   & 10000 &  6.9\%  & 6,771 & 3,405 \\
+Current mix   & 5,000  & 80.0\%  & 6,771 &     0 \\
+Current mix   & 10,000 &  6.9\%  & 6,771 & 3,405 \\
 Current mix   & 15000 &  0.0\%  & 6,771 & 8,405 \\
 Current mix   & 20000 &  0.0\%  & 6,771 & 13,405 \\
-Optimised     & 5000  & 96.6\%  & 8,922 &     0 \\
-Optimised     & 10000 & 30.3\%  & 8,922 & 1,192 \\
+Optimised     & 5,000  & 96.6\%  & 8,922 &     0 \\
+Optimised     & 10,000 & 30.3\%  & 8,922 & 1,192 \\
 Optimised     & 15000 &  0.9\%  & 8,922 & 6,192 \\
 Optimised     & 20000 &  0.0\%  & 8,922 & 11,192 \\
-Heavy reels   & 5000  & 99.9\%  & 12,043 &    0 \\
-Heavy reels   & 10000 & 78.2\%  & 12,043 &    0 \\
+Heavy reels   & 5,000  & 99.9\%  & 12,043 &    0 \\
+Heavy reels   & 10,000 & 78.2\%  & 12,043 &    0 \\
 Heavy reels   & 15000 & 12.9\%  & 12,043 & 3,067 \\
 Heavy reels   & 20000 &  0.3\%  & 12,043 & 8,067 \\
 \bottomrule
@@ -1413,6 +1414,11 @@ digital marketing background.
 
 \vspace{8pt}
 \begin{longtable}{@{}L{4cm} L{11.5cm}@{}}
+\toprule
+\textbf{Term / Acronym} & \textbf{Plain-English Definition} \\
+\midrule
+\endfirsthead
+\multicolumn{2}{c}{\tablename\ \thetable{} --- continued} \\
 \toprule
 \textbf{Term / Acronym} & \textbf{Plain-English Definition} \\
 \midrule
@@ -1581,7 +1587,7 @@ to 20260530 means the Monte Carlo results in this report are exactly reproducibl
 \textbf{Service Level Agreement (SLA)} &
 A defined standard of service, here applied to response time. An Instagram comment
 SLA of 30 minutes means the team commits to replying to all commercial comments
-within 30 minutes of posting. \\[4pt]
+within 30 minutes of a comment being made. \\[4pt]
 
 \textbf{Shortcode} &
 The unique string in an Instagram post URL. For the URL
