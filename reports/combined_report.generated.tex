@@ -104,12 +104,13 @@ It is a consistent, reproducible index for comparing posts on partial public met
 \begin{tikzpicture}
 \begin{axis}[
   xbar, xmin=0, xmax=334,
+  xtick distance=100, scaled x ticks=false,
   width=13.5cm, height=10.25cm, bar width=12pt,
   xlabel={\small Average engagement score},
   symbolic y coords={Reservations and Bookings,Date Night and Romance,Birthdays and Celebrations,Price and Value,General Brand,Food and Dining,Promotions and Offers,Dinner and Nightlife,Ambience and Vibe,Events and Live Music,Cocktails and Drinks}, ytick=data,
   y tick label style={font=\small, align=right, text width=3.8cm},
-  scaled x ticks=false,
-  xticklabel style={/pgf/number format/.cd,fixed,fixed zerofill=false,precision=0,1000 sep={,}},
+  x tick label style={font=\footnotesize},
+  xticklabel style={/pgf/number format/.cd,fixed,precision=0,1000 sep={,}},
   nodes near coords={\pgfmathprintnumber[fixed,precision=0,1000 sep={,}]{\pgfplotspointmeta}},
   nodes near coords align={horizontal},
   every node near coord/.style={font=\footnotesize, color=tggreen},
@@ -183,12 +184,13 @@ Likes only & 103 & 62 & 0.557 \\
 \begin{tikzpicture}
 \begin{axis}[
   xbar, xmin=0, xmax=229,
+  xtick distance=50, scaled x ticks=false,
   width=13.5cm, height=7.25cm, bar width=12pt,
   xlabel={\small Average engagement score},
   symbolic y coords={Wednesday,Saturday,Sunday,Thursday,Friday,Tuesday,Monday}, ytick=data,
   y tick label style={font=\small, align=right, text width=3.8cm},
-  scaled x ticks=false,
-  xticklabel style={/pgf/number format/.cd,fixed,fixed zerofill=false,precision=0,1000 sep={,}},
+  x tick label style={font=\footnotesize},
+  xticklabel style={/pgf/number format/.cd,fixed,precision=0,1000 sep={,}},
   nodes near coords={\pgfmathprintnumber[fixed,precision=0,1000 sep={,}]{\pgfplotspointmeta}},
   nodes near coords align={horizontal},
   every node near coord/.style={font=\footnotesize, color=tggreen},
@@ -264,12 +266,13 @@ The comment review uses anonymised text only; usernames are excluded from all ou
 \begin{tikzpicture}
 \begin{axis}[
   xbar, xmin=0, xmax=99,
+  xtick distance=20, scaled x ticks=false,
   width=13.5cm, height=9.5cm, bar width=12pt,
   xlabel={\small Number of comments},
   symbolic y coords={service issue complaint,price value concern,booking reservation intent,menu food curiosity,event interest,date-night romantic ambience,positive ambience praise,location access question,generic praise,generic unclear}, ytick=data,
   y tick label style={font=\small, align=right, text width=3.8cm},
-  scaled x ticks=false,
-  xticklabel style={/pgf/number format/.cd,fixed,fixed zerofill=false,precision=0,1000 sep={,}},
+  x tick label style={font=\footnotesize},
+  xticklabel style={/pgf/number format/.cd,fixed,precision=0,1000 sep={,}},
   nodes near coords={\pgfmathprintnumber[fixed,precision=0,1000 sep={,}]{\pgfplotspointmeta}},
   nodes near coords align={horizontal},
   every node near coord/.style={font=\footnotesize, color=tggreen},
@@ -454,11 +457,12 @@ day Sunday mean & 11 & 141.31 & 59.99 & 264.35 & No \\
 \begin{tikzpicture}
 \begin{axis}[
   xbar, xmin=-83, xmax=117,
+  xtick distance=50, scaled x ticks=false,
   width=13.5cm, height=10.25cm, bar width=12pt,
   xlabel={\small Lift above baseline (\textbackslash\{\}\%)},
   symbolic y coords={Reservations and Bookings,Date Night and Romance,Birthdays and Celebrations,Price and Value,General Brand,Food and Dining,Promotions and Offers,Dinner and Nightlife,Ambience and Vibe,Events and Live Music,Cocktails and Drinks}, ytick=data,
   y tick label style={font=\small, align=right, text width=3.8cm},
-  scaled x ticks=false,
+  x tick label style={font=\footnotesize},
   xticklabel={\pgfmathprintnumber[fixed,precision=0]{\tick}\%},
   nodes near coords={\pgfmathprintnumber[fixed,precision=1]{\pgfplotspointmeta}\%},
   nodes near coords align={horizontal},

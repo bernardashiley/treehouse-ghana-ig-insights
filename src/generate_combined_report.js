@@ -116,11 +116,19 @@ function bar(opts){
   const syms=rows.map(r=>coordName(r.label)).join(',');
   const xmin = pct ? Math.floor(Math.min(0,...rows.map(r=>num(r.value)))*1.1) : 0;
   const xmax = Math.ceil((pct ? Math.max(...rows.map(r=>num(r.value))) : num(max))*1.15);
-  // Force fixed-point, thousands-separated tick + value labels so pgfplots never
-  // shows a scientific axis multiplier (e.g. ".10^3") or ragged decimals.
+  // Choose a "nice" round tick step targeting ~4-5 ticks, so labels never crowd
+  // and collide (the "8001,000" run). Without this pgfplots auto-ticks every 200.
+  const niceStep = (range) => {
+    const raw = (range || 1) / 4;
+    const magn = Math.pow(10, Math.floor(Math.log10(raw)));
+    const n = raw / magn;
+    return (n < 1.5 ? 1 : n < 3.5 ? 2 : n < 7.5 ? 5 : 10) * magn;
+  };
+  const step = niceStep(xmax - xmin);
+  // Fixed-point, thousands-separated labels; no scientific axis multiplier.
   const tickFmt = pct
     ? `xticklabel={\\pgfmathprintnumber[fixed,precision=0]{\\tick}\\%},`
-    : `xticklabel style={/pgf/number format/.cd,fixed,fixed zerofill=false,precision=0,1000 sep={,}},`;
+    : `xticklabel style={/pgf/number format/.cd,fixed,precision=0,1000 sep={,}},`;
   const nodeFmt = pct
     ? `nodes near coords={\\pgfmathprintnumber[fixed,precision=1]{\\pgfplotspointmeta}\\%},`
     : `nodes near coords={\\pgfmathprintnumber[fixed,precision=0,1000 sep={,}]{\\pgfplotspointmeta}},`;
@@ -130,11 +138,12 @@ function bar(opts){
 \\begin{tikzpicture}
 \\begin{axis}[
   xbar, xmin=${xmin}, xmax=${xmax},
+  xtick distance=${step}, scaled x ticks=false,
   width=13.5cm, height=${Math.max(5,rows.length*0.75+2)}cm, bar width=12pt,
   xlabel={\\small ${tx(xlabel)}},
   symbolic y coords={${syms}}, ytick=data,
   y tick label style={font=\\small, align=right, text width=3.8cm},
-  scaled x ticks=false,
+  x tick label style={font=\\footnotesize},
   ${tickFmt}
   ${nodeFmt}
   nodes near coords align={horizontal},

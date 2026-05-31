@@ -673,6 +673,18 @@ function makeLatex(data) {
     .replace(/\^/g, '\\textasciicircum{}').replace(/~/g, '\\textasciitilde{}')
     .replace(/>/g, '\\textgreater{}').replace(/</g, '\\textless{}');
 
+  // "Nice" round tick step (~4 ticks) so axis labels never crowd/collide.
+  const niceStep = (range) => {
+    const raw = (range || 1) / 4;
+    const magn = Math.pow(10, Math.floor(Math.log10(raw)));
+    const n = raw / magn;
+    return (n < 1.5 ? 1 : n < 3.5 ? 2 : n < 7.5 ? 5 : 10) * magn;
+  };
+  const pillarMax = Math.max(...pillars.slice(0,8).map(r => num(r.avg_engagement_score)), 1);
+  const pillarStep = niceStep(pillarMax);
+  const typeMax = Math.max(num(postMean), num(reelMean), 1);
+  const typeStep = niceStep(typeMax);
+
   // TikZ pillar bar chart data
   const pillarData = pillars.slice(0, 8).map(r => {
     const LABELS = {
@@ -799,7 +811,7 @@ A higher score means more likes, comments and video plays combined.
     return m[r.pillar]||r.pillar;}).reverse().join(',')}},
   ytick=data,
   xmin=0,
-  scaled x ticks=false,
+  xtick distance=${pillarStep}, scaled x ticks=false,
   xticklabel style={/pgf/number format/.cd,fixed,precision=0,1000 sep={,}},
   nodes near coords={\\pgfmathprintnumber[fixed,precision=0,1000 sep={,}]{\\pgfplotspointmeta}},
   nodes near coords align={horizontal},
@@ -837,7 +849,7 @@ A higher score means more likes, comments and video plays combined.
   symbolic x coords={Feed Posts, Short Videos (Reels)},
   xtick=data,
   ymin=0,
-  scaled y ticks=false,
+  ytick distance=${typeStep}, scaled y ticks=false,
   yticklabel style={/pgf/number format/.cd,fixed,precision=0,1000 sep={,}},
   nodes near coords={\\pgfmathprintnumber[fixed,precision=0,1000 sep={,}]{\\pgfplotspointmeta}},
   nodes near coords align={vertical},
