@@ -792,7 +792,7 @@ Video &   462.72 & 250  & 4,272   & @malaikurd at Afroson1C \\
 
 \section{Overview}
 
-This part of the report documents the full statistical and predictive analysis conducted on the public Instagram dataset for Treehouse Ghana. All computations were performed in a reproducible Node.js pipeline with no external dependencies. Monte Carlo simulations used a fixed seed (20260530) and 10,000 iterations per test unless otherwise stated. Results are therefore exactly reproducible by re-running the pipeline from the committed data files.
+This part of the report documents the full statistical and predictive analysis conducted on the public Instagram dataset for Treehouse Ghana. All computations were performed in a reproducible Node.js pipeline with no external dependencies. Monte Carlo simulations used a fixed seed (20260530) and 10000 iterations per test unless otherwise stated. Results are therefore exactly reproducible by re-running the pipeline from the committed data files.
 
 \begin{table}[h]
 \centering
@@ -921,7 +921,7 @@ Mean cocktails: 261.27 versus baseline: 126.75 (difference: +134.52). The effect
 
 \chapter{Bootstrap Confidence Intervals}
 
-All intervals use 5,000 bootstrap iterations on the deduplicated dataset ($n = 150$).
+All intervals use 5000 bootstrap iterations on the deduplicated dataset ($n = 150$).
 
 \section{Segment-Level Confidence Intervals}
 
@@ -1136,7 +1136,7 @@ The very high Pearson $r = 0.929$ between views and engagement score is expected
 \chapter{Monte Carlo Simulations}
 
 \begin{callout}
-\textbf{Simulation parameters.} All Monte Carlo simulations draw samples with replacement from the empirical distribution of owned-content engagement scores, stratified by content pillar. Seeds are fixed (20260530) for full reproducibility. All simulations use 10,000 iterations. Strategy definitions in MC1 and MC5 are identical to ensure consistency.
+\textbf{Simulation parameters.} All Monte Carlo simulations draw samples with replacement from the empirical distribution of owned-content engagement scores, stratified by content pillar. Seeds are fixed (20260530) for full reproducibility. All simulations use 10000 iterations. Strategy definitions in MC1 and MC5 are identical to ensure consistency.
 \end{callout}
 
 \section{MC1: Content Strategy Comparison (12 Weeks)}
@@ -1151,7 +1151,7 @@ Three content strategies were compared over a 12-week horizon. The strategy defi
 
 \begin{figure}[h]
 \centering
-\caption{MC1: Expected 12-week engagement under three strategies (10,000 simulations)}
+\caption{MC1: Expected 12-week engagement under three strategies (10000 simulations)}
 \begin{tikzpicture}
 \begin{axis}[
   ybar,
@@ -1211,7 +1211,7 @@ The wide P5--P95 range reflects genuine empirical uncertainty from the small his
 
 \begin{table}[h]
 \centering
-\caption{MC2: 10,000-simulation engagement forecast at three horizons}
+\caption{MC2: 10000-simulation engagement forecast at three horizons}
 \begin{tabular}{@{}R{2.5cm} R{2.5cm} R{3cm} R{2.5cm} R{2.5cm} R{2.5cm} R{1.5cm}@{}}
 \toprule
 \textbf{Horizon} & \textbf{Exp. Posts} & \textbf{Forecast Mean} & \textbf{P10} & \textbf{P90} & \textbf{Peak P90} & \textbf{CV} \\
@@ -1238,7 +1238,7 @@ The conversion pipeline models the pathway from published post to confirmed book
 
 \begin{table}[h]
 \centering
-\caption{MC3: Monthly booking pipeline under three conversion scenarios (10,000 simulations)}
+\caption{MC3: Monthly booking pipeline under three conversion scenarios (10000 simulations)}
 \begin{tabular}{@{}L{2.5cm} R{1.5cm} R{2cm} R{2.5cm} R{2cm} R{2.2cm} R{2.5cm}@{}}
 \toprule
 \textbf{Scenario} & \textbf{Contact \%} & \textbf{Booking \%} & \textbf{P50 Bookings} & \textbf{P90 Bookings} & \textbf{P(0 bookings)} & \textbf{P($\geq$3 bookings)} \\
@@ -1301,7 +1301,8 @@ MC5 uses the same strategy definitions as MC1 to allow direct comparison. Expect
   width=13.5cm, height=7cm,
   bar width=16pt,
   ylabel={\small P(achieving target) \%},
-  symbolic x coords={5,000, 10,000, 15,000, 20,000},
+  symbolic x coords={5000,10000,15000,20000},
+  xticklabels={5k,10k,15k,20k},
   xtick=data,
   x tick label style={font=\small},
   xlabel={\small 12-week engagement target},
@@ -1313,15 +1314,15 @@ MC5 uses the same strategy definitions as MC1 to allow direct comparison. Expect
   legend style={at={(0.02,0.98)}, anchor=north west, font=\small},
 ]
 \addplot[fill=tggrey!50, draw=tggrey] coordinates {
-  (5,000, 80.0) (10,000, 6.9) (15,000, 0.0) (20,000, 0.0)
+  (5000, 80.0) (10000, 6.9) (15000, 0.0) (20000, 0.0)
 };
 \addlegendentry{Current Mix}
 \addplot[fill=tgmid!70, draw=tgmid] coordinates {
-  (5,000, 96.6) (10,000, 30.3) (15,000, 0.9) (20,000, 0.0)
+  (5000, 96.6) (10000, 30.3) (15000, 0.9) (20000, 0.0)
 };
 \addlegendentry{Optimised}
 \addplot[fill=tggreen, draw=tggreen] coordinates {
-  (5,000, 99.9) (10,000, 78.2) (15,000, 12.9) (20,000, 0.3)
+  (5000, 99.9) (10000, 78.2) (15000, 12.9) (20000, 0.3)
 };
 \addlegendentry{Heavy Reels}
 \end{axis}
@@ -1343,18 +1344,18 @@ MC5 uses the same strategy definitions as MC1 to allow direct comparison. Expect
 \endfoot
 \bottomrule
 \endlastfoot
-Current mix   & 5,000  & 80.0\%  & 6,771 &     0 \\
-Current mix   & 10,000 &  6.9\%  & 6,771 & 3,405 \\
-Current mix   & 15,000 &  0.0\%  & 6,771 & 8,405 \\
-Current mix   & 20,000 &  0.0\%  & 6,771 & 13,405 \\
-Optimised     & 5,000  & 96.6\%  & 8,922 &     0 \\
-Optimised     & 10,000 & 30.3\%  & 8,922 & 1,192 \\
-Optimised     & 15,000 &  0.9\%  & 8,922 & 6,192 \\
-Optimised     & 20,000 &  0.0\%  & 8,922 & 11,192 \\
-Heavy reels   & 5,000  & 99.9\%  & 12,043 &    0 \\
-Heavy reels   & 10,000 & 78.2\%  & 12,043 &    0 \\
-Heavy reels   & 15,000 & 12.9\%  & 12,043 & 3,067 \\
-Heavy reels   & 20,000 &  0.3\%  & 12,043 & 8,067 \\
+Current mix   & 5000  & 80.0\%  & 6,771 &     0 \\
+Current mix   & 10000 &  6.9\%  & 6,771 & 3,405 \\
+Current mix   & 15000 &  0.0\%  & 6,771 & 8,405 \\
+Current mix   & 20000 &  0.0\%  & 6,771 & 13,405 \\
+Optimised     & 5000  & 96.6\%  & 8,922 &     0 \\
+Optimised     & 10000 & 30.3\%  & 8,922 & 1,192 \\
+Optimised     & 15000 &  0.9\%  & 8,922 & 6,192 \\
+Optimised     & 20000 &  0.0\%  & 8,922 & 11,192 \\
+Heavy reels   & 5000  & 99.9\%  & 12,043 &    0 \\
+Heavy reels   & 10000 & 78.2\%  & 12,043 &    0 \\
+Heavy reels   & 15000 & 12.9\%  & 12,043 & 3,067 \\
+Heavy reels   & 20000 &  0.3\%  & 12,043 & 8,067 \\
 \bottomrule
 \end{longtable}
 
