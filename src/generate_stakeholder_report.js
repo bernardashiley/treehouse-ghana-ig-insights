@@ -721,7 +721,7 @@ function makeLatex(data) {
     .sort((a, b) => num(b.count) - num(a.count));
   const topCommercial = commercialIntents[0] || null;
   const topCommercialTxt = topCommercial
-    ? `\\textbf{Your most common high-intent comment is \\textquotedblleft${tx(topCommercial.intent)}\\textquotedblright{}} (${topCommercial.percentage}\\% of comments). Replying quickly turns these warm leads into customers.`
+    ? `\\textbf{Your most common high-intent comment is \\textquotedblleft{}${tx(topCommercial.intent)}\\textquotedblright{}} (${topCommercial.percentage}\\% of comments). Replying quickly turns these warm leads into customers.`
     : `\\textbf{Most comments are warm but low-intent.} The opportunity is to end captions with one explicit next step so that affection turns into action.`;
   const topPillarLatex = top1Txt;
   const bestDayLatex = topDay.period || 'your best-performing day';
@@ -949,7 +949,7 @@ ${intentRows}
 \\end{center}
 
 \\textbf{Actionable:} ${topCommercial
-  ? `Reply to every \\textquotedblleft${tx(topCommercial.intent)}\\textquotedblright{} comment within 30 minutes during posting hours — that is your highest-intent signal.`
+  ? `Reply to every \\textquotedblleft{}${tx(topCommercial.intent)}\\textquotedblright{} comment within 30 minutes during posting hours — that is your highest-intent signal.`
   : `Reply to every high-intent comment within 30 minutes during posting hours.`}
 Make the single next step those comments are asking for one tap away from your bio.
 
@@ -974,7 +974,7 @@ ${stratRows}
 
 \\subsection*{This week}
 \\begin{enumerate}
-  \\item Reply to every high-intent comment within 30 minutes during posting hours${topCommercial ? ` (your most common is \\textquotedblleft${tx(topCommercial.intent)}\\textquotedblright{})` : ''} — these are warm leads.
+  \\item Reply to every high-intent comment within 30 minutes during posting hours${topCommercial ? ` (your most common is \\textquotedblleft{}${tx(topCommercial.intent)}\\textquotedblright{})` : ''} — these are warm leads.
   \\item Put the single next step your top comments ask for one tap away in your bio (link, form or saved reply).
   \\item Pin a Highlight that answers your most-asked question, so the answer is always one tap away.
 \\end{enumerate}
