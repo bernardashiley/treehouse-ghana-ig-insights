@@ -549,10 +549,10 @@ The following comment types signal direct business intent. Each represents a war
 \toprule
 \textbf{Comment type} & \textbf{Recommended action} \\
 \midrule
-Location and access questions & Pin the address in every caption. Add a Highlights story titled ``Find Us''. \\[4pt]
-Event availability questions  & Include date, time, and ``link in bio'' in all event posts. \\[4pt]
-Menu and food curiosity       & Post one carousel per month showing the top five dishes with prices. \\[4pt]
-Booking enquiries             & Add the WhatsApp number to every post that mentions dining. \\
+Location and access questions & The Google Maps link exists in the bio link tree but is two taps deep. Paste the short URL directly into captions on posts that attract location questions, and add a ``Find Us'' Instagram Highlight for single-tap access. \\[4pt]
+Event availability questions  & Include the full event date, start time, and the ticketing URL (tix.africa) directly in the caption --- do not rely on ``link in bio'' alone. \\[4pt]
+Menu and food curiosity       & The menu link (bit.ly/Treehouseghmenu) is in the bio. Surface it in captions on food posts rather than asking followers to navigate to the bio. One carousel per month showing the top five dishes with prices will reduce repeat menu questions. \\[4pt]
+Booking enquiries             & WhatsApp is accessible via the bio. Include the full WhatsApp number in every post caption that mentions dining so it is visible without leaving the post. \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -757,12 +757,30 @@ Video &   462.72 & 250  & 4,272   & @malaikurd at Afroson1C \\
   \item Response time to commercial comments and direct messages
 \end{itemize}
 
+\section{Profile and Bio --- Current State}
+
+\begin{note}
+The following observations are drawn from a review of the live Instagram profile at the time of writing.
+\end{note}
+
+The bio currently reads: \textit{Al fresco dining in the heart of Accra. Open daily from noon -- 11pm.} The link section shows \textbf{bit.ly/Treehouseghmenu and 2 more}. Expanding the link tree reveals three links:
+
+\begin{enumerate}[leftmargin=*, label=\arabic{enumi}.]
+  \item \textbf{Menu} --- bit.ly/Treehouseghmenu
+  \item \textbf{Location} --- maps.app.goo.gl (Google Maps, truncated in display)
+  \item \textbf{Alfresco Wine Table} --- tix.africa/discover/alfrescowine (event ticketing)
+\end{enumerate}
+
+WhatsApp contact is accessible via the bio. Instagram Highlights already exist for Events, Drinks, and Food.
+
+The core issue is not that these assets are absent --- they exist. The issue is \textbf{discoverability}. Each asset is two or three taps deep from a post. When a viewer sees a location question in the comments and taps through to the profile, most will not expand the link tree. The recommendations below address this gap.
+
 \section{Immediate Actions (This Week)}
 
 \begin{enumerate}[leftmargin=*, label=\arabic{enumi}.]
-  \item Reply to every commercial comment --- booking requests, location questions, menu curiosity. A reply within 30 minutes converts a warm lead into a customer.
-  \item Add the WhatsApp number and reservation link to the Instagram bio if not already present.
-  \item Create one Instagram Highlight titled ``Book a Table'' and pin address, opening hours, reservation number, and a direct link.
+  \item Reply to every commercial comment --- booking requests, location questions, menu curiosity --- within 30 minutes. A prompt reply converts a visible warm lead into a customer.
+  \item Add the Google Maps URL and WhatsApp number \textbf{directly in post captions} for all posts that mention dining, events, or bookings. Do not rely on the bio link tree.
+  \item Add a ``Find Us'' Instagram Highlight containing the address, a one-tap Google Maps link, parking directions, and opening hours.
 \end{enumerate}
 
 \section{Actions This Month}
@@ -1382,6 +1400,260 @@ Heavy reels   & 20000 &  0.3\%  & 12,043 & 8,067 \\
 This report is based on public Instagram data collected via the Apify Instagram Scraper and analysed entirely locally. Results depend on what was publicly available at collection time. Instagram does not expose private analytics through public data interfaces, including impressions, reach, saves, shares, profile visits, link clicks, direct message volume, ad targeting, or completed bookings.
 
 All conclusions are directional rather than absolute. No private account access was used. No private user data was used. Individual commenters are not identified anywhere in this report or in the underlying processed data files. For business decisions, combine these findings with Treehouse Ghana's native Instagram Insights, reservation data, point-of-sale trends, and campaign context.
+
+%% ============================================================
+%%  GLOSSARY
+%% ============================================================
+\chapter*{Glossary of Terms and Abbreviations}
+\addcontentsline{toc}{chapter}{Glossary of Terms and Abbreviations}
+
+The following definitions cover all technical, statistical, and platform-specific
+terms used in this report. They are written for readers without a statistical or
+digital marketing background.
+
+\vspace{8pt}
+\begin{longtable}{@{}L{4cm} L{11.5cm}@{}}
+\toprule
+\textbf{Term / Acronym} & \textbf{Plain-English Definition} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+
+\textbf{API} &
+Application Programming Interface. A connection that lets software retrieve
+data from another service automatically. Here it refers to the Apify API, which
+is used to collect public Instagram data. \\[4pt]
+
+\textbf{Apify} &
+A web data collection service. This project used Apify's Instagram Scraper to
+gather public post, reel, comment, and mention data for the \texttt{@treehousegh}
+account. \\[4pt]
+
+\textbf{Bootstrap / Bootstrap CI} &
+A statistical method that estimates uncertainty by repeatedly re-drawing random
+samples from the data and measuring how much the result varies. A \textbf{bootstrap
+confidence interval (CI)} is a range of values that is likely to contain the true
+answer 95\% of the time. \\[4pt]
+
+\textbf{Call to Action (CTA)} &
+A direct instruction in a caption or story that tells the viewer what to do next.
+Examples: ``Book your table now'', ``WhatsApp us on 0599400737'',
+``Link in bio for the menu''. \\[4pt]
+
+\textbf{Coefficient of Variation (CV)} &
+A measure of how consistent a group of numbers is. A CV of 0.30 means the
+standard deviation is 30\% of the mean. A high CV (above 0.5) means results are
+unpredictable and driven by occasional spikes. \\[4pt]
+
+\textbf{Cohen's \textit{d}} &
+A measure of \textit{practical} effect size. It answers: even if the difference is
+statistically real, is it big enough to matter? Values: below 0.2 = negligible,
+0.2--0.5 = small, 0.5--0.8 = medium, above 0.8 = large. \\[4pt]
+
+\textbf{Confidence Interval (CI)} &
+A range around an estimate that expresses uncertainty. A 95\% CI means: if the
+analysis were repeated many times on new data, the true value would fall inside
+this range 95\% of those times. Wider intervals mean less certainty; narrower
+intervals mean more. \\[4pt]
+
+\textbf{Content Pillar} &
+A thematic category used to group posts by topic. In this report, pillars include
+Cocktails and Drinks, Events and Live Music, Ambience and Vibe, Food and Dining,
+and others. Pillar analysis shows which topics attract the most audience interaction. \\[4pt]
+
+\textbf{Degrees of Freedom (df)} &
+A technical input to statistical tests. In plain terms, it reflects the amount
+of information available. A higher df generally means a more reliable test result.
+It is shown in test tables for completeness but does not require interpretation
+by the reader. \\[4pt]
+
+\textbf{Direct Message (DM)} &
+A private message sent between Instagram users. DMs are not visible publicly and
+are not captured in this analysis. They are likely a significant booking channel
+that this report cannot measure. \\[4pt]
+
+\textbf{Engagement Score} &
+A composite score used throughout this report to compare posts on a common scale.
+It is calculated as: $\text{Likes} + (\text{Comments} \times 5) + (\text{Video Plays} \div 100)$.
+Comments are weighted more heavily because they require active effort and carry
+stronger commercial signal than a passive like or view. \\[4pt]
+
+\textbf{Exploratory Data Analysis (EDA)} &
+An initial examination of a dataset to understand its shape, range, and
+characteristics before running formal tests. In Part II of this report, EDA
+includes summary tables covering mean, median, standard deviation, and skewness
+for each content segment. \\[4pt]
+
+\textbf{FAQ} &
+Frequently Asked Questions. In the context of Instagram Highlights, an FAQ
+Highlight is a saved Story that answers common audience questions (location,
+opening hours, menu, bookings) so that a viewer can find the answer without
+having to comment or send a message. \\[4pt]
+
+\textbf{Hypothesis Test} &
+A formal statistical procedure for deciding whether an observed difference is
+likely to be real or likely to be the result of random chance. Each test
+produces a \textit{p}-value (see below). In this report, hypothesis tests are
+used to evaluate claims such as ``short videos attract more engagement than
+feed posts''. \\[4pt]
+
+\textbf{Interquartile Range (IQR)} &
+The range between the 25th and 75th percentile of a dataset. It captures the
+middle 50\% of values and is used in outlier detection: a post is flagged as an
+outlier if its engagement score exceeds the 75th percentile plus 1.5 times the IQR. \\[4pt]
+
+\textbf{Kruskal-Wallis Test} &
+A non-parametric statistical test used to compare three or more groups. It does
+not assume the data is normally distributed, making it appropriate for social
+media engagement scores, which are heavily skewed. In this report it is used to
+test whether posting day has a real effect on engagement. \\[4pt]
+
+\textbf{KPI} &
+Key Performance Indicator. A metric chosen to track progress toward a business
+goal. This report recommends specific KPIs such as public engagement score by
+pillar, comment volume, and response time to commercial comments. \\[4pt]
+
+\textbf{Mann-Whitney U Test} &
+A non-parametric test that compares two groups by ranking all observations
+together and checking whether one group tends to rank higher than the other.
+It does not require normal distributions and is the preferred test when data
+is skewed, as social media engagement data typically is. \\[4pt]
+
+\textbf{Mean} &
+The arithmetic average of a set of values. It is sensitive to extreme outliers.
+In this report, means are always shown alongside medians so that the effect of
+outlier posts can be seen. \\[4pt]
+
+\textbf{Median} &
+The middle value when all observations are sorted from lowest to highest.
+It is more robust than the mean when data is skewed. The median engagement score
+for all posts is 38.57, meaning half of all posts scored below that and half
+scored above. \\[4pt]
+
+\textbf{Monte Carlo Simulation (MC)} &
+A method of estimating outcomes by running thousands of random trials drawn from
+real historical data, then summarising the distribution of results. It is used
+here to project expected engagement under different content strategies (MC1),
+forecast engagement over 30, 60, and 90 days (MC2), model the booking conversion
+pipeline (MC3), optimise pillar allocations (MC4), and calculate the probability
+of achieving specific targets (MC5). \\[4pt]
+
+\textbf{$n$} &
+The number of observations in a sample. In the context of a pillar analysis,
+$n = 8$ for Cocktails and Drinks means only eight posts in the dataset were
+classified under that pillar. Small $n$ leads to wide confidence intervals and
+unreliable conclusions. \\[4pt]
+
+\textbf{$p$-value} &
+The probability that the observed result (or one more extreme) would occur by
+chance alone, assuming there is no real effect. A $p$-value below 0.05 is the
+conventional threshold for declaring a result ``statistically significant''.
+A $p$-value of 0.07, for example, means the result is not conclusive but is
+directionally informative. \\[4pt]
+
+\textbf{Pearson Correlation ($r$)} &
+A measure of the straight-line relationship between two variables, ranging from
+$-1$ (perfect negative) to $+1$ (perfect positive). A value near zero means the
+two variables are not meaningfully related. In this report, the Pearson $r$
+between caption length and engagement is 0.10, indicating that longer captions do
+not reliably produce more engagement. \\[4pt]
+
+\textbf{Percentile (P5, P25, P75, P95)} &
+A value below which a given percentage of observations fall. P5 means the bottom
+5\% of results; P95 means the top 5\%. In the Monte Carlo tables, P5 represents
+the worst-case outcome seen in 5\% of simulations and P95 represents the best-case
+outcome seen in 5\% of simulations. \\[4pt]
+
+\textbf{Reel} &
+Instagram's short-video format, typically 15 to 90 seconds. Reels are distributed
+by Instagram's recommendation algorithm and therefore reach audiences beyond the
+account's existing followers. Feed posts (images and carousels) are distributed
+primarily to existing followers. \\[4pt]
+
+\textbf{Seed (Random Seed)} &
+A fixed starting number given to a random number generator so that the same
+sequence of random values is produced every time the code runs. Setting the seed
+to 20260530 means the Monte Carlo results in this report are exactly reproducible. \\[4pt]
+
+\textbf{Service Level Agreement (SLA)} &
+A defined standard of service, here applied to response time. An Instagram comment
+SLA of 30 minutes means the team commits to replying to all commercial comments
+within 30 minutes of posting. \\[4pt]
+
+\textbf{Shortcode} &
+The unique string in an Instagram post URL. For the URL
+\texttt{https://www.instagram.com/p/DN7\_M4B2HMT/}, the shortcode is
+\texttt{DN7\_M4B2HMT}. It is used in this analysis as the unique identifier for
+each post when deduplicating the dataset. \\[4pt]
+
+\textbf{Skewness} &
+A measure of how asymmetric a distribution is. A positive skew (the typical
+pattern for social media engagement) means that most posts score low, with a small
+number of high-performing posts pulling the mean upward. \\[4pt]
+
+\textbf{Spearman Correlation ($\rho$, rho)} &
+A version of the Pearson correlation that works with ranked values rather than raw
+numbers. It is more robust to outliers and skewed data. In this report it is used
+alongside Pearson $r$ to confirm directional findings. \\[4pt]
+
+\textbf{Standard Deviation (Std Dev)} &
+A measure of how spread out values are around the mean. A high standard deviation
+means results are inconsistent; a low standard deviation means they are
+predictable. \\[4pt]
+
+\textbf{Statistically Significant} &
+A result is statistically significant when the $p$-value is below the chosen
+threshold (0.05 in this report). It means the observed effect is unlikely to have
+occurred by chance alone. It does not necessarily mean the effect is large or
+commercially important. \\[4pt]
+
+\textbf{UGC (User-Generated Content)} &
+Content created by customers or third parties rather than the brand. Third-party
+mentions of \texttt{@treehousegh} are a form of UGC. Reposting UGC with
+attribution adds social proof without requiring original production effort. \\[4pt]
+
+\textbf{UTC (Coordinated Universal Time)} &
+The global time standard. Accra, Ghana operates on GMT/UTC+0. All post timing
+in this report uses UTC, so the hour values in the timing tables correspond
+directly to Accra local time. \\[4pt]
+
+\textbf{Welch t-test} &
+A parametric statistical test that compares the means of two groups. Unlike the
+standard t-test, it does not assume the two groups have equal variance, making it
+more appropriate for comparing groups of different sizes. \\[4pt]
+
+\textbf{Bonferroni Correction} &
+An adjustment made when running multiple hypothesis tests at the same time. It
+lowers the $p$-value threshold (from 0.05 to 0.0083 when running six tests) to
+reduce the chance that at least one result appears significant purely by accident. \\[4pt]
+
+\textbf{Excess Kurtosis} &
+A measure of how ``heavy-tailed'' a distribution is compared to a normal bell
+curve. Positive excess kurtosis means extreme values (very high-performing posts)
+occur more often than a normal distribution would predict. A value of 16 in the
+all-content group indicates the distribution is dominated by outlier posts. \\[4pt]
+
+\textbf{Lift vs Baseline} &
+The percentage difference between a pillar's average engagement score and the
+overall average. A lift of +101.7\% for Cocktails and Drinks means that, on
+average, a cocktails post attracted twice the engagement of a typical post across
+all categories. \\[4pt]
+
+\textbf{P(achieve)} &
+In the Monte Carlo risk tables, this is the probability (expressed as a
+percentage) that a strategy will reach a specified engagement target over 12 weeks.
+P(achieve) of 80\% means that in 8 out of every 10 simulated runs, the strategy
+reached the target. \\[4pt]
+
+\textbf{Top-20 Hit Rate} &
+The proportion of posts within a pillar that scored in the top 20\% of all posts
+by engagement score. A high hit rate means the pillar consistently produces
+strong content; a low hit rate means performance is variable. \\[4pt]
+
+\end{longtable}
 
 %% ============================================================
 %%  SIGN-OFF
