@@ -60,7 +60,10 @@ jobs:
       - name: Compile combined full report to PDF
         run: |
           cd reports
-          tectonic combined_report.tex 2>&1 || echo "⚠ Combined report compilation skipped (non-fatal)"
+          tectonic combined_report.tex
+          echo "=== PDF check ==="
+          ls -lh *.pdf || echo "No PDFs in reports/"
+          find . -name "*.pdf" 2>/dev/null | head -10
 
       # ── Upload all report outputs as downloadable artifacts ──────────────────
       - name: Upload reports as artifacts
