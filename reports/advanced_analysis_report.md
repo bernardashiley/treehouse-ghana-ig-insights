@@ -23,7 +23,7 @@
 | all_content_deduplicated | 150 | 126.75 | 38.57 | 265.01 | 2.091 | 3.881 | 16.563 |
 | posts | 134 | 112.24 | 38.1 | 251.99 | 2.245 | 4.452 | 21.903 |
 | reels | 16 | 248.34 | 76.77 | 341.94 | 1.377 | 1.544 | 1.214 |
-| owned_treehousegh | 107 | 118.9 | 36 | 284.34 | 2.391 | 4.03 | 16.956 |
+| owned_account | 107 | 118.9 | 36 | 284.34 | 2.391 | 4.03 | 16.956 |
 | third_party | 43 | 146.3 | 71 | 211.06 | 1.443 | 2.506 | 5.678 |
 
 **Distribution shape.** All groups are strongly right-skewed (skewness 2–4) with positive excess kurtosis, indicating heavy tails.

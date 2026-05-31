@@ -11,9 +11,9 @@
 | 📊 **Posts analysed** | 135 feed posts + 84 short videos |
 | 🏆 **Best-performing content type** | Cocktails & Drinks (avg score 290) |
 | 📅 **Best day to post** | **Monday** (avg score 199) |
-| 🎬 **Short videos vs posts** | Short videos attract **121% more engagement** on average |
+| 🎬 **Posts vs short videos** | Short videos attract more engagement on average — worth expanding |
 
-> **What this means in plain English:** Treehouse Ghana has a healthy, active following. Short videos (Reels) consistently outperform static posts. The biggest opportunity is posting more drinks-and-events content with clear calls to action.
+> **What this means in plain English:** This account has a healthy, active following. Its strongest content is **cocktails & drinks**. The biggest opportunity is posting more Cocktails & Drinks, Events & Live Music, Ambience & Vibe content with clear calls to action.
 
 ---
 
@@ -28,7 +28,7 @@ The chart below shows how different types of content perform. The longer the bar
 🥈 **Events & Live Music** — average engagement score of **252**. Event content needs clear dates, artists, times, and booking instructions.
 🥉 **Ambience & Vibe** — average engagement score of **233**. Vibe-led content sells the venue experience and should be paired with reservation details.
 4️⃣ **Dinner & Nightlife** — average engagement score of **198**. Evening content should highlight atmosphere, availability, and weekly rituals.
-5️⃣ **promotions/offers** — average engagement score of **144**. Offers should be tested with clear expiry dates and measurable response prompts.
+5️⃣ **Promotions** — average engagement score of **144**. Offers should be tested with clear expiry dates and measurable response prompts.
 
 ---
 
@@ -43,13 +43,13 @@ These posts and videos are your proven best-sellers. Study what made them work:
 
 ---
 
-## Short Videos vs Feed Posts
+## Posts vs Short Videos
 
 ![Short videos vs feed posts](figures/sr_type_compare.svg)
 
-**Why this matters:** Short videos (Reels) reach people beyond your existing followers through Instagram's discovery feed. Feed posts are seen mainly by people who already follow you. Investing in more short-video content is the single highest-impact format change available.
+**Why this matters:** Short videos (Reels) reach people beyond your existing followers through Instagram's discovery feed, and here they attract more engagement on average than feed posts. Expanding short-video output is a strong opportunity.
 
-> **Practical tip:** You don't need expensive equipment. A smartphone held still for 15–30 seconds of a dish being plated, a cocktail being poured, or guests enjoying the space is enough to outperform most static images.
+> **Practical tip:** You don't need expensive equipment. A smartphone held still for 15–30 seconds of a dish being plated or an event being set up is enough to test the format.
 
 ---
 
@@ -90,17 +90,17 @@ These comment types signal direct business intent — someone who comments is a 
 
 ## Three Paths Forward
 
-We simulated what would happen if you kept your current approach, improved your content mix, or went all-in on short videos. Each simulation was run 10,000 times to show the likely range.
+We simulated three content approaches by drawing on your past performance. Each was run 10,000 times to show a likely range.
 
 ![Three content strategy scenarios](figures/sr_strategies.svg)
 
 | Approach | Expected 12-Week Total | Compared to Now |
 |---|---|---|
 | **Current approach** | ~6,773 | Baseline |
-| **Improved mix** (more drinks, events, ambience) | ~8,836 | +30.5% |
-| **Short-video focus** (maximum Reels output) | ~12,004 | +77.2% |
+| **Improved mix** (lean into your top categories) | ~8,836 | +30.5% |
+| **Heavier video** (more short-form) | ~12,004 | +77.2% |
 
-> These numbers are estimates based on past performance — your results will vary based on creative quality, timing and current trends.
+> These numbers are estimates based on past performance — your results will vary with creative quality, timing and trends.
 
 ---
 

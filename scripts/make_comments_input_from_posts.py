@@ -4,15 +4,20 @@ from pathlib import Path
 
 project = Path.cwd()
 
-posts_path = project / "data" / "raw" / "treehouse_posts_full.json"
+# Resolve the client data prefix from config so this works for any client.
+config_path = project / "config" / "client.config.json"
+prefix = "client"
+if config_path.exists():
+    with open(config_path, "r", encoding="utf-8-sig") as f:
+        cfg = json.load(f)
+    c = cfg.get("client", {})
+    prefix = c.get("data_prefix") or c.get("short_name") or c.get("handle") or "client"
 
-if not posts_path.exists():
-    posts_path = project / "data" / "raw" / "treehouse_posts_test.json"
+posts_path = project / "data" / "raw" / f"{prefix}_posts_full.json"
 
 if not posts_path.exists():
     raise SystemExit(
-        "Missing posts data. Run the posts scrape first:\n"
-        ".\\scripts\\run_apify_actor.ps1 .\\inputs\\posts_test.json treehouse_posts_test 50"
+        f"Missing posts data: {posts_path}. Run the posts scrape first."
     )
 
 

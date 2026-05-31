@@ -59,7 +59,7 @@ All metrics are derived entirely from public data. Private account analytics (re
   \textbf{Posts analysed}       & 135 owned feed posts and 84 short videos (reels) \\[4pt]
   \textbf{Top content category} & Cocktails and Drinks (average engagement score: 290) \\[4pt]
   \textbf{Best day to post}     & Monday (average engagement score: 199) \\[4pt]
-  \textbf{Short video signal}   & Higher interaction and unique algorithmic reach; advantage is directional (see Reels vs Posts) \\
+  \textbf{Format signal}        & Short videos show higher interaction; advantage is directional (see Reels vs Posts) \\
 \end{tabularx}
 \end{callout}
 
@@ -85,6 +85,7 @@ Profile biography: \textit{Al fresco dining in the heart of Accra. Open daily fr
 \begin{note}
 \textbf{Data limitation.} This analysis covers public Instagram data only. It does not include private account analytics such as reach, impressions, saves, shares, profile visits, link clicks, story taps, ad spend, or completed bookings. All conclusions are directional rather than absolute. Combine these findings with Treehouse Ghana's native Instagram analytics, reservation data, and campaign context.
 \end{note}
+
 
 \chapter{Content Performance}
 \section{Engagement Score Methodology}
@@ -151,24 +152,24 @@ Reservations and Bookings & 2 & 19 & 0 & 1,654 & 35.54 \\
 
 \chapter{Short Videos versus Feed Posts}
 \section{Comparative Performance}\label{sec:reelsposts}
-On the headline composite score, short videos appear to attract more engagement. Because that score embeds a views term available to video but not to many image posts, a credible comparison must also remove the views term.
+This account has \textbf{134 feed posts and 16 reels} in the analysed window. The engagement score embeds a views term available to video but not to many image posts (49\% of feed posts here record zero views), so the comparison is shown three ways: on the composite score, and on likes-and-comments and likes alone, which remove that mechanical advantage.
 
 \begin{table}[htbp]
 \centering
 \caption{Reels versus posts under three metrics (deduplicated data)}
-\begin{tabular}{@{}L{6.5cm} R{2cm} R{2cm} L{3.5cm}@{}}
+\begin{tabular}{@{}L{6cm} R{2cm} R{2cm} R{2cm}@{}}
 \toprule
-\textbf{Metric} & \textbf{Reel mean} & \textbf{Post mean} & \textbf{Reading} \\
+\textbf{Metric} & \textbf{Reel mean} & \textbf{Post mean} & \textbf{MWU \$p\$} \\
 \midrule
-Engagement score (includes views) & 248 & 112 & Inflated by views \\
-Likes + comments only (no views) & \textemdash & \textemdash & Directional only \\
-Likes only & \textemdash & \textemdash & Not significant \\
+Engagement score (includes views) & 248 & 112 & 0.057 \\
+Likes + comments only (no views) & 121 & 71 & 0.179 \\
+Likes only & 103 & 62 & 0.557 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{callout}
-\textbf{Honest reading.} The reels advantage is real in direction but should not be quoted as a fixed multiple. Much of the headline gap is the mechanical views term, and the deduplicated reel sample is small, which limits statistical power. Treat reels as a reach and discovery investment --- the one channel image posts cannot access --- and measure their effect with native Instagram reach data, which this public analysis cannot see.
+\textbf{Honest reading.} Short videos lead on the composite score, but much of that gap is the mechanical views term; on likes and comments the difference is not statistically reliable at this sample size. Treat reels as a reach and discovery investment and confirm with native reach data.
 \end{callout}
 
 \chapter{Timing Analysis}
@@ -341,8 +342,9 @@ Average mentions per post/reel & 1.24 \\
 \end{table}
 
 \part{Advanced Statistical and Predictive Analysis}
+
 \chapter{Methodology and Data Quality}
-All computation runs in a reproducible Node.js pipeline. Monte Carlo simulations use a fixed seed (20260530) and 10,000 iterations; an independent analyst re-running the code obtains bit-identical results. After removing duplicate posts that appear in both the posts and reels scrapes, the working dataset comprises \textbf{150 unique posts and reels}.
+All computation runs in a reproducible Node.js pipeline. Monte Carlo simulations use a fixed seed (20260530) and 10,000 iterations; an independent analyst re-running the code obtains bit-identical results. After removing duplicate posts that appear in both the posts and reels scrapes, the working dataset comprises \textbf{150 unique posts and reels} (107 published by the account, the remainder features and mentions).
 
 \chapter{Exploratory Data Analysis}
 \begin{table}[htbp]
@@ -355,7 +357,7 @@ All computation runs in a reproducible Node.js pipeline. Monte Carlo simulations
 all content deduplicated & 150 & 126.75 & 38.57 & 265.01 & 2.09 & 3.88 \\
 posts & 134 & 112.24 & 38.1 & 251.99 & 2.25 & 4.45 \\
 reels & 16 & 248.34 & 76.77 & 341.94 & 1.38 & 1.54 \\
-owned treehousegh & 107 & 118.9 & 36 & 284.34 & 2.39 & 4.03 \\
+owned account & 107 & 118.9 & 36 & 284.34 & 2.39 & 4.03 \\
 third party & 43 & 146.3 & 71 & 211.06 & 1.44 & 2.51 \\
 \bottomrule
 \end{tabular}
@@ -390,7 +392,7 @@ H6 cocktails vs all & Welch t-test & 0.3731 & No & d=0.389 \\
 \end{longtable}
 
 \begin{note}
-\textbf{Reels vs posts.} The Welch t-test ($p=0.1355$) and Mann-Whitney U test ($p=0.0567$) are directional in favour of reels but do not both clear significance at this sample size. The bootstrap confidence interval for the difference includes zero, consistent with the circularity caveat in Part~I.
+\textbf{Reels vs posts.} The Welch t-test ($p=0.1355$) and Mann-Whitney U test ($p=0.0567$) are directional in favour of reels but do not both clear significance at this sample size, consistent with the circularity caveat in Part~I.
 \end{note}
 
 \chapter{Bootstrap Confidence Intervals}

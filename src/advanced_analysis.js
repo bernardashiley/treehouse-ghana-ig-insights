@@ -636,11 +636,12 @@ function main() {
   // Analysis parameters come from config/client.config.json (analysis block).
   // The seed is kept constant across clients by default for reproducibility and
   // cross-client method comparability; override in config if a fresh draw is wanted.
-  let SEED = 20260530, MC = 10000, BOOT = 5000;
+  let SEED = 20260530, MC = 10000, BOOT = 5000, OWNER = '';
   try {
     const { loadConfig } = require('./config');
-    const a = loadConfig().analysis;
-    SEED = a.mc_seed; MC = a.mc_iterations; BOOT = a.bootstrap_iterations;
+    const cfg = loadConfig();
+    SEED = cfg.analysis.mc_seed; MC = cfg.analysis.mc_iterations; BOOT = cfg.analysis.bootstrap_iterations;
+    OWNER = String(cfg.client.handle || cfg.client.short_name || '').toLowerCase();
   } catch (e) { /* fall back to defaults if config absent */ }
 
   const rng = makePrng(SEED);
@@ -659,9 +660,19 @@ function main() {
   const dupCount = (rawPosts.length + rawReels.length) - all.length;
   console.log(`Loaded: ${rawPosts.length} posts + ${rawReels.length} reels → ${all.length} unique after dedup (${dupCount} duplicates removed)`);
 
-  // Separate owned vs third-party on the deduplicated set
-  const owned      = all.filter(r => r.owner_username === 'treehousegh');
-  const thirdParty = all.filter(r => r.owner_username !== 'treehousegh');
+  // Separate owned vs third-party on the deduplicated set.
+  // Owner handle comes from config (case-insensitive). If config is missing or
+  // the handle matches nothing, fall back to the most frequent owner so the
+  // owned/third-party split never silently collapses to empty.
+  let ownerHandle = OWNER;
+  const ownerCounts = {};
+  for (const r of all) { const u = String(r.owner_username || '').toLowerCase(); ownerCounts[u] = (ownerCounts[u] || 0) + 1; }
+  if (!ownerHandle || !(ownerHandle in ownerCounts)) {
+    const top = Object.entries(ownerCounts).sort((a, b) => b[1] - a[1])[0];
+    if (top) { console.warn(`[warn] config handle "${OWNER}" not found in data; using most frequent owner "${top[0]}" (${top[1]} posts)`); ownerHandle = top[0]; }
+  }
+  const owned      = all.filter(r => String(r.owner_username || '').toLowerCase() === ownerHandle);
+  const thirdParty = all.filter(r => String(r.owner_username || '').toLowerCase() !== ownerHandle);
 
   // Separate by content_type on deduplicated set (for posts vs reels test)
   const posts = all.filter(r => r.content_type === 'post');
@@ -718,7 +729,7 @@ function main() {
     summarise(allScores,        'all_content_deduplicated'),
     summarise(postScores,       'posts'),
     summarise(reelScores,       'reels'),
-    summarise(ownedScores,      'owned_treehousegh'),
+    summarise(ownedScores,      'owned_account'),
     summarise(thirdPartyScores, 'third_party'),
     ...Object.entries(allPillarDist).map(([p, xs]) => summarise(xs, `pillar:${p}`)),
     ...DAYS.map(d => summarise(dayMap[d] || [], `day:${d}`)),

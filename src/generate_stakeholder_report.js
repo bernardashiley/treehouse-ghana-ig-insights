@@ -245,14 +245,17 @@ function chartTypeCompare(eda) {
     bars += `<line x1="${bx - 5}" y1="${by}" x2="${bx + GW - 30}" y2="${by}" stroke="${C.grey3}" stroke-width="1.5"/>` + '\n';
   });
 
-  // Uplift arrow
-  const uplift = Math.round((metrics[0].reel - metrics[0].post) / metrics[0].post * 100);
+  // Comparison label — direction-aware so it never shows a nonsensical "+-85%".
+  const winner = metrics[0].reel >= metrics[0].post ? 'Short Videos' : 'Feed Posts';
+  const hi = Math.max(metrics[0].reel, metrics[0].post), lo = Math.min(metrics[0].reel, metrics[0].post);
+  const ratio = lo > 0 ? Math.round((hi / lo - 1) * 100) : 0;
+  const arrowColor = winner === 'Short Videos' ? C.purple : C.blue;
   bars += `<text x="${cx1 + GW + SPACING/2}" y="${MT + GH/2 - 10}" font-family="${FONT}"
-    font-size="32" fill="${C.green2}" text-anchor="middle" font-weight="bold">+${uplift}%</text>
-  <text x="${cx1 + GW + SPACING/2}" y="${MT + GH/2 + 16}" font-family="${FONT}"
-    font-size="13" fill="${C.green2}" text-anchor="middle">more engagement</text>
-  <text x="${cx1 + GW + SPACING/2}" y="${MT + GH/2 + 34}" font-family="${FONT}"
-    font-size="12" fill="${C.grey2}" text-anchor="middle">from short videos</text>` + '\n';
+    font-size="26" fill="${arrowColor}" text-anchor="middle" font-weight="bold">+${ratio}%</text>
+  <text x="${cx1 + GW + SPACING/2}" y="${MT + GH/2 + 14}" font-family="${FONT}"
+    font-size="13" fill="${arrowColor}" text-anchor="middle">more engagement</text>
+  <text x="${cx1 + GW + SPACING/2}" y="${MT + GH/2 + 32}" font-family="${FONT}"
+    font-size="12" fill="${C.grey2}" text-anchor="middle">from ${winner.toLowerCase()}</text>` + '\n';
 
   // Legend
   bars += svgRect(30, H - 30, 14, 14, C.blue) + '\n';
@@ -261,8 +264,8 @@ function chartTypeCompare(eda) {
   bars += svgText(280, H - 18, 'Short Videos (Reels)', { size: 12, fill: C.grey2 }) + '\n';
 
   const content = `
-${svgText(W/2, 30, 'Short Videos vs Feed Posts', { size: 20, weight: 'bold', fill: C.green1, anchor: 'middle' })}
-${svgText(W/2, 52, 'Short videos consistently attract more interaction than static feed posts', { size: 13, fill: C.grey2, anchor: 'middle' })}
+${svgText(W/2, 30, 'Posts vs Short Videos', { size: 20, weight: 'bold', fill: C.green1, anchor: 'middle' })}
+${svgText(W/2, 52, 'Average interaction by content format (this account)', { size: 13, fill: C.grey2, anchor: 'middle' })}
 ${bars}`;
 
   return svgWrap(W, H, content, 'Short videos vs feed posts comparison');
@@ -469,24 +472,49 @@ function makeMarkdown(data) {
     'ambience/decor/vibe': 'Ambience & Vibe', 'dinner/nightlife': 'Dinner & Nightlife',
     'events/live music/DJ': 'Events & Live Music', 'general brand/content': 'General Brand',
     'date night/romance': 'Date Night', 'birthdays/celebrations': 'Birthdays & Events',
+    'reservations/bookings': 'Reservations', 'promotions/offers': 'Promotions', 'price/value': 'Price & Value',
   };
+
+  // ── Data-conditional facts so the narrative fits THIS client ────────────────
+  const edaGet = (lbl) => eda.find(r => r.label === lbl) || {};
+  const postMean = num(edaGet('posts').mean), reelMean = num(edaGet('reels').mean);
+  const reelN    = num(edaGet('reels').n) || reelsCt;
+  const ownedN   = num(edaGet('owned_account').n);
+  const dedupN   = num(edaGet('all_content_deduplicated').n);
+  const smallSample = ownedN > 0 && ownedN < 40;
+  const tooFewReels = reelN < 5;
+  const reelsWin    = reelMean > postMean;
+  const topLbl  = PILLAR_LABELS[topPillar.pillar] || topPillar.pillar;
+  const top3Lbl = pillars.slice(0, 3).map(r => PILLAR_LABELS[r.pillar] || r.pillar).join(', ');
+  const formatRow = tooFewReels
+    ? `Only ${reelN} short videos posted — this account is **posts-driven**; feed posts carry the engagement`
+    : reelsWin
+      ? `Short videos attract more engagement on average — worth expanding`
+      : `**Feed posts outperform short videos** for this account`;
+  const plainEnglish = tooFewReels
+    ? `${prof.full_name ? '' : ''}This account is small but engaged. Its strongest content is **${topLbl.toLowerCase()}**, and almost all engagement comes from **feed posts** (carousels and images) — it has posted very few short videos. The biggest opportunities are to keep producing the ${top3Lbl} content that already works, and to make every post end with a clear next step (book, call, or visit).`
+    : `This account has a healthy, active following. Its strongest content is **${topLbl.toLowerCase()}**. The biggest opportunity is posting more ${top3Lbl} content with clear calls to action.`;
 
   return `# Treehouse Ghana — Instagram Performance Report
 *Prepared ${new Date().toISOString().slice(0,10)} · Based on ${Number(posts).toLocaleString()} posts, ${reelsCt} reels, ${mentCt} external mentions and ${commCt} audience comments*
 
 ---
+${smallSample ? `
+> ⚠️ **How to read this report.** This is a **descriptive content audit** of your **${ownedN} posts** (${dedupN} including posts that feature or tag you), not a statistical forecast. It reliably describes what you have posted, what works, and what your audience says — and it points to opportunities worth testing. With this many posts, treat the figures as **well-evidenced descriptions and sensible hypotheses**, not guarantees. The picture gets statistically firm once you pass ~100 posts.
 
+---
+` : ''}
 ## At a Glance
 
 | | |
 |---|---|
 | 👥 **Followers** | **${followers}** at time of analysis |
 | 📊 **Posts analysed** | ${posts} feed posts + ${reelsCt} short videos |
-| 🏆 **Best-performing content type** | ${PILLAR_LABELS[topPillar.pillar] || topPillar.pillar} (avg score ${round(num(topPillar.avg_engagement_score), 0)}) |
+| 🏆 **Best-performing content type** | ${topLbl} (avg score ${round(num(topPillar.avg_engagement_score), 0)}) |
 | 📅 **Best day to post** | **${topDay.period}** (avg score ${round(num(topDay.avg_engagement_score), 0)}) |
-| 🎬 **Short videos vs posts** | Short videos attract **${Math.round((num(eda.find(r=>r.label==='reels')?.mean || 248) / num(eda.find(r=>r.label==='posts')?.mean || 112) - 1) * 100)}% more engagement** on average |
+| 🎬 **Posts vs short videos** | ${formatRow} |
 
-> **What this means in plain English:** Treehouse Ghana has a healthy, active following. Short videos (Reels) consistently outperform static posts. The biggest opportunity is posting more drinks-and-events content with clear calls to action.
+> **What this means in plain English:** ${plainEnglish}
 
 ---
 
@@ -512,13 +540,17 @@ These posts and videos are your proven best-sellers. Study what made them work:
 
 ---
 
-## Short Videos vs Feed Posts
+## Posts vs Short Videos
 
 ![Short videos vs feed posts](figures/sr_type_compare.svg)
 
-**Why this matters:** Short videos (Reels) reach people beyond your existing followers through Instagram's discovery feed. Feed posts are seen mainly by people who already follow you. Investing in more short-video content is the single highest-impact format change available.
+${tooFewReels
+  ? `**Why this matters:** This account is **posts-driven**. You have posted only ${reelN} short videos in the period analysed, and your feed posts (carousels and images of food and events) carry almost all of the engagement. Short videos (Reels) do something posts cannot — Instagram shows them to people who don't yet follow you — so the opportunity is to **test** a few short videos as a way to reach new people, not to assume they will beat your already-strong posts. Keep doing what works, and treat video as an experiment to grow reach, measured in your Instagram Insights.`
+  : reelsWin
+    ? `**Why this matters:** Short videos (Reels) reach people beyond your existing followers through Instagram's discovery feed, and here they attract more engagement on average than feed posts. Expanding short-video output is a strong opportunity.`
+    : `**Why this matters:** For this account, **feed posts currently outperform short videos**. Keep investing in your strong post formats (food and event carousels). Reels are still worth testing because they reach non-followers, but they are not yet a proven strength here — measure them in your Instagram Insights before shifting effort.`}
 
-> **Practical tip:** You don't need expensive equipment. A smartphone held still for 15–30 seconds of a dish being plated, a cocktail being poured, or guests enjoying the space is enough to outperform most static images.
+> **Practical tip:** You don't need expensive equipment. A smartphone held still for 15–30 seconds of a dish being plated or an event being set up is enough to test the format.
 
 ---
 
@@ -559,19 +591,21 @@ These comment types signal direct business intent — someone who comments is a 
 
 ---
 
-## Three Paths Forward
+## Three Paths Forward${smallSample ? ' (Illustrative)' : ''}
 
-We simulated what would happen if you kept your current approach, improved your content mix, or went all-in on short videos. Each simulation was run 10,000 times to show the likely range.
+We simulated three content approaches by drawing on your past performance. Each was run 10,000 times to show a likely range.
 
 ![Three content strategy scenarios](figures/sr_strategies.svg)
 
 | Approach | Expected 12-Week Total | Compared to Now |
 |---|---|---|
 | **Current approach** | ~${Number(current.mean||0).toLocaleString()} | Baseline |
-| **Improved mix** (more drinks, events, ambience) | ~${Number((strategies.find(r=>r.strategy==='optimised')||{}).mean||0).toLocaleString()} | +${(strategies.find(r=>r.strategy==='optimised')||{}).uplift_vs_current||0}% |
-| **Short-video focus** (maximum Reels output) | ~${Number(heavy.mean||0).toLocaleString()} | +${heavy.uplift_vs_current||0}% |
+| **Improved mix** (lean into your top categories) | ~${Number((strategies.find(r=>r.strategy==='optimised')||{}).mean||0).toLocaleString()} | +${(strategies.find(r=>r.strategy==='optimised')||{}).uplift_vs_current||0}% |
+| **Heavier video** (more short-form) | ~${Number(heavy.mean||0).toLocaleString()} | +${heavy.uplift_vs_current||0}% |
 
-> These numbers are estimates based on past performance — your results will vary based on creative quality, timing and current trends.
+> ${smallSample
+  ? `**Treat these as illustrative, not promises.** They are built from only ${ownedN} posts, so the percentages mostly reflect the arithmetic of posting more of what has done well, not a guaranteed outcome. Use them for direction — *do more of what works* — not as targets. The "heavier video" path in particular is unproven for you, since you have posted very few videos so far.`
+  : `These numbers are estimates based on past performance — your results will vary with creative quality, timing and trends.`}
 
 ---
 
@@ -617,9 +651,23 @@ function makeLatex(data) {
   const current   = strategies.find(r => r.strategy === 'current_mix')  || {};
   const optimised = strategies.find(r => r.strategy === 'optimised')    || {};
   const heavy     = strategies.find(r => r.strategy === 'heavy_reels')  || {};
-  const reelMean  = num(eda.find(r => r.label === 'reels')?.mean  || 248);
-  const postMean  = num(eda.find(r => r.label === 'posts')?.mean  || 112);
-  const upliftPct = Math.round((reelMean / postMean - 1) * 100);
+  const reelMean  = num(eda.find(r => r.label === 'reels')?.mean  || 0);
+  const postMean  = num(eda.find(r => r.label === 'posts')?.mean  || 0);
+  const reelN     = num(eda.find(r => r.label === 'reels')?.n) || (prof.scraped_reels || 0);
+  const ownedN    = num(eda.find(r => r.label === 'owned_account')?.n) || 0;
+  const smallSample = ownedN > 0 && ownedN < 40;
+  const tooFewReels = reelN < 5;
+  const PL = { 'food':'food and dining','cocktails/drinks':'cocktails and drinks','ambience/decor/vibe':'ambience',
+    'dinner/nightlife':'dinner and nightlife','events/live music/DJ':'events and live music','general brand/content':'general brand',
+    'date night/romance':'date night','birthdays/celebrations':'birthdays and celebrations','reservations/bookings':'reservations',
+    'promotions/offers':'promotions','price/value':'price and value' };
+  const top3Txt = pillars.slice(0,3).map(r => PL[r.pillar] || tx(r.pillar)).join(', ');
+  const top1Txt = PL[(pillars[0]||{}).pillar] || 'food';
+  const formatFinding = tooFewReels
+    ? `\\textbf{This account is posts-driven.} Only ${reelN} short videos were posted in the period; feed posts (carousels and images) carry essentially all engagement. Short video is an untested opportunity to reach new people, not a proven channel here.`
+    : (reelMean > postMean)
+      ? `\\textbf{Short videos attract more engagement than feed posts on average} and reach beyond existing followers; expanding video is a clear opportunity.`
+      : `\\textbf{Feed posts outperform short videos for this account.} Keep investing in strong post formats; treat video as an experiment to grow reach.`;
 
   const tx = s => String(s).replace(/[\\{}$&#_%]/g, c => '\\' + c)
     .replace(/\^/g, '\\textasciicircum{}').replace(/~/g, '\\textasciitilde{}')
@@ -717,22 +765,16 @@ function makeLatex(data) {
 % ─── EXECUTIVE SUMMARY ────────────────────────────────────────────────────────
 \\section*{\\color{tregreen}Executive Summary}
 
-Treehouse Ghana has a growing Instagram presence with ${tx(followers)} followers.
+Treehouse Ghana has ${tx(followers)} followers.
 This report analyses ${tx(posts.toString())} posts and short videos published over the past 18 months.
-Five findings stand out:
+${smallSample ? `\\textbf{It is a descriptive content audit, not a statistical forecast:} with ${ownedN} owned posts the figures reliably describe what has worked and point to opportunities to test, but are not guarantees. ` : ''}Key findings:
 
 \\begin{enumerate}
-  \\item \\textbf{Short videos attract ${tx(upliftPct.toString())}\\% more engagement} than static posts on average.
-    Investing in more video content is the highest-impact format change available.
-  \\item \\textbf{Cocktails, events, and ambience content} are consistently your strongest-performing categories —
-    yet the majority of posts are food-focused.
-  \\item \\textbf{${tx(topDay.period||'Monday')} is your best day to post.} Posts published on this day attract
-    the most engagement on average.
-  \\item \\textbf{Audience comments reveal genuine commercial intent} — location questions, event enquiries and
-    booking requests are present but often go unanswered. Responding within 30 minutes turns a comment into a customer.
-  \\item \\textbf{Switching to an improved content mix} could increase 12-week engagement by
-    ${tx(String(optimised.uplift_vs_current||30))}\\%; a full video-first approach could add
-    ${tx(String(heavy.uplift_vs_current||77))}\\%.
+  \\item \\textbf{${tx(top1Txt.charAt(0).toUpperCase()+top1Txt.slice(1))} is the strongest content category}, followed by ${tx(top3Txt)}. Do more of what already works.
+  \\item ${formatFinding}
+  \\item \\textbf{${tx(topDay.period||'')} is the best day to post}, with the highest average engagement.
+  \\item \\textbf{Audience comments are warm and specific} — praise for the food and questions about events and booking. Replying quickly turns a comment into a customer.
+  \\item \\textbf{Posts that feature the business (customer posts, collaborations) draw strong engagement} — reshare them and lean into that social proof.
 \\end{enumerate}
 
 % ─── CONTENT PERFORMANCE ──────────────────────────────────────────────────────
@@ -804,9 +846,8 @@ A higher score means more likes, comments and video plays combined.
 \\end{tikzpicture}
 \\end{center}
 
-Short videos attract on average \\textbf{${tx(upliftPct.toString())}\\% more engagement} than static feed posts.
-They also reach people who do not yet follow Treehouse Ghana through Instagram's discovery algorithm.
-A 15--30 second video of a dish, cocktail or the venue atmosphere is enough to outperform most images.
+${formatFinding}
+Short videos reach people who do not yet follow the account through Instagram's discovery algorithm, which is why they are worth ${tooFewReels ? 'testing' : 'using'}. ${tooFewReels ? `So far only ${reelN} have been posted, so this is an opportunity to explore, not a proven result.` : ''} Measure their reach in your native Instagram Insights, which this public analysis cannot see.
 
 % ─── BEST DAYS ────────────────────────────────────────────────────────────────
 \\section*{\\color{tregreen}Best Days to Post}

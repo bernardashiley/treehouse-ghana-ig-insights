@@ -51,10 +51,56 @@ const mcRisk  = readCsv('data/processed/adv_mc_risk.csv');
 const counts = summary.counts || {};
 const profile = summary.profile || {};
 const followers = fmt(profile.followers_count || 0);
+
+// ── Data-conditional format comparison (reels vs posts) ───────────────────────
+// Computed from the cleaned data so the narrative adapts to each client instead
+// of assuming the Treehouse (reels-leaning) result.
+function fmtVerdict(){
+  const cl=readCsv('data/processed/posts_clean.csv').concat(readCsv('data/processed/reels_clean.csv'));
+  const seen=new Map();
+  for(const r of cl){const k=r.shortcode||r.id;if(!seen.has(k)||num(r.engagement_score)>num(seen.get(k).engagement_score))seen.set(k,r);}
+  const all=[...seen.values()];
+  const P=all.filter(r=>r.content_type==='post'), R=all.filter(r=>r.content_type==='reel');
+  const m=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:0;
+  const v=a=>{if(a.length<2)return 0;const mu=m(a);return a.reduce((s,x)=>s+(x-mu)**2,0)/(a.length-1);};
+  const ncdf=x=>{const t=1/(1+0.2316419*Math.abs(x));const p=t*(0.319381530+t*(-0.356563782+t*(1.781477937+t*(-1.821255978+t*1.330274429))));const z=1-(1/Math.sqrt(2*Math.PI))*Math.exp(-0.5*x*x)*p;return x>=0?z:1-z;};
+  const mwu=(a,b)=>{if(!a.length||!b.length)return 1;let u=0;for(const x of a)for(const y of b){if(x>y)u++;else if(x===y)u+=0.5;}const U=Math.min(u,a.length*b.length-u),mu=a.length*b.length/2,sg=Math.sqrt(a.length*b.length*(a.length+b.length+1)/12);return sg?2*(1-ncdf(Math.abs((U-mu)/sg))):1;};
+  const esc=r=>Math.max(0,num(r.engagement_score));
+  const lk=r=>Math.max(0,num(r.likes));
+  const lc=r=>Math.max(0,num(r.likes))+Math.max(0,num(r.comments))*5;
+  const rEsc=R.map(esc),pEsc=P.map(esc),rLk=R.map(lk),pLk=P.map(lk),rLc=R.map(lc),pLc=P.map(lc);
+  const pZero=P.filter(r=>num(r.views)===0).length;
+  return {
+    nP:P.length,nR:R.length,
+    escR:Math.round(m(rEsc)),escP:Math.round(m(pEsc)),
+    lkR:Math.round(m(rLk)),lkP:Math.round(m(pLk)),
+    lcR:Math.round(m(rLc)),lcP:Math.round(m(pLc)),
+    pEscMwu:r2(mwu(rEsc,pEsc),3),pLkMwu:r2(mwu(rLk,pLk),3),pLcMwu:r2(mwu(rLc,pLc),3),
+    postsZeroViewPct:P.length?Math.round(100*pZero/P.length):0,
+  };
+}
+const FV = fmtVerdict();
+// Decide the format story from the data.
+const reelsWin = FV.escR > FV.escP;
+const tooFewReels = FV.nR < 5;
+const formatSignalRow = tooFewReels
+  ? `Only ${FV.nR} reels in the analysed window --- too few to compare; this account is posts-driven`
+  : reelsWin
+    ? `Short videos show higher interaction; advantage is directional (see Reels vs Posts)`
+    : `Feed posts currently outperform short videos for this account (see Reels vs Posts)`;
 const NAME = C.name;
 
 // derived headline values
 const edaBy = Object.fromEntries(eda.map(r=>[r.label,r]));
+// Sample-adequacy gate: below this many OWNED posts the inferential and
+// Monte Carlo layers are demoted to a clearly-labelled illustrative appendix.
+const SMALL_N_THRESHOLD = 40;
+const ownedN = Number((edaBy['owned_account']||{}).n) || 0;
+const dedupN = Number((edaBy['all_content_deduplicated']||{}).n) || 0;
+const smallSample = ownedN > 0 && ownedN < SMALL_N_THRESHOLD;
+const part2Title = smallSample
+  ? 'Appendix: Illustrative Statistical Exploration'
+  : 'Advanced Statistical and Predictive Analysis';
 const topPillar = [...pillars].filter(p=>num(p.avg_engagement_score)>0).sort((a,b)=>num(b.avg_engagement_score)-num(a.avg_engagement_score))[0]||{};
 const dayRows = timing.filter(r=>r.period_type==='day_of_week').sort((a,b)=>num(b.avg_engagement_score)-num(a.avg_engagement_score));
 const bestDay = dayRows[0]||{};
@@ -198,7 +244,7 @@ All metrics are derived entirely from public data. Private account analytics (re
   \\textbf{Posts analysed}       & ${counts.posts||0} owned feed posts and ${counts.reels||0} short videos (reels) \\\\[4pt]
   \\textbf{Top content category} & ${tx(pillarLabel(topPillar.pillar||''))} (average engagement score: ${fmt(topPillar.avg_engagement_score)}) \\\\[4pt]
   \\textbf{Best day to post}     & ${tx(bestDay.period||'')} (average engagement score: ${fmt(bestDay.avg_engagement_score)}) \\\\[4pt]
-  \\textbf{Short video signal}   & Higher interaction and unique algorithmic reach; advantage is directional (see Reels vs Posts) \\\\
+  \\textbf{Format signal}        & ${formatSignalRow} \\\\
 \\end{tabularx}
 \\end{callout}
 
@@ -210,6 +256,17 @@ ${C.bio?`Profile biography: \\textit{${tx(C.bio)}}\n`:''}
 \\begin{note}
 \\textbf{Data limitation.} This analysis covers public Instagram data only. It does not include private account analytics such as reach, impressions, saves, shares, profile visits, link clicks, story taps, ad spend, or completed bookings. All conclusions are directional rather than absolute. Combine these findings with ${tx(C.name)}'s native Instagram analytics, reservation data, and campaign context.
 \\end{note}
+${smallSample?`
+\\section{How to Read This Report (Sample Size)}
+\\begin{callout}
+\\textbf{This is a descriptive content audit, not a statistical study.} The analysis covers \\textbf{${ownedN} posts published by the account} (${dedupN} including features and mentions). That is ample for the descriptive findings that form the body of this report --- what has been posted, which themes recur, when the audience engages, and what they say in comments. It is, however, \\textbf{below the size needed for confirmatory statistics}. Accordingly:
+\\begin{itemize}[leftmargin=*, topsep=2pt, itemsep=1pt]
+  \\item \\textbf{Part~I (this part)} --- the descriptive audit --- is the substance of the report and is where decisions should be grounded.
+  \\item \\textbf{The Appendix} --- hypothesis tests and Monte Carlo simulations --- is included for transparency and method completeness. At this sample size its outputs are \\emph{illustrative and directional only}; they are not established effects, and the simulations are not forecasts.
+\\end{itemize}
+The honest one-line summary: \\textbf{treat every number here as a well-evidenced description of the past ${ownedN} posts, and as a hypothesis to test --- revisit with statistical weight once the account has roughly 100+ posts.}
+\\end{callout}
+`:''}
 
 \\chapter{Content Performance}
 \\section{Engagement Score Methodology}
@@ -240,17 +297,23 @@ rows:[...pillars].sort((a,b)=>num(b.avg_engagement_score)-num(a.avg_engagement_s
 
 \\chapter{Short Videos versus Feed Posts}
 \\section{Comparative Performance}\\label{sec:reelsposts}
-On the headline composite score, short videos appear to attract more engagement. Because that score embeds a views term available to video but not to many image posts, a credible comparison must also remove the views term.
+This account has \\textbf{${FV.nP} feed posts and ${FV.nR} reels} in the analysed window. The engagement score embeds a views term available to video but not to many image posts (${FV.postsZeroViewPct}\\% of feed posts here record zero views), so the comparison is shown three ways: on the composite score, and on likes-and-comments and likes alone, which remove that mechanical advantage.
 
 ${table({caption:'Reels versus posts under three metrics (deduplicated data)',cols:[
-{h:'Metric',spec:'L{6.5cm}',cell:r=>r.m},{h:'Reel mean',spec:'R{2cm}',cell:r=>r.rm},{h:'Post mean',spec:'R{2cm}',cell:r=>r.pm},{h:'Reading',spec:'L{3.5cm}',cell:r=>r.note}],
+{h:'Metric',spec:'L{6cm}',cell:r=>r.m},{h:'Reel mean',spec:'R{2cm}',cell:r=>r.rm},{h:'Post mean',spec:'R{2cm}',cell:r=>r.pm},{h:'MWU $p$',spec:'R{2cm}',cell:r=>r.p}],
 rows:[
-{m:'Engagement score (includes views)',rm:fmt(reelMean),pm:fmt(postMean),note:'Inflated by views'},
-{m:'Likes + comments only (no views)',rm:'\\textemdash',pm:'\\textemdash',note:'Directional only'},
-{m:'Likes only',rm:'\\textemdash',pm:'\\textemdash',note:'Not significant'}]})}
+{m:'Engagement score (includes views)',rm:fmt(FV.escR),pm:fmt(FV.escP),p:FV.pEscMwu},
+{m:'Likes + comments only (no views)',rm:fmt(FV.lcR),pm:fmt(FV.lcP),p:FV.pLcMwu},
+{m:'Likes only',rm:fmt(FV.lkR),pm:fmt(FV.lkP),p:FV.pLkMwu}]})}
 
 \\begin{callout}
-\\textbf{Honest reading.} The reels advantage is real in direction but should not be quoted as a fixed multiple. Much of the headline gap is the mechanical views term, and the deduplicated reel sample is small, which limits statistical power. Treat reels as a reach and discovery investment --- the one channel image posts cannot access --- and measure their effect with native Instagram reach data, which this public analysis cannot see.
+\\textbf{Honest reading.} ${
+  tooFewReels
+    ? `With only ${FV.nR} reels in the window, this comparison cannot be made meaningfully --- the account is currently \\textbf{posts-driven}. Feed posts (particularly carousels of food and events) carry essentially all of the engagement. The opportunity is to test short video as an under-used format and measure reach with native Instagram analytics, not to assume it will replicate the performance of the existing posts.`
+    : reelsWin
+      ? `Short videos lead on the composite score, but much of that gap is the mechanical views term; on likes and comments the difference is ${FV.pLcMwu<0.05?'still present':'not statistically reliable'} at this sample size. Treat reels as a reach and discovery investment and confirm with native reach data.`
+      : `\\textbf{Feed posts outperform short videos for this account} on every metric (engagement ${fmt(FV.escP)} vs ${fmt(FV.escR)}; likes ${fmt(FV.lkP)} vs ${fmt(FV.lkR)}). Reels are not currently a strength here. Keep investing in the high-performing post formats (food and event carousels) and treat reels as an experiment to grow reach, measured with native analytics --- not as a proven channel for this account.`
+}
 \\end{callout}
 
 \\chapter{Timing Analysis}
@@ -285,14 +348,18 @@ ${table({caption:'Caption and hashtag summary statistics',cols:[{h:'Metric',spec
 \\section{Most Frequent Hashtags}
 ${table({caption:'Top 15 hashtags by frequency of use',cols:[{h:'Hashtag',spec:'L{5cm}',cell:r=>'\\#'+tx(r.hashtag)},{h:'Uses',spec:'R{3cm}',cell:r=>r.count}],rows:hashtags.slice(0,15)})}
 
-\\part{Advanced Statistical and Predictive Analysis}
+\\part{${tx(part2Title)}}
+${smallSample?`\\begin{note}
+\\textbf{Read this appendix as illustrative, not confirmatory.} With ${ownedN} owned posts (pillars of one to a handful of posts each, and only ${FV.nR} reels), the tests and simulations below do not have the statistical power to establish effects or to forecast. They are retained for transparency and methodological completeness, and to frame \\emph{hypotheses} for a future, larger sample. Where a $p$-value appears \\textquotedblleft significant\\textquotedblright{} on a tiny subgroup (for example a two-item reel group), treat it as an artefact of small numbers, not evidence. The decisions in this report should rest on Part~I.
+\\end{note}
+`:''}
 \\chapter{Methodology and Data Quality}
-All computation runs in a reproducible Node.js pipeline. Monte Carlo simulations use a fixed seed (${cfg.analysis.mc_seed}) and ${fmt(cfg.analysis.mc_iterations)} iterations; an independent analyst re-running the code obtains bit-identical results. After removing duplicate posts that appear in both the posts and reels scrapes, the working dataset comprises \\textbf{${edaBy.all_content_deduplicated?.n||edaBy['all_content_deduplicated']?.n||''} unique posts and reels}.
+All computation runs in a reproducible Node.js pipeline. Monte Carlo simulations use a fixed seed (${cfg.analysis.mc_seed}) and ${fmt(cfg.analysis.mc_iterations)} iterations; an independent analyst re-running the code obtains bit-identical results. After removing duplicate posts that appear in both the posts and reels scrapes, the working dataset comprises \\textbf{${dedupN} unique posts and reels} (${ownedN} published by the account, the remainder features and mentions).
 
 \\chapter{Exploratory Data Analysis}
 ${table({caption:'Descriptive statistics by content segment',cols:[
 {h:'Segment',spec:'L{4cm}',cell:r=>tx(r.label.replace(/_/g,' '))},{h:'N',spec:'R{1cm}',cell:r=>r.n},{h:'Mean',spec:'R{1.6cm}',cell:r=>r2(r.mean)},{h:'Median',spec:'R{1.6cm}',cell:r=>r2(r.median)},{h:'Std Dev',spec:'R{1.8cm}',cell:r=>r2(r.stddev)},{h:'CV',spec:'R{1.2cm}',cell:r=>r2(r.cv,2)},{h:'Skew',spec:'R{1.4cm}',cell:r=>r2(r.skew,2)}],
-rows:eda.filter(r=>['all_content_deduplicated','posts','reels','owned_treehousegh','third_party'].includes(r.label)||/^owned/.test(r.label))})}
+rows:eda.filter(r=>['all_content_deduplicated','posts','reels','owned_account','third_party'].includes(r.label)||/^owned/.test(r.label))})}
 
 All groups are strongly right-skewed with heavy tails, which violates normality assumptions and motivates the use of non-parametric tests alongside parametric ones.
 
@@ -303,7 +370,13 @@ ${longtable({caption:'Hypothesis test results',cols:[
 rows:hyp})}
 
 \\begin{note}
-\\textbf{Reels vs posts.} The Welch t-test ($p=${tx(h1w.p||'n/a')}$) and Mann-Whitney U test ($p=${tx(h1m.p||'n/a')}$) are directional in favour of reels but do not both clear significance at this sample size. The bootstrap confidence interval for the difference ${concentration.includes_zero==='true'?'includes zero':'excludes zero'}, consistent with the circularity caveat in Part~I.
+\\textbf{Reels vs posts.} ${
+  tooFewReels
+    ? `With only ${FV.nR} reels after deduplication, the reels-versus-posts test is underpowered and no reliable difference can be claimed. The account is posts-driven; see the format discussion in Part~I.`
+    : reelsWin
+      ? `The Welch t-test ($p=${tx(h1w.p||'n/a')}$) and Mann-Whitney U test ($p=${tx(h1m.p||'n/a')}$) are directional in favour of reels but do not both clear significance at this sample size, consistent with the circularity caveat in Part~I.`
+      : `On this account feed posts lead reels on every metric; any apparent reels effect on the composite score is outweighed once the views term is removed (see Part~I).`
+}
 \\end{note}
 
 \\chapter{Bootstrap Confidence Intervals}

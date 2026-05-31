@@ -4,9 +4,9 @@
 <rect width="100%" height="100%" fill="#FFFFFF"/>
 
 <text x="350" y="30" font-family="Arial, Helvetica, sans-serif" font-size="20"
-  font-weight="bold" fill="#1B3A2D" text-anchor="middle">Short Videos vs Feed Posts</text>
+  font-weight="bold" fill="#1B3A2D" text-anchor="middle">Posts vs Short Videos</text>
 <text x="350" y="52" font-family="Arial, Helvetica, sans-serif" font-size="13"
-  font-weight="normal" fill="#6B7280" text-anchor="middle">Short videos consistently attract more interaction than static feed posts</text>
+  font-weight="normal" fill="#6B7280" text-anchor="middle">Average interaction by content format (this account)</text>
 <rect x="180" y="190" width="70" height="90" fill="#2E86AB" rx="3"/>
 <text x="215" y="182" font-family="Arial, Helvetica, sans-serif" font-size="13"
   font-weight="bold" fill="#2E86AB" text-anchor="middle">112</text>
@@ -34,10 +34,10 @@
   font-weight="bold" fill="#1F2937" text-anchor="middle">Median Engagement</text>
 <line x1="515" y1="280" x2="690" y2="280" stroke="#D1D5DB" stroke-width="1.5"/>
 <text x="450" y="170" font-family="Arial, Helvetica, sans-serif"
-    font-size="32" fill="#2D6A4F" text-anchor="middle" font-weight="bold">+121%</text>
-  <text x="450" y="196" font-family="Arial, Helvetica, sans-serif"
-    font-size="13" fill="#2D6A4F" text-anchor="middle">more engagement</text>
-  <text x="450" y="214" font-family="Arial, Helvetica, sans-serif"
+    font-size="26" fill="#7B2D8B" text-anchor="middle" font-weight="bold">+121%</text>
+  <text x="450" y="194" font-family="Arial, Helvetica, sans-serif"
+    font-size="13" fill="#7B2D8B" text-anchor="middle">more engagement</text>
+  <text x="450" y="212" font-family="Arial, Helvetica, sans-serif"
     font-size="12" fill="#6B7280" text-anchor="middle">from short videos</text>
 <rect x="30" y="350" width="14" height="14" fill="#2E86AB" rx="3"/>
 <text x="50" y="362" font-family="Arial, Helvetica, sans-serif" font-size="12"
