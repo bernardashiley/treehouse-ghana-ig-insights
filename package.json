@@ -11,9 +11,12 @@
     "report":      "node src/generate_report.js",
     "stakeholder": "node src/generate_stakeholder_report.js",
     "combined":    "node src/generate_combined_report.js",
+    "discover":    "node src/discover_structure.js",
+    "structure":   "node src/generate_structure_report.js",
     "audit":       "node scripts/validity_audit.js",
+    "test":        "node test/run_tests.js",
     "build":       "npm run analyse && npm run report",
-    "all":         "npm run analyse && npm run advanced && npm run stakeholder && npm run combined"
+    "all":         "npm run analyse && npm run advanced && npm run discover && npm run structure && npm run stakeholder && npm run combined"
   },
   "engines": {
     "node": ">=20"

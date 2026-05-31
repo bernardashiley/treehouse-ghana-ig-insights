@@ -1161,4 +1161,13 @@ ${mdTable(riskRows.filter(r => [5000, 10000, 15000, 20000].includes(r.target_12w
   ].forEach(f => console.log(`  ${f}`));
 }
 
-main();
+// Export pure functions for the test harness; only run the pipeline when this
+// file is executed directly (so require() in tests does not trigger main()).
+module.exports = {
+  makePrng, variance, stddev, se, pctile, skewness, excessKurtosis,
+  normalCdf, regGammaP, tPValue, chiPValue,
+  welchTest, mannWhitneyU, kruskalWallis, pearsonTest, bootstrapCi,
+  sampleFrom, randNormal, safeScores, dedupe, effectLabel,
+};
+
+if (require.main === module) main();

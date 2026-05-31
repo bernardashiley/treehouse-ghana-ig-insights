@@ -30,6 +30,9 @@ jobs:
       # ── Analysis pipeline ────────────────────────────────────────────────────
       # advanced_analysis.js reads from data/processed/ CSVs (committed to repo)
       # so it runs without the raw Apify data files.
+      - name: Run test harness (statistical validity + edge cases)
+        run: node test/run_tests.js
+
       - name: Run advanced statistical analysis
         run: node src/advanced_analysis.js
 
