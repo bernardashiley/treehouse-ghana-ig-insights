@@ -109,23 +109,37 @@ const hourRows = timing.filter(r=>r.period_type==='hour_utc');
 // ── table/figure builders ──────────────────────────────────────────────────
 function bar(opts){
   // horizontal bar chart from {label,value} rows (sorted ascending for xbar bottom-up)
-  const {title,rows,max,xlabel='Average engagement score',unit='',pct=false}=opts;
-  const coords=rows.map(r=>`(${r2(r.value)},${coordName(r.label)})`).join('');
+  const {title,rows,max,xlabel='Average engagement score',pct=false}=opts;
+  // Engagement scores render as whole numbers; percentages keep one decimal.
+  const coordVal = v => pct ? r2(num(v),1) : Math.round(num(v));
+  const coords=rows.map(r=>`(${coordVal(r.value)},${coordName(r.label)})`).join('');
   const syms=rows.map(r=>coordName(r.label)).join(',');
-  const xtl = pct?`xticklabel={\\pgfmathprintnumber{\\tick}\\%},`:'';
+  const xmin = pct ? Math.floor(Math.min(0,...rows.map(r=>num(r.value)))*1.1) : 0;
+  const xmax = Math.ceil((pct ? Math.max(...rows.map(r=>num(r.value))) : num(max))*1.15);
+  // Force fixed-point, thousands-separated tick + value labels so pgfplots never
+  // shows a scientific axis multiplier (e.g. ".10^3") or ragged decimals.
+  const tickFmt = pct
+    ? `xticklabel={\\pgfmathprintnumber[fixed,precision=0]{\\tick}\\%},`
+    : `xticklabel style={/pgf/number format/.cd,fixed,fixed zerofill=false,precision=0,1000 sep={,}},`;
+  const nodeFmt = pct
+    ? `nodes near coords={\\pgfmathprintnumber[fixed,precision=1]{\\pgfplotspointmeta}\\%},`
+    : `nodes near coords={\\pgfmathprintnumber[fixed,precision=0,1000 sep={,}]{\\pgfplotspointmeta}},`;
   return `\\begin{figure}[htbp]
 \\centering
 \\caption{${tx(title)}}
 \\begin{tikzpicture}
 \\begin{axis}[
-  xbar, xmin=${pct?Math.min(0,...rows.map(r=>num(r.value)))*1.1:0}, xmax=${r2(max*1.15)},
+  xbar, xmin=${xmin}, xmax=${xmax},
   width=13.5cm, height=${Math.max(5,rows.length*0.75+2)}cm, bar width=12pt,
   xlabel={\\small ${tx(xlabel)}},
   symbolic y coords={${syms}}, ytick=data,
   y tick label style={font=\\small, align=right, text width=3.8cm},
-  nodes near coords, nodes near coords align={horizontal},
+  scaled x ticks=false,
+  ${tickFmt}
+  ${nodeFmt}
+  nodes near coords align={horizontal},
   every node near coord/.style={font=\\footnotesize, color=tggreen},
-  enlarge y limits=0.08, axis line style={draw=tgrule}, ${xtl}
+  enlarge y limits=0.08, axis line style={draw=tgrule},
 ]
 \\addplot[fill=tgmid!80, draw=tgmid] coordinates {${coords}};
 \\end{axis}
@@ -300,7 +314,7 @@ rows:[...pillars].sort((a,b)=>num(b.avg_engagement_score)-num(a.avg_engagement_s
 This account has \\textbf{${FV.nP} feed posts and ${FV.nR} reels} in the analysed window. The engagement score embeds a views term available to video but not to many image posts (${FV.postsZeroViewPct}\\% of feed posts here record zero views), so the comparison is shown three ways: on the composite score, and on likes-and-comments and likes alone, which remove that mechanical advantage.
 
 ${table({caption:'Reels versus posts under three metrics (deduplicated data)',cols:[
-{h:'Metric',spec:'L{6cm}',cell:r=>r.m},{h:'Reel mean',spec:'R{2cm}',cell:r=>r.rm},{h:'Post mean',spec:'R{2cm}',cell:r=>r.pm},{h:'MWU $p$',spec:'R{2cm}',cell:r=>r.p}],
+{h:'Metric',spec:'L{6cm}',cell:r=>r.m},{h:'Reel mean',spec:'R{2cm}',cell:r=>r.rm},{h:'Post mean',spec:'R{2cm}',cell:r=>r.pm},{h:'MWU p-value',spec:'R{2cm}',cell:r=>r.p}],
 rows:[
 {m:'Engagement score (includes views)',rm:fmt(FV.escR),pm:fmt(FV.escP),p:FV.pEscMwu},
 {m:'Likes + comments only (no views)',rm:fmt(FV.lcR),pm:fmt(FV.lcP),p:FV.pLcMwu},
@@ -388,7 +402,7 @@ rows:cis})}
 ${bar({title:'Content pillar lift relative to overall baseline (percent)',xlabel:'Lift above baseline (\\%)',pct:true,rows:[...lift].sort((a,b)=>num(a.lift_vs_baseline_pct)-num(b.lift_vs_baseline_pct)).map(l=>({label:l.pillar,value:l.lift_vs_baseline_pct})),max:Math.max(...lift.map(l=>num(l.lift_vs_baseline_pct)))})}
 
 ${longtable({caption:'Pillar lift versus baseline with bootstrap 95\\% CI',cols:[
-{h:'Pillar',spec:'L{4cm}',cell:r=>tx(pillarLabel(r.pillar))},{h:'N',spec:'R{1.2cm}',cell:r=>r.n},{h:'Avg Score',spec:'R{2cm}',cell:r=>r2(r.avg_engagement_score)},{h:'Lift',spec:'R{2cm}',cell:r=>tx(r.lift_vs_baseline_pct)+'\\%'},{h:'95\\% CI',spec:'L{3.5cm}',cell:r=>r2(r.ci_low)+' to '+r2(r.ci_high)}],
+{h:'Pillar',spec:'L{4cm}',cell:r=>tx(pillarLabel(r.pillar))},{h:'N',spec:'R{1.2cm}',cell:r=>r.n},{h:'Avg Score',spec:'R{2cm}',cell:r=>r2(r.avg_engagement_score)},{h:'Lift',spec:'R{2cm}',cell:r=>tx(r.lift_vs_baseline_pct)+'\\%'},{h:'95% CI',spec:'L{3.5cm}',cell:r=>r2(r.ci_low)+' to '+r2(r.ci_high)}],
 rows:[...lift].sort((a,b)=>num(b.avg_engagement_score)-num(a.avg_engagement_score))})}
 
 \\chapter{Monte Carlo Simulations}
@@ -408,7 +422,7 @@ rows:mcFore})}
 
 \\section{MC3: Booking Conversion Pipeline}
 ${table({caption:'MC3: monthly booking pipeline under three conversion scenarios',cols:[
-{h:'Scenario',spec:'L{2.5cm}',cell:r=>tx(r.scenario)},{h:'Contact \\%',spec:'R{1.8cm}',cell:r=>r.contact_rate_pct},{h:'Booking \\%',spec:'R{2cm}',cell:r=>r.booking_rate_pct},{h:'P50',spec:'R{1.6cm}',cell:r=>r.bookings_p50},{h:'P90',spec:'R{1.6cm}',cell:r=>r.bookings_p90},{h:'P(0)',spec:'R{1.8cm}',cell:r=>r.prob_0_bookings_pct+'\\%'},{h:'P($\\geq$3)',spec:'R{1.8cm}',cell:r=>r.prob_ge3_bookings_pct+'\\%'}],
+{h:'Scenario',spec:'L{2.5cm}',cell:r=>tx(r.scenario)},{h:'Contact %',spec:'R{1.8cm}',cell:r=>r.contact_rate_pct},{h:'Booking %',spec:'R{2cm}',cell:r=>r.booking_rate_pct},{h:'P50',spec:'R{1.6cm}',cell:r=>r.bookings_p50},{h:'P90',spec:'R{1.6cm}',cell:r=>r.bookings_p90},{h:'P(0)',spec:'R{1.8cm}',cell:r=>r.prob_0_bookings_pct+'\\%'},{h:'P(3+ bookings)',spec:'R{1.8cm}',cell:r=>r.prob_ge3_bookings_pct+'\\%'}],
 rows:mcConv})}
 \\begin{callout}
 \\textbf{Principal finding from MC3.} At current comment volumes the Instagram comment channel alone cannot reliably drive booking conversions regardless of conversion rate. The binding constraint is comment volume, not the funnel. Increasing reach-oriented content (MC1) raises the top of the funnel; replying immediately to commercial comments is the cheapest operational lever.

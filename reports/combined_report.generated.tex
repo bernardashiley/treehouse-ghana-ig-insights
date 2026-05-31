@@ -103,16 +103,19 @@ It is a consistent, reproducible index for comparing posts on partial public met
 \caption{Average engagement score by content pillar}
 \begin{tikzpicture}
 \begin{axis}[
-  xbar, xmin=0, xmax=333.03,
+  xbar, xmin=0, xmax=334,
   width=13.5cm, height=10.25cm, bar width=12pt,
   xlabel={\small Average engagement score},
   symbolic y coords={Reservations and Bookings,Date Night and Romance,Birthdays and Celebrations,Price and Value,General Brand,Food and Dining,Promotions and Offers,Dinner and Nightlife,Ambience and Vibe,Events and Live Music,Cocktails and Drinks}, ytick=data,
   y tick label style={font=\small, align=right, text width=3.8cm},
-  nodes near coords, nodes near coords align={horizontal},
+  scaled x ticks=false,
+  xticklabel style={/pgf/number format/.cd,fixed,fixed zerofill=false,precision=0,1000 sep={,}},
+  nodes near coords={\pgfmathprintnumber[fixed,precision=0,1000 sep={,}]{\pgfplotspointmeta}},
+  nodes near coords align={horizontal},
   every node near coord/.style={font=\footnotesize, color=tggreen},
-  enlarge y limits=0.08, axis line style={draw=tgrule}, 
+  enlarge y limits=0.08, axis line style={draw=tgrule},
 ]
-\addplot[fill=tgmid!80, draw=tgmid] coordinates {(35.54,Reservations and Bookings)(76.07,Date Night and Romance)(76.73,Birthdays and Celebrations)(79.84,Price and Value)(80.36,General Brand)(133.73,Food and Dining)(143.81,Promotions and Offers)(197.94,Dinner and Nightlife)(232.75,Ambience and Vibe)(251.93,Events and Live Music)(289.59,Cocktails and Drinks)};
+\addplot[fill=tgmid!80, draw=tgmid] coordinates {(36,Reservations and Bookings)(76,Date Night and Romance)(77,Birthdays and Celebrations)(80,Price and Value)(80,General Brand)(134,Food and Dining)(144,Promotions and Offers)(198,Dinner and Nightlife)(233,Ambience and Vibe)(252,Events and Live Music)(290,Cocktails and Drinks)};
 \end{axis}
 \end{tikzpicture}
 \end{figure}
@@ -159,7 +162,7 @@ This account has \textbf{134 feed posts and 16 reels} in the analysed window. Th
 \caption{Reels versus posts under three metrics (deduplicated data)}
 \begin{tabular}{@{}L{6cm} R{2cm} R{2cm} R{2cm}@{}}
 \toprule
-\textbf{Metric} & \textbf{Reel mean} & \textbf{Post mean} & \textbf{MWU \$p\$} \\
+\textbf{Metric} & \textbf{Reel mean} & \textbf{Post mean} & \textbf{MWU p-value} \\
 \midrule
 Engagement score (includes views) & 248 & 112 & 0.057 \\
 Likes + comments only (no views) & 121 & 71 & 0.179 \\
@@ -179,16 +182,19 @@ Likes only & 103 & 62 & 0.557 \\
 \caption{Average engagement score by posting day}
 \begin{tikzpicture}
 \begin{axis}[
-  xbar, xmin=0, xmax=228.69,
+  xbar, xmin=0, xmax=229,
   width=13.5cm, height=7.25cm, bar width=12pt,
   xlabel={\small Average engagement score},
   symbolic y coords={Wednesday,Saturday,Sunday,Thursday,Friday,Tuesday,Monday}, ytick=data,
   y tick label style={font=\small, align=right, text width=3.8cm},
-  nodes near coords, nodes near coords align={horizontal},
+  scaled x ticks=false,
+  xticklabel style={/pgf/number format/.cd,fixed,fixed zerofill=false,precision=0,1000 sep={,}},
+  nodes near coords={\pgfmathprintnumber[fixed,precision=0,1000 sep={,}]{\pgfplotspointmeta}},
+  nodes near coords align={horizontal},
   every node near coord/.style={font=\footnotesize, color=tggreen},
-  enlarge y limits=0.08, axis line style={draw=tgrule}, 
+  enlarge y limits=0.08, axis line style={draw=tgrule},
 ]
-\addplot[fill=tgmid!80, draw=tgmid] coordinates {(94.56,Wednesday)(104.15,Saturday)(120.65,Sunday)(141.39,Thursday)(147.64,Friday)(179.97,Tuesday)(198.86,Monday)};
+\addplot[fill=tgmid!80, draw=tgmid] coordinates {(95,Wednesday)(104,Saturday)(121,Sunday)(141,Thursday)(148,Friday)(180,Tuesday)(199,Monday)};
 \end{axis}
 \end{tikzpicture}
 \end{figure}
@@ -257,14 +263,17 @@ The comment review uses anonymised text only; usernames are excluded from all ou
 \caption{Comment intent categories}
 \begin{tikzpicture}
 \begin{axis}[
-  xbar, xmin=0, xmax=98.9,
+  xbar, xmin=0, xmax=99,
   width=13.5cm, height=9.5cm, bar width=12pt,
   xlabel={\small Number of comments},
   symbolic y coords={service issue complaint,price value concern,booking reservation intent,menu food curiosity,event interest,date-night romantic ambience,positive ambience praise,location access question,generic praise,generic unclear}, ytick=data,
   y tick label style={font=\small, align=right, text width=3.8cm},
-  nodes near coords, nodes near coords align={horizontal},
+  scaled x ticks=false,
+  xticklabel style={/pgf/number format/.cd,fixed,fixed zerofill=false,precision=0,1000 sep={,}},
+  nodes near coords={\pgfmathprintnumber[fixed,precision=0,1000 sep={,}]{\pgfplotspointmeta}},
+  nodes near coords align={horizontal},
   every node near coord/.style={font=\footnotesize, color=tggreen},
-  enlarge y limits=0.08, axis line style={draw=tgrule}, 
+  enlarge y limits=0.08, axis line style={draw=tgrule},
 ]
 \addplot[fill=tgmid!80, draw=tgmid] coordinates {(1,service issue complaint)(1,price value concern)(1,booking reservation intent)(2,menu food curiosity)(3,event interest)(3,date-night romantic ambience)(5,positive ambience praise)(5,location access question)(8,generic praise)(86,generic unclear)};
 \end{axis}
@@ -444,14 +453,17 @@ day Sunday mean & 11 & 141.31 & 59.99 & 264.35 & No \\
 \caption{Content pillar lift relative to overall baseline (percent)}
 \begin{tikzpicture}
 \begin{axis}[
-  xbar, xmin=-82.72000000000001, xmax=116.96,
+  xbar, xmin=-83, xmax=117,
   width=13.5cm, height=10.25cm, bar width=12pt,
   xlabel={\small Lift above baseline (\textbackslash\{\}\%)},
   symbolic y coords={Reservations and Bookings,Date Night and Romance,Birthdays and Celebrations,Price and Value,General Brand,Food and Dining,Promotions and Offers,Dinner and Nightlife,Ambience and Vibe,Events and Live Music,Cocktails and Drinks}, ytick=data,
   y tick label style={font=\small, align=right, text width=3.8cm},
-  nodes near coords, nodes near coords align={horizontal},
+  scaled x ticks=false,
+  xticklabel={\pgfmathprintnumber[fixed,precision=0]{\tick}\%},
+  nodes near coords={\pgfmathprintnumber[fixed,precision=1]{\pgfplotspointmeta}\%},
+  nodes near coords align={horizontal},
   every node near coord/.style={font=\footnotesize, color=tggreen},
-  enlarge y limits=0.08, axis line style={draw=tgrule}, xticklabel={\pgfmathprintnumber{\tick}\%},
+  enlarge y limits=0.08, axis line style={draw=tgrule},
 ]
 \addplot[fill=tgmid!80, draw=tgmid] coordinates {(-75.2,Reservations and Bookings)(-47,Date Night and Romance)(-46.6,Birthdays and Celebrations)(-44.4,Price and Value)(-44,General Brand)(-6.9,Food and Dining)(0.2,Promotions and Offers)(37.9,Dinner and Nightlife)(62.1,Ambience and Vibe)(75.5,Events and Live Music)(101.7,Cocktails and Drinks)};
 \end{axis}
@@ -461,12 +473,12 @@ day Sunday mean & 11 & 141.31 & 59.99 & 264.35 & No \\
 \begin{longtable}{@{}L{4cm} R{1.2cm} R{2cm} R{2cm} L{3.5cm}@{}}
 \caption{Pillar lift versus baseline with bootstrap 95\textbackslash\{\}\% CI} \\
 \toprule
-\textbf{Pillar} & \textbf{N} & \textbf{Avg Score} & \textbf{Lift} & \textbf{95\textbackslash\{\}\% CI} \\
+\textbf{Pillar} & \textbf{N} & \textbf{Avg Score} & \textbf{Lift} & \textbf{95\% CI} \\
 \midrule
 \endfirsthead
 \multicolumn{5}{c}{\tablename\ \thetable{} --- continued} \\
 \toprule
-\textbf{Pillar} & \textbf{N} & \textbf{Avg Score} & \textbf{Lift} & \textbf{95\textbackslash\{\}\% CI} \\
+\textbf{Pillar} & \textbf{N} & \textbf{Avg Score} & \textbf{Lift} & \textbf{95\% CI} \\
 \midrule
 \endhead
 \bottomrule
@@ -527,7 +539,7 @@ heavy reels & 66 & 12,004 & 7,877 & 16,451 & +77.2\% \\
 \caption{MC3: monthly booking pipeline under three conversion scenarios}
 \begin{tabular}{@{}L{2.5cm} R{1.8cm} R{2cm} R{1.6cm} R{1.6cm} R{1.8cm} R{1.8cm}@{}}
 \toprule
-\textbf{Scenario} & \textbf{Contact \textbackslash\{\}\%} & \textbf{Booking \textbackslash\{\}\%} & \textbf{P50} & \textbf{P90} & \textbf{P(0)} & \textbf{P(\$\textbackslash\{\}geq\$3)} \\
+\textbf{Scenario} & \textbf{Contact \%} & \textbf{Booking \%} & \textbf{P50} & \textbf{P90} & \textbf{P(0)} & \textbf{P(3+ bookings)} \\
 \midrule
 pessimistic & 5 & 20 & 0 & 0 & 100\% & 0\% \\
 central & 12 & 30 & 0 & 0 & 100\% & 0\% \\
