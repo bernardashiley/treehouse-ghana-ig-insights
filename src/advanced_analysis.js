@@ -829,7 +829,7 @@ function main() {
   addHt('H6_top_pillar_vs_all', 'Welch t-test',
     `μ(${topPillarName}) = μ(all content)`,
     h6,
-    { pillar: topPillarName, note: topPillarScores.length < 5 ? `${topPillarName} n=${topPillarScores.length} — low power` : '' });
+    { pillar: topPillarName, note: topPillarScores.length < 5 ? `${topPillarName} n=${topPillarScores.length}, low power` : '' });
 
   writeCsv('data/processed/adv_hypothesis_tests.csv', htRows);
   console.log('✓ Hypothesis tests written');
@@ -920,8 +920,8 @@ function main() {
 
   // Helpers for honest conditional language in the report
   const sig = (p, note) => p != null && p < 0.05
-    ? `**significant** (p = ${p}) — ${note}`
-    : `**not significant** (p = ${p ?? 'N/A'}) — insufficient evidence to reject H₀`;
+    ? `**significant** (p = ${p}): ${note}`
+    : `**not significant** (p = ${p ?? 'N/A'}): insufficient evidence to reject H₀`;
 
   const mdTable = (rows, cols) => {
     if (!rows?.length) return '_No data_';
@@ -931,7 +931,7 @@ function main() {
     return [hdr, sep, ...body].join('\n');
   };
 
-  const report = `# Treehouse Ghana — Advanced Statistical & Predictive Analysis
+  const report = `# Treehouse Ghana: Advanced Statistical & Predictive Analysis
 
 *Date: ${new Date().toISOString().slice(0, 10)} · Seed: 20260530 · Simulations: 10,000 per test · n = ${all.length} unique posts/reels (${dupCount} duplicate shortcodes removed before analysis)*
 
@@ -941,7 +941,7 @@ function main() {
 
 | Issue | Finding | Action taken |
 |---|---|---|
-| Duplicate shortcodes | ${dupCount} records appeared in both the posts and reels Apify scrapes | Deduplicated before all analyses — kept higher-engagement copy |
+| Duplicate shortcodes | ${dupCount} records appeared in both the posts and reels Apify scrapes | Deduplicated before all analyses; kept higher-engagement copy |
 | Negative engagement scores | Apify artefact: some posts reported −1 likes | Clamped to 0; not dropped (preserves low-engagement baseline) |
 | Small pillar samples | promotions/offers n=2, price/value n=2, reservations n=2 | Excluded from owned pillar MC (n<3 threshold); CIs pinned to estimate |
 | Third-party posts in pillar distributions | Mentions from external accounts inflate some pillars | MC strategy simulations use owned-only distributions |
@@ -982,46 +982,46 @@ ${mdTable(DAYS.map(d => edaRows.find(r => r.label === `day:${d}`) || { label: d,
 
 ## 2. Hypothesis Tests (α = 0.05; Bonferroni α = ${BONF_ALPHA} for 6 tests)
 
-### H1 — Reels vs Posts Engagement
+### H1: Reels vs Posts Engagement
 
 **Welch t-test** (parametric):
 t = ${h1a?.t}, df = ${h1a?.df}, p = ${h1a?.p}, Cohen's d = ${h1a?.cohens_d} (${effectLabel(h1a?.cohens_d ?? 0)} effect)
 Result: ${sig(h1a?.p, 'reels outperform posts on mean engagement score')}
 
-**Mann-Whitney U** (non-parametric — preferred given high skewness):
+**Mann-Whitney U** (non-parametric, preferred given high skewness):
 U = ${h1b?.U}, z = ${h1b?.z}, p = ${h1b?.p}
 Result: ${sig(h1b?.p, 'reels rank systematically higher than posts')}
 
 ${h1a?.significant || h1b?.significant
-  ? `The ${h1a?.significant && h1b?.significant ? 'Welch t-test and Mann-Whitney U both agree' : h1b?.significant ? 'Mann-Whitney U (more appropriate for skewed data)' : 'Welch t-test'}: reels generate significantly higher engagement. The bootstrap CI for the difference is [${rMinusP?.lower} to ${rMinusP?.upper}], which ${rMinusP?.includes_zero ? 'includes zero — treat as directional evidence' : 'excludes zero — statistically confirmed'}. Invest in video-first creative.`
-  : `Neither test reaches significance. The ${rMinusP?.includes_zero ? 'bootstrap CI for the difference includes zero' : ''} — the reels advantage is directional but not statistically established at this sample size. Continue tracking.`}
+  ? `The ${h1a?.significant && h1b?.significant ? 'Welch t-test and Mann-Whitney U both agree' : h1b?.significant ? 'Mann-Whitney U (more appropriate for skewed data)' : 'Welch t-test'}: reels generate significantly higher engagement. The bootstrap CI for the difference is [${rMinusP?.lower} to ${rMinusP?.upper}], which ${rMinusP?.includes_zero ? 'includes zero, so treat as directional evidence' : 'excludes zero, statistically confirmed'}. Invest in video-first creative.`
+  : `Neither test reaches significance. The ${rMinusP?.includes_zero ? 'bootstrap CI for the difference includes zero' : ''}. The reels advantage is directional but not statistically established at this sample size. Continue tracking.`}
 
-### H2 — Day-of-Week Effect (Kruskal-Wallis)
+### H2: Day-of-Week Effect (Kruskal-Wallis)
 
 H = ${h2Kw?.H}, df = ${h2Kw?.df}, p = ${h2Kw?.p}
 Result: ${sig(h2Kw?.p, 'posting day has a statistically real effect on engagement')}
 
 ${h2Kw?.significant ? 'Monday and Tuesday show the highest mean engagement scores. Prioritise early-week slots for high-quality posts.' : 'Observed day differences may be confounded by content type. Continue testing posting times against native impressions data.'}
 
-### H3 — Owned vs Third-Party Engagement
+### H3: Owned vs Third-Party Engagement
 
 t = ${h3?.t}, p = ${h3?.p}, Cohen's d = ${h3?.cohens_d}
 Result: ${sig(h3?.p, 'owned and third-party content generate different engagement')}
 Mean owned: ${h3?.mean_a}, mean third-party: ${h3?.mean_b}.
 
-### H4 — Caption Length vs Engagement
+### H4: Caption Length vs Engagement
 
 Pearson r = ${h4?.r} (95% CI: ${h4?.r_ci_lo} to ${h4?.r_ci_hi}), p = ${h4?.p}
 Result: ${sig(h4?.p, 'caption length is a meaningful predictor of engagement')}
 Caption length explains a negligible share of variance. Copy effort should be directed at clarity and CTA, not character count.
 
-### H5 — Hashtag Count vs Engagement
+### H5: Hashtag Count vs Engagement
 
 Pearson r = ${h5?.r} (95% CI: ${h5?.r_ci_lo} to ${h5?.r_ci_hi}), p = ${h5?.p}
 Result: ${sig(h5?.p, 'hashtag count is a meaningful predictor of engagement')}
 The correlation is ${Math.abs(h5?.r ?? 0) < 0.1 ? 'negligible' : Math.abs(h5?.r ?? 0) < 0.3 ? 'weak' : 'moderate'}. Do not over-index on hashtag volume.
 
-### H6 — Top Pillar (${topPillarName}) vs Overall Baseline
+### H6: Top Pillar (${topPillarName}) vs Overall Baseline
 
 t = ${h6?.t}, p = ${h6?.p}, Cohen's d = ${h6?.cohens_d} (${effectLabel(h6?.cohens_d ?? 0)} effect, n = ${topPillarScores.length})
 Result: ${sig(h6?.p, `${topPillarName} significantly outperforms average content`)}
@@ -1038,7 +1038,7 @@ ${mdTable(ciRows.filter(r => ['all_mean','posts_mean','reels_mean','reels_minus_
 ])}
 
 ${rMinusP?.includes_zero
-  ? 'The reels−posts CI includes zero: the advantage is directional but not yet confirmed by this interval. This is **consistent** with the hypothesis test results above — treat as a strong signal requiring more data before budget commitment.'
+  ? 'The reels−posts CI includes zero: the advantage is directional but not yet confirmed by this interval. This is **consistent** with the hypothesis test results above: treat as a strong signal requiring more data before budget commitment.'
   : 'The reels−posts CI **excludes zero**: the engagement advantage of reels is statistically confirmed by both the hypothesis tests and the bootstrap interval.'}
 
 ### Pillar Bootstrap CIs (all content)
@@ -1048,7 +1048,7 @@ ${mdTable(ciRows.filter(r => r.label.startsWith('pillar_')).map(r => ({ ...r, la
   { label: 'Mean', key: 'estimate' }, { label: 'Lower', key: 'lower' }, { label: 'Upper', key: 'upper' }, { label: 'CI Width', key: 'width' },
 ])}
 
-CIs on pillars with n ≤ 5 are pinned or very wide — do not make investment decisions based on those until sample sizes increase.
+CIs on pillars with n ≤ 5 are pinned or very wide: do not make investment decisions based on those until sample sizes increase.
 
 ---
 
@@ -1057,7 +1057,7 @@ CIs on pillars with n ≤ 5 are pinned or very wide — do not make investment d
 All MCs use owned-content pillar distributions. Seeds are fixed for reproducibility.
 MC1 and MC5 share identical strategy definitions.
 
-### MC1 — Content Strategy Comparison (12 weeks, 10,000 simulations)
+### MC1: Content Strategy Comparison (12 weeks, 10,000 simulations)
 
 ${mdTable(stratRows, [
   { label: 'Strategy',     key: 'strategy'        },
@@ -1073,7 +1073,7 @@ ${mdTable(stratRows, [
 The wide P5–P95 range reflects genuine empirical uncertainty from small historical sample sizes.
 Treat bands as directional, not as precise delivery guarantees.
 
-### MC2 — Engagement Forecast (30/60/90 days, 10,000 simulations)
+### MC2: Engagement Forecast (30/60/90 days, 10,000 simulations)
 
 ${mdTable(forecastRows, [
   { label: 'Horizon (days)', key: 'horizon_days'   },
@@ -1085,9 +1085,9 @@ ${mdTable(forecastRows, [
   { label: 'CV',             key: 'cv'             },
 ])}
 
-CV > 0.5 at all horizons confirms a "burst" engagement pattern — a few viral posts drive the period total.
+CV > 0.5 at all horizons confirms a "burst" engagement pattern: a few viral posts drive the period total.
 
-### MC3 — Booking Conversion Pipeline (monthly, 10,000 simulations)
+### MC3: Booking Conversion Pipeline (monthly, 10,000 simulations)
 
 Based on observed mean ${round(meanCommentsPerPost, 2)} comments per owned post and 18.9% commercial-intent comment rate (measured from classified comment data). Contact-to-booking rates are scenario-varied.
 
@@ -1104,11 +1104,11 @@ ${mdTable(conversionRows, [
   { label: 'P(≥10 bookings) %',  key: 'prob_ge10_bookings_pct' },
 ])}
 
-The key insight from MC3 is that current comment volume is the binding constraint — not conversion rates.
+The key insight from MC3 is that current comment volume is the binding constraint, not conversion rates.
 Increasing posting frequency or engagement (MC1) raises the top of the funnel and directly improves all scenarios.
 Faster replies to commercial comments is the operationally cheapest lever.
 
-### MC4 — Top-20 Pillar Mix Allocations (8 weeks, 5 posts/week budget, owned content only)
+### MC4: Top-20 Pillar Mix Allocations (8 weeks, 5 posts/week budget, owned content only)
 
 ${mdTable(mixRows.slice(0, 10), [
   { label: 'Allocation',       key: 'mix'             },
@@ -1124,12 +1124,12 @@ The optimiser consistently allocates to ${
     .sort((a, b) => mean(b[1]) - mean(a[1]))
     .slice(0, 3)
     .map(([p]) => `**${p}**`)
-    .join(', ') || '**the highest-engagement pillars**'} — the categories with the highest mean engagement in your own data.
+    .join(', ') || '**the highest-engagement pillars**'}, the categories with the highest mean engagement in your own data.
 Choose mixes with CV < 0.25 (lower downside risk) unless high mean justifies volatility.
 
-### MC5 — Risk Analysis: P(Achieving 12-Week Targets)
+### MC5: Risk Analysis of Achieving 12-Week Targets
 
-*Uses same strategy definitions as MC1 — expected means should match within Monte Carlo noise.*
+*Uses same strategy definitions as MC1; expected means should match within Monte Carlo noise.*
 
 ${mdTable(riskRows.filter(r => [5000, 10000, 15000, 20000].includes(r.target_12wk_engagement)), [
   { label: 'Strategy',   key: 'strategy'               },
@@ -1151,13 +1151,13 @@ ${mdTable(riskRows.filter(r => [5000, 10000, 15000, 20000].includes(r.target_12w
 
 4. **Caption length and hashtag count have negligible effect** (r < 0.13 both, ${h4?.significant || h5?.significant ? 'one reaches significance but effect size is small' : 'neither significant'}). Direct copy effort toward a single clear CTA and occasion cue, not word count or tag volume.
 
-5. **Reply speed is the booking pipeline bottleneck.** MC3 shows the commercial-intent comment volume (≈${round(meanCommentsPerPost * (owned.length / 4) * 0.189, 0)} per month estimated) is already low. The move from pessimistic to central contact rate is purely an operational change — SLA on commercial comments, pinned booking prompt, WhatsApp link in bio.
+5. **Reply speed is the booking pipeline bottleneck.** MC3 shows the commercial-intent comment volume (≈${round(meanCommentsPerPost * (owned.length / 4) * 0.189, 0)} per month estimated) is already low. The move from pessimistic to central contact rate is purely an operational change: SLA on commercial comments, pinned booking prompt, WhatsApp link in bio.
 
 6. **Top-10 concentration risk is real** (40.4% of engagement in 10 posts). Maintaining a backlog of 3–4 pre-produced high-potential reels buffers against dry spells and narrows the P5–P95 forecast band.
 
 ---
 
-*Generated by \`src/advanced_analysis.js\` — pure Node.js, zero external dependencies, seed-reproducible.*
+*Generated by \`src/advanced_analysis.js\`, pure Node.js, zero external dependencies, seed-reproducible.*
 `;
 
   writeText('reports/advanced_analysis_report.md', report);

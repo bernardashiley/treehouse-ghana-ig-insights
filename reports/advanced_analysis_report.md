@@ -1,4 +1,4 @@
-# Treehouse Ghana — Advanced Statistical & Predictive Analysis
+# Treehouse Ghana: Advanced Statistical & Predictive Analysis
 
 *Date: 2026-05-31 · Seed: 20260530 · Simulations: 10,000 per test · n = 150 unique posts/reels (69 duplicate shortcodes removed before analysis)*
 
@@ -8,7 +8,7 @@
 
 | Issue | Finding | Action taken |
 |---|---|---|
-| Duplicate shortcodes | 69 records appeared in both the posts and reels Apify scrapes | Deduplicated before all analyses — kept higher-engagement copy |
+| Duplicate shortcodes | 69 records appeared in both the posts and reels Apify scrapes | Deduplicated before all analyses; kept higher-engagement copy |
 | Negative engagement scores | Apify artefact: some posts reported −1 likes | Clamped to 0; not dropped (preserves low-engagement baseline) |
 | Small pillar samples | promotions/offers n=2, price/value n=2, reservations n=2 | Excluded from owned pillar MC (n<3 threshold); CIs pinned to estimate |
 | Third-party posts in pillar distributions | Mentions from external accounts inflate some pillars | MC strategy simulations use owned-only distributions |
@@ -62,47 +62,47 @@ The high coefficient of variation (CV ≈ 2) confirms performance is driven by i
 
 ## 2. Hypothesis Tests (α = 0.05; Bonferroni α = 0.0083 for 6 tests)
 
-### H1 — Reels vs Posts Engagement
+### H1: Reels vs Posts Engagement
 
 **Welch t-test** (parametric):
 t = 1.5429, df = 17, p = 0.1355, Cohen's d = 0.453 (small effect)
-Result: **not significant** (p = 0.1355) — insufficient evidence to reject H₀
+Result: **not significant** (p = 0.1355): insufficient evidence to reject H₀
 
-**Mann-Whitney U** (non-parametric — preferred given high skewness):
+**Mann-Whitney U** (non-parametric, preferred given high skewness):
 U = 759, z = -1.9056, p = 0.0567
-Result: **not significant** (p = 0.0567) — insufficient evidence to reject H₀
+Result: **not significant** (p = 0.0567): insufficient evidence to reject H₀
 
-Neither test reaches significance. The bootstrap CI for the difference includes zero — the reels advantage is directional but not statistically established at this sample size. Continue tracking.
+Neither test reaches significance. The bootstrap CI for the difference includes zero. The reels advantage is directional but not statistically established at this sample size. Continue tracking.
 
-### H2 — Day-of-Week Effect (Kruskal-Wallis)
+### H2: Day-of-Week Effect (Kruskal-Wallis)
 
 H = 17.5941, df = 6, p = 0.0073
-Result: **significant** (p = 0.0073) — posting day has a statistically real effect on engagement
+Result: **significant** (p = 0.0073): posting day has a statistically real effect on engagement
 
 Monday and Tuesday show the highest mean engagement scores. Prioritise early-week slots for high-quality posts.
 
-### H3 — Owned vs Third-Party Engagement
+### H3: Owned vs Third-Party Engagement
 
 t = -0.6474, p = 0.5178, Cohen's d = -0.109
-Result: **not significant** (p = 0.5178) — insufficient evidence to reject H₀
+Result: **not significant** (p = 0.5178): insufficient evidence to reject H₀
 Mean owned: 118.9, mean third-party: 146.3.
 
-### H4 — Caption Length vs Engagement
+### H4: Caption Length vs Engagement
 
 Pearson r = 0.1021 (95% CI: -0.0591 to 0.2581), p = 0.213
-Result: **not significant** (p = 0.213) — insufficient evidence to reject H₀
+Result: **not significant** (p = 0.213): insufficient evidence to reject H₀
 Caption length explains a negligible share of variance. Copy effort should be directed at clarity and CTA, not character count.
 
-### H5 — Hashtag Count vs Engagement
+### H5: Hashtag Count vs Engagement
 
 Pearson r = 0.1114 (95% CI: -0.0498 to 0.2669), p = 0.1741
-Result: **not significant** (p = 0.1741) — insufficient evidence to reject H₀
+Result: **not significant** (p = 0.1741): insufficient evidence to reject H₀
 The correlation is weak. Do not over-index on hashtag volume.
 
-### H6 — Top Pillar (events/live music/DJ) vs Overall Baseline
+### H6: Top Pillar (events/live music/DJ) vs Overall Baseline
 
 t = 1.089, p = 0.3076, Cohen's d = 0.604 (medium effect, n = 5)
-Result: **not significant** (p = 0.3076) — insufficient evidence to reject H₀
+Result: **not significant** (p = 0.3076): insufficient evidence to reject H₀
 Mean events/live music/DJ: 358.17 vs baseline: 126.75 (difference 231.41). With n = 5, the test is underpowered; the effect is directional, not conclusive.
 
 ---
@@ -118,7 +118,7 @@ Mean events/live music/DJ: 358.17 vs baseline: 126.75 (difference 231.41). With 
 | third_party_mean | 146.3 | 89.54 | 213.13 | 123.59 | false |
 | reels_minus_posts | 136.1 | -11.43 | 314.29 | 325.72 | true |
 
-The reels−posts CI includes zero: the advantage is directional but not yet confirmed by this interval. This is **consistent** with the hypothesis test results above — treat as a strong signal requiring more data before budget commitment.
+The reels−posts CI includes zero: the advantage is directional but not yet confirmed by this interval. This is **consistent** with the hypothesis test results above: treat as a strong signal requiring more data before budget commitment.
 
 ### Pillar Bootstrap CIs (all content)
 
@@ -136,7 +136,7 @@ The reels−posts CI includes zero: the advantage is directional but not yet con
 | date night romance mean | 7 | 90.18 | 37.71 | 156.96 | 119.25 |
 | reservations bookings mean | 1 | 0 | 0 | 0 | 0 |
 
-CIs on pillars with n ≤ 5 are pinned or very wide — do not make investment decisions based on those until sample sizes increase.
+CIs on pillars with n ≤ 5 are pinned or very wide: do not make investment decisions based on those until sample sizes increase.
 
 ---
 
@@ -145,7 +145,7 @@ CIs on pillars with n ≤ 5 are pinned or very wide — do not make investment d
 All MCs use owned-content pillar distributions. Seeds are fixed for reproducibility.
 MC1 and MC5 share identical strategy definitions.
 
-### MC1 — Content Strategy Comparison (12 weeks, 10,000 simulations)
+### MC1: Content Strategy Comparison (12 weeks, 10,000 simulations)
 
 | Strategy | Total Posts | Mean | Median | P5 (worst 5%) | P95 (best 5%) | CV | Uplift vs Current % |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -156,7 +156,7 @@ MC1 and MC5 share identical strategy definitions.
 The wide P5–P95 range reflects genuine empirical uncertainty from small historical sample sizes.
 Treat bands as directional, not as precise delivery guarantees.
 
-### MC2 — Engagement Forecast (30/60/90 days, 10,000 simulations)
+### MC2: Engagement Forecast (30/60/90 days, 10,000 simulations)
 
 | Horizon (days) | Expected Posts | Forecast Mean | P10 (low) | P90 (high) | Peak P90 | CV |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -164,9 +164,9 @@ Treat bands as directional, not as precise delivery guarantees.
 | 60 | 33 | 4165 | 2201 | 6368 | 1828 | 0.394 |
 | 90 | 50 | 6257 | 3772 | 8936 | 1828 | 0.327 |
 
-CV > 0.5 at all horizons confirms a "burst" engagement pattern — a few viral posts drive the period total.
+CV > 0.5 at all horizons confirms a "burst" engagement pattern: a few viral posts drive the period total.
 
-### MC3 — Booking Conversion Pipeline (monthly, 10,000 simulations)
+### MC3: Booking Conversion Pipeline (monthly, 10,000 simulations)
 
 Based on observed mean 0.38 comments per owned post and 18.9% commercial-intent comment rate (measured from classified comment data). Contact-to-booking rates are scenario-varied.
 
@@ -176,11 +176,11 @@ Based on observed mean 0.38 comments per owned post and 18.9% commercial-intent 
 | central | 6 | 12 | 30 | 0 | 0 | 0 | 100 | 0 | 0 |
 | optimistic | 6 | 20 | 45 | 0 | 0 | 0 | 100 | 0 | 0 |
 
-The key insight from MC3 is that current comment volume is the binding constraint — not conversion rates.
+The key insight from MC3 is that current comment volume is the binding constraint, not conversion rates.
 Increasing posting frequency or engagement (MC1) raises the top of the funnel and directly improves all scenarios.
 Faster replies to commercial comments is the operationally cheapest lever.
 
-### MC4 — Top-20 Pillar Mix Allocations (8 weeks, 5 posts/week budget, owned content only)
+### MC4: Top-20 Pillar Mix Allocations (8 weeks, 5 posts/week budget, owned content only)
 
 | Allocation | Mean Engagement | P25 | P75 | CV |
 | --- | --- | --- | --- | --- |
@@ -195,12 +195,12 @@ Faster replies to commercial comments is the operationally cheapest lever.
 | events/live music/DJ:1.45 \| cocktails/drinks:1.48 \| dinner/nightlife:0.39 \| food:0.14 \| date night/romance | 9340 | 7936 | 10691 | 0.227 |
 | events/live music/DJ:1.5 \| cocktails/drinks:0.84 \| dinner/nightlife:1.55 \| food:0.44 \| date night/romance: | 9322 | 7679 | 10928 | 0.247 |
 
-The optimiser consistently allocates to **events/live music/DJ**, **cocktails/drinks**, **ambience/decor/vibe** — the categories with the highest mean engagement in your own data.
+The optimiser consistently allocates to **events/live music/DJ**, **cocktails/drinks**, **ambience/decor/vibe**, the categories with the highest mean engagement in your own data.
 Choose mixes with CV < 0.25 (lower downside risk) unless high mean justifies volatility.
 
-### MC5 — Risk Analysis: P(Achieving 12-Week Targets)
+### MC5: Risk Analysis of Achieving 12-Week Targets
 
-*Uses same strategy definitions as MC1 — expected means should match within Monte Carlo noise.*
+*Uses same strategy definitions as MC1; expected means should match within Monte Carlo noise.*
 
 | Strategy | Target | P(achieve) % | Expected Mean | Shortfall P50 |
 | --- | --- | --- | --- | --- |
@@ -229,10 +229,10 @@ Choose mixes with CV < 0.25 (lower downside risk) unless high mean justifies vol
 
 4. **Caption length and hashtag count have negligible effect** (r < 0.13 both, neither significant). Direct copy effort toward a single clear CTA and occasion cue, not word count or tag volume.
 
-5. **Reply speed is the booking pipeline bottleneck.** MC3 shows the commercial-intent comment volume (≈2 per month estimated) is already low. The move from pessimistic to central contact rate is purely an operational change — SLA on commercial comments, pinned booking prompt, WhatsApp link in bio.
+5. **Reply speed is the booking pipeline bottleneck.** MC3 shows the commercial-intent comment volume (≈2 per month estimated) is already low. The move from pessimistic to central contact rate is purely an operational change: SLA on commercial comments, pinned booking prompt, WhatsApp link in bio.
 
 6. **Top-10 concentration risk is real** (40.4% of engagement in 10 posts). Maintaining a backlog of 3–4 pre-produced high-potential reels buffers against dry spells and narrows the P5–P95 forecast band.
 
 ---
 
-*Generated by `src/advanced_analysis.js` — pure Node.js, zero external dependencies, seed-reproducible.*
+*Generated by `src/advanced_analysis.js`, pure Node.js, zero external dependencies, seed-reproducible.*

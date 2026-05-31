@@ -1,0 +1,105 @@
+{
+  "seed": 20260530,
+  "n_docs": 136,
+  "vocab_size": 207,
+  "chosen_k": 8,
+  "silhouette": 0.082,
+  "k_trials": [
+    {
+      "k": 3,
+      "silhouette": 0.045,
+      "inertia": 118.08
+    },
+    {
+      "k": 4,
+      "silhouette": 0.051,
+      "inertia": 114.14
+    },
+    {
+      "k": 5,
+      "silhouette": 0.047,
+      "inertia": 112.74
+    },
+    {
+      "k": 6,
+      "silhouette": 0.06,
+      "inertia": 107.43
+    },
+    {
+      "k": 7,
+      "silhouette": 0.061,
+      "inertia": 106.79
+    },
+    {
+      "k": 8,
+      "silhouette": 0.082,
+      "inertia": 101.52
+    }
+  ],
+  "clusters": [
+    {
+      "cluster": 5,
+      "size": 7,
+      "share_pct": 5.1,
+      "avg_engagement": 246,
+      "top_terms": "livemusic, liveband, musiclover, tuesday, live, every, music, reels",
+      "example_url": "https://www.instagram.com/p/Ct9Niq7gYWk/"
+    },
+    {
+      "cluster": 2,
+      "size": 40,
+      "share_pct": 29.4,
+      "avg_engagement": 189,
+      "top_terms": "soulmusic, rnb, soulfridays, goodvibesonly, soul, friday, soulfriday, dinner",
+      "example_url": "https://www.instagram.com/p/DN7_M4B2HMT/"
+    },
+    {
+      "cluster": 8,
+      "size": 3,
+      "share_pct": 2.2,
+      "avg_engagement": 168,
+      "top_terms": "jazz, bluejackets_cover, tunes, 7pm, thursday, restaurant, delicious, join",
+      "example_url": "https://www.instagram.com/p/C_dLWQECoCe/"
+    },
+    {
+      "cluster": 7,
+      "size": 20,
+      "share_pct": 14.7,
+      "avg_engagement": 143,
+      "top_terms": "treehousegh, accra, ghana, fashion, entertainment, tickets, december, weekgh",
+      "example_url": "https://www.instagram.com/p/DQUsBoXEVxU/"
+    },
+    {
+      "cluster": 3,
+      "size": 17,
+      "share_pct": 12.5,
+      "avg_engagement": 127,
+      "top_terms": "afroson1cx, cavemen, thecavemen, malaikurd, afx2026, mx24gh, mxbreaks, accra2026",
+      "example_url": "https://www.instagram.com/p/DTYWwIHjCIw/"
+    },
+    {
+      "cluster": 1,
+      "size": 27,
+      "share_pct": 19.9,
+      "avg_engagement": 87,
+      "top_terms": "goodfood, lunch, dinner, treehouserestaurant, foodie, foodinsta, food, call",
+      "example_url": "https://www.instagram.com/p/DOGh0AXjO7k/"
+    },
+    {
+      "cluster": 4,
+      "size": 7,
+      "share_pct": 5.1,
+      "avg_engagement": 83,
+      "top_terms": "drinks, cocktails, treehouserestaurant, friends, friday, together, valentine, sweet",
+      "example_url": "https://www.instagram.com/p/DF-h8-Ti51M/"
+    },
+    {
+      "cluster": 6,
+      "size": 15,
+      "share_pct": 11,
+      "avg_engagement": 51,
+      "top_terms": "explore, reels, goodtimes, foodlover, dinner, treehouserestaurant, food, perfection",
+      "example_url": "https://www.instagram.com/p/DJJoEtFCxh_/"
+    }
+  ]
+}

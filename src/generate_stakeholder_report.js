@@ -4,8 +4,8 @@
  * Produces plain-English reports with SVG charts for Treehouse Ghana.
  *
  * Outputs
- *   reports/stakeholder_report.md       — renders directly on GitHub
- *   reports/stakeholder_report.tex      — compile with pdflatex or tectonic
+ *   reports/stakeholder_report.md       (renders directly on GitHub)
+ *   reports/stakeholder_report.tex      (compile with pdflatex or tectonic)
  *   reports/figures/sr_pillars.svg
  *   reports/figures/sr_days.svg
  *   reports/figures/sr_type_compare.svg
@@ -245,7 +245,7 @@ function chartTypeCompare(eda) {
     bars += `<line x1="${bx - 5}" y1="${by}" x2="${bx + GW - 30}" y2="${by}" stroke="${C.grey3}" stroke-width="1.5"/>` + '\n';
   });
 
-  // Comparison label — direction-aware so it never shows a nonsensical "+-85%".
+  // Comparison label, direction-aware so it never shows a nonsensical "+-85%".
   const winner = metrics[0].reel >= metrics[0].post ? 'Short Videos' : 'Feed Posts';
   const hi = Math.max(metrics[0].reel, metrics[0].post), lo = Math.min(metrics[0].reel, metrics[0].post);
   const ratio = lo > 0 ? Math.round((hi / lo - 1) * 100) : 0;
@@ -326,9 +326,9 @@ ${svgText(30, 30, 'What Your Audience is Saying', { size: 20, weight: 'bold', fi
 ${svgText(30, 52, `Classified from ${totalComments} comments on your top-performing posts`, { size: 13, fill: C.grey2 })}
 ${bars}
 ${svgRect(30, H - MB + 18, 14, 14, C.amber)}
-${svgText(50, H - MB + 30, 'Commercial opportunities — these comments indicate intent to visit, book, or learn more', { size: 12, fill: C.amber })}
+${svgText(50, H - MB + 30, 'Commercial opportunities: these comments indicate intent to visit, book, or learn more', { size: 12, fill: C.amber })}
 ${svgRect(30, H - MB + 40, 14, 14, C.green4)}
-${svgText(50, H - MB + 52, 'Positive sentiment — social proof you can reshare', { size: 12, fill: C.grey2 })}`;
+${svgText(50, H - MB + 52, 'Positive sentiment: social proof you can reshare', { size: 12, fill: C.grey2 })}`;
 
   return svgWrap(W, H, content, 'Comment intent breakdown');
 }
@@ -484,25 +484,27 @@ function makeMarkdown(data) {
   const ownedN   = num(edaGet('owned_account').n);
   const dedupN   = num(edaGet('all_content_deduplicated').n);
   const smallSample = ownedN > 0 && ownedN < 40;
-  const tooFewReels = reelN < 5;
+  // Below ~30 reels the posts-vs-reels comparison is underpowered on skewed data;
+  // treat short video as an under-used format to test rather than claiming a winner.
+  const tooFewReels = reelN < 30;
   const reelsWin    = reelMean > postMean;
   const topLbl  = PILLAR_LABELS[topPillar.pillar] || topPillar.pillar;
   const top3Lbl = pillars.slice(0, 3).map(r => PILLAR_LABELS[r.pillar] || r.pillar).join(', ');
   const formatRow = tooFewReels
-    ? `Only ${reelN} short videos posted — this account is **posts-driven**; feed posts carry the engagement`
+    ? `Only ${reelN} short videos posted: this account is **posts-driven**; feed posts carry the engagement`
     : reelsWin
-      ? `Short videos attract more engagement on average — worth expanding`
+      ? `Short videos attract more engagement on average, worth expanding`
       : `**Feed posts outperform short videos** for this account`;
   const plainEnglish = tooFewReels
-    ? `${prof.full_name ? '' : ''}This account is small but engaged. Its strongest content is **${topLbl.toLowerCase()}**, and almost all engagement comes from **feed posts** (carousels and images) — it has posted very few short videos. The biggest opportunities are to keep producing the ${top3Lbl} content that already works, and to make every post end with a clear next step (book, call, or visit).`
+    ? `${prof.full_name ? '' : ''}This account is small but engaged. Its strongest content is **${topLbl.toLowerCase()}**, and almost all engagement comes from **feed posts** (carousels and images); it has posted very few short videos. The biggest opportunities are to keep producing the ${top3Lbl} content that already works, and to make every post end with a clear next step (book, call, or visit).`
     : `This account has a healthy, active following. Its strongest content is **${topLbl.toLowerCase()}**. The biggest opportunity is posting more ${top3Lbl} content with clear calls to action.`;
 
-  return `# Treehouse Ghana — Instagram Performance Report
+  return `# Treehouse Ghana: Instagram Performance Report
 *Prepared ${new Date().toISOString().slice(0,10)} · Based on ${Number(posts).toLocaleString()} posts, ${reelsCt} reels, ${mentCt} external mentions and ${commCt} audience comments*
 
 ---
 ${smallSample ? `
-> ⚠️ **How to read this report.** This is a **descriptive content audit** of your **${ownedN} posts** (${dedupN} including posts that feature or tag you), not a statistical forecast. It reliably describes what you have posted, what works, and what your audience says — and it points to opportunities worth testing. With this many posts, treat the figures as **well-evidenced descriptions and sensible hypotheses**, not guarantees. The picture gets statistically firm once you pass ~100 posts.
+> ⚠️ **How to read this report.** This is a **descriptive content audit** of your **${ownedN} posts** (${dedupN} including posts that feature or tag you), not a statistical forecast. It reliably describes what you have posted, what works, and what your audience says, and it points to opportunities worth testing. With this many posts, treat the figures as **well-evidenced descriptions and sensible hypotheses**, not guarantees. The picture gets statistically firm once you pass ~100 posts.
 
 ---
 ` : ''}
@@ -533,10 +535,10 @@ ${(() => {
   return ranked.slice(0,5).map((r,i) => {
     const sc = round(num(r.avg_engagement_score),0), n = num(r.posts_count);
     const vsBase = base ? Math.round((num(r.avg_engagement_score)/base - 1)*100) : 0;
-    const read = n < 10 ? `only ${n} posts so far — a promising signal worth testing with more`
-      : vsBase >= 0 ? `about ${vsBase}% above your typical post — a proven strength to do more of`
-      : `below your average — lower priority unless reframed`;
-    return `${['🥇','🥈','🥉','4️⃣','5️⃣'][i]||'▪'} **${PILLAR_LABELS[r.pillar]||r.pillar}** — avg score **${sc}** (${n} posts): ${read}.`;
+    const read = n < 10 ? `only ${n} posts so far, a promising signal worth testing with more`
+      : vsBase >= 0 ? `about ${vsBase}% above your typical post, a proven strength to do more of`
+      : `below your average, lower priority unless reframed`;
+    return `${['🥇','🥈','🥉','4️⃣','5️⃣'][i]||'▪'} **${PILLAR_LABELS[r.pillar]||r.pillar}**, avg score **${sc}** (${n} posts): ${read}.`;
   }).join('\n');
 })()}
 
@@ -558,10 +560,10 @@ These posts and videos are your proven best-sellers. Study what made them work:
 ![Short videos vs feed posts](figures/sr_type_compare.svg)
 
 ${tooFewReels
-  ? `**Why this matters:** This account is **posts-driven**. You have posted only ${reelN} short videos in the period analysed, and your feed posts (carousels and images of food and events) carry almost all of the engagement. Short videos (Reels) do something posts cannot — Instagram shows them to people who don't yet follow you — so the opportunity is to **test** a few short videos as a way to reach new people, not to assume they will beat your already-strong posts. Keep doing what works, and treat video as an experiment to grow reach, measured in your Instagram Insights.`
+  ? `**Why this matters:** This account is **posts-driven**. You have posted only ${reelN} short videos in the period analysed, and your feed posts (carousels and images of food and events) carry almost all of the engagement. Short videos (Reels) do something posts cannot: Instagram shows them to people who don't yet follow you, so the opportunity is to **test** a few short videos as a way to reach new people, not to assume they will beat your already-strong posts. Keep doing what works, and treat video as an experiment to grow reach, measured in your Instagram Insights.`
   : reelsWin
     ? `**Why this matters:** Short videos (Reels) reach people beyond your existing followers through Instagram's discovery feed, and here they attract more engagement on average than feed posts. Expanding short-video output is a strong opportunity.`
-    : `**Why this matters:** For this account, **feed posts currently outperform short videos**. Keep investing in your strong post formats (food and event carousels). Reels are still worth testing because they reach non-followers, but they are not yet a proven strength here — measure them in your Instagram Insights before shifting effort.`}
+    : `**Why this matters:** For this account, **feed posts currently outperform short videos**. Keep investing in your strong post formats (food and event carousels). Reels are still worth testing because they reach non-followers, but they are not yet a proven strength here. Measure them in your Instagram Insights before shifting effort.`}
 
 > **Practical tip:** You don't need expensive equipment. A smartphone held still for 15–30 seconds of a dish being plated or an event being set up is enough to test the format.
 
@@ -576,9 +578,9 @@ ${tooFewReels
 ${[...timing.filter(r => r.period_type === 'day_of_week')]
   .sort((a, b) => num(b.avg_engagement_score) - num(a.avg_engagement_score))
   .map((r, i) => {
-    const rec = i === 0 ? '✅ Best day — post your most important content here'
-              : i === 1 ? '✅ Second-best — strong engagement'
-              : i <= 3   ? '🟡 Good — solid performance'
+    const rec = i === 0 ? '✅ Best day: post your most important content here'
+              : i === 1 ? '✅ Second-best: strong engagement'
+              : i <= 3   ? '🟡 Good: solid performance'
               : '⚪ Lower priority';
     return `| **${r.period}** | ${round(num(r.avg_engagement_score),0)} | ${rec} |`;
   }).join('\n')}
@@ -593,7 +595,7 @@ The comments on your top posts reveal exactly what people want to know. We analy
 
 ### Commercial opportunities hiding in your comments
 
-Most comments are light praise — lovely, but not where business comes from. The value is in the smaller, specific categories below: people effectively raising their hand. These are your actual comment types, ranked by how often they appear, with the move each one calls for:
+Most comments are light praise: lovely, but not where business comes from. The value is in the smaller, specific categories below: people effectively raising their hand. These are your actual comment types, ranked by how often they appear, with the move each one calls for:
 
 | Comment type (and how often) | What to do about it |
 |---|---|
@@ -618,8 +620,8 @@ We simulated three content approaches by drawing on your past performance. Each 
 | **Heavier video** (more short-form) | ~${Number(heavy.mean||0).toLocaleString()} | +${heavy.uplift_vs_current||0}% |
 
 > ${smallSample
-  ? `**Treat these as illustrative, not promises.** They are built from only ${ownedN} posts, so the percentages mostly reflect the arithmetic of posting more of what has done well, not a guaranteed outcome. Use them for direction — *do more of what works* — not as targets. The "heavier video" path in particular is unproven for you, since you have posted very few videos so far.`
-  : `These numbers are estimates based on past performance — your results will vary with creative quality, timing and trends.`}
+  ? `**Treat these as illustrative, not promises.** They are built from only ${ownedN} posts, so the percentages mostly reflect the arithmetic of posting more of what has done well, not a guaranteed outcome. Use them for direction (*do more of what works*), not as targets. The "heavier video" path in particular is unproven for you, since you have posted very few videos so far.`
+  : `These numbers are estimates based on past performance, and your results will vary with creative quality, timing and trends.`}
 
 ---
 
@@ -635,24 +637,24 @@ ${(() => {
   const optName = (strategies.find(r=>r.strategy==='optimised')||{});
   const optUplift = optName.uplift_vs_current || 0;
   return `### This week (quick wins)
-1. **Reply to every high-intent comment within 30 minutes during posting hours.**${topIntent ? ` Your most common commercial signal is *${topIntent.intent}* (${topIntent.percentage}% of comments) — those are warm leads, and a fast reply is what converts them.` : ' These are warm leads; a fast reply is what converts them.'}
+1. **Reply to every high-intent comment within 30 minutes during posting hours.**${topIntent ? ` Your most common commercial signal is *${topIntent.intent}* (${topIntent.percentage}% of comments). Those are warm leads, and a fast reply is what converts them.` : ' These are warm leads; a fast reply is what converts them.'}
 2. **Make the one next step you most want frictionless in your bio.** Whatever action your top comments are asking for, put a single tap to it (link, form, or saved reply) at the top of your profile so nobody has to hunt for it.
 3. **Pin a Highlight that answers your most-asked question.** Build it around the comment type above so the answer is always one tap away instead of being re-typed in DMs.
 
 ### This month
 4. **Publish more of what already works.** Your strongest category is **${topPillarName}**. Schedule more of it deliberately rather than leaving your best content to chance.
-5. **Post on your strongest day.** Engagement peaks around **${bestDay}** — anchor your most important posts there.
+5. **Post on your strongest day.** Engagement peaks around **${bestDay}**, so anchor your most important posts there.
 6. **Reshare your best social proof.** Take two of your strongest mentions or comments, reshare them, and end the caption with one explicit next step.
 
 ### This quarter
 7. **Rebalance your calendar toward the "Improved mix" above** (the simulated path worth roughly +${optUplift}% over 12 weeks): more of your top categories, fewer low-engagement generic posts.
 8. **Set and assign a comment response-time target** (30 minutes in working hours) so high-intent comments are never missed.
-9. **Track one metric monthly** — average engagement score per content type — and ask us to re-run this analysis in 90 days to measure progress against this baseline.`;
+9. **Track one metric monthly** (average engagement score per content type), and ask us to re-run this analysis in 90 days to measure progress against this baseline.`;
 })()}
 
 ---
 
-## Glossary — plain-English definitions
+## Glossary: plain-English definitions
 
 A few terms appear above. Here is what each one means, in everyday language:
 
@@ -662,19 +664,19 @@ A few terms appear above. Here is what each one means, in everyday language:
 | **Reel / short video** | Instagram's short vertical video format. Reels are pushed to people who don't follow you yet, so they are the main way to reach new audiences. |
 | **Feed post / carousel** | A standard image or multi-image ("carousel") post that appears on your grid. Mostly seen by people who already follow you. |
 | **Content category (pillar)** | A theme we grouped your posts into (for example, behind-the-scenes, projects, events) so we can see which themes earn the most engagement. |
-| **Comment intent** | What a commenter actually wants — praise, a question, a booking/collaboration request — rather than just the words. High-intent comments are warm leads. |
+| **Comment intent** | What a commenter actually wants (praise, a question, a booking/collaboration request) rather than just the words. High-intent comments are warm leads. |
 | **Warm lead** | Someone who has signalled real interest (a question or request) and is far more likely to convert into a customer or collaborator than a passive viewer. |
 | **Simulation (Monte Carlo)** | We re-played your likely results thousands of times using your own past performance, to show a *range* of outcomes rather than a single guess. |
-| **Likely range** | The band most outcomes fell into across those simulations — a realistic best-to-worst spread, not a promise. |
+| **Likely range** | The band most outcomes fell into across those simulations, a realistic best-to-worst spread, not a promise. |
 | **Baseline** | Your current performance, used as the reference point everything else is compared against. |
-| **CTA (call to action)** | The one specific next step you ask the audience to take in a caption — "book here", "watch now", "send your reel". |
+| **CTA (call to action)** | The one specific next step you ask the audience to take in a caption: "book here", "watch now", "send your reel". |
 | **Highlight** | The saved, pinned story circles under your bio. They stay permanently, so they are ideal for answers people ask for repeatedly. |
 
 ---
 
 ## About This Report
 
-This report is based entirely on **public** Instagram data — posts, reels, comments and mentions visible to anyone. It does not use your private Instagram analytics (reach, impressions, saves, shares, profile visits). For a complete picture, combine these findings with your native Instagram Insights.
+This report is based entirely on **public** Instagram data: posts, reels, comments and mentions visible to anyone. It does not use your private Instagram analytics (reach, impressions, saves, shares, profile visits). For a complete picture, combine these findings with your native Instagram Insights.
 
 *Analysis by: data pipeline in this repository. Charts and numbers update automatically when the analysis is re-run. Last generated: ${new Date().toISOString().slice(0,10)}.*
 `;
@@ -698,7 +700,8 @@ function makeLatex(data) {
   const reelN     = num(eda.find(r => r.label === 'reels')?.n) || (prof.scraped_reels || 0);
   const ownedN    = num(eda.find(r => r.label === 'owned_account')?.n) || 0;
   const smallSample = ownedN > 0 && ownedN < 40;
-  const tooFewReels = reelN < 5;
+  // Below ~30 reels the comparison is underpowered; frame video as a test, not a winner.
+  const tooFewReels = reelN < 30;
   const tx = s => String(s).replace(/[\\{}$&#_%]/g, c => '\\' + c)
     .replace(/\^/g, '\\textasciicircum{}').replace(/~/g, '\\textasciitilde{}')
     .replace(/>/g, '\\textgreater{}').replace(/</g, '\\textless{}');
@@ -797,7 +800,7 @@ function makeLatex(data) {
 
 \\pagestyle{fancy}
 \\fancyhf{}
-\\rhead{\\small\\color{tregrey}Treehouse Ghana — Instagram Report}
+\\rhead{\\small\\color{tregrey}Treehouse Ghana: Instagram Report}
 \\lhead{\\small\\color{tregrey}\\textbf{Confidential}}
 \\cfoot{\\small\\color{tregrey}\\thepage}
 
@@ -840,7 +843,7 @@ ${smallSample ? `\\textbf{It is a descriptive content audit, not a statistical f
   \\item ${formatFinding}
   \\item \\textbf{${tx(topDay.period||'')} is the best day to post}, with the highest average engagement.
   \\item ${topCommercialTxt}
-  \\item \\textbf{Posts that feature the account in collaborations and mentions draw strong engagement} — reshare them and lean into that social proof.
+  \\item \\textbf{Posts that feature the account in collaborations and mentions draw strong engagement}: reshare them and lean into that social proof.
 \\end{enumerate}
 
 % ─── CONTENT PERFORMANCE ──────────────────────────────────────────────────────
@@ -936,7 +939,7 @@ ${dayRows}
 \\section*{\\color{tregreen}What Your Audience is Saying}
 
 We classified \\textbf{${tx(String(data.commCt||106))} comments} from your top-performing posts.
-Most are light praise, but the smaller, specific categories below are where business hides — every one is someone effectively raising their hand.
+Most are light praise, but the smaller, specific categories below are where business hides: every one is someone effectively raising their hand.
 
 \\begin{center}
 \\begin{tabular}{lrr}
@@ -949,7 +952,7 @@ ${intentRows}
 \\end{center}
 
 \\textbf{Actionable:} ${topCommercial
-  ? `Reply to every \\textquotedblleft{}${tx(topCommercial.intent)}\\textquotedblright{} comment within 30 minutes during posting hours — that is your highest-intent signal.`
+  ? `Reply to every \\textquotedblleft{}${tx(topCommercial.intent)}\\textquotedblright{} comment within 30 minutes during posting hours: that is your highest-intent signal.`
   : `Reply to every high-intent comment within 30 minutes during posting hours.`}
 Make the single next step those comments are asking for one tap away from your bio.
 
@@ -974,7 +977,7 @@ ${stratRows}
 
 \\subsection*{This week}
 \\begin{enumerate}
-  \\item Reply to every high-intent comment within 30 minutes during posting hours${topCommercial ? ` (your most common is \\textquotedblleft{}${tx(topCommercial.intent)}\\textquotedblright{})` : ''} — these are warm leads.
+  \\item Reply to every high-intent comment within 30 minutes during posting hours${topCommercial ? ` (your most common is \\textquotedblleft{}${tx(topCommercial.intent)}\\textquotedblright{})` : ''}; these are warm leads.
   \\item Put the single next step your top comments ask for one tap away in your bio (link, form or saved reply).
   \\item Pin a Highlight that answers your most-asked question, so the answer is always one tap away.
 \\end{enumerate}
@@ -982,7 +985,7 @@ ${stratRows}
 \\subsection*{This month}
 \\begin{enumerate}
   \\setcounter{enumi}{3}
-  \\item Publish more of what already works — your strongest category is \\textbf{${tx(topPillarLatex)}}. Schedule it deliberately.
+  \\item Publish more of what already works: your strongest category is \\textbf{${tx(topPillarLatex)}}. Schedule it deliberately.
   \\item Anchor your most important posts on your strongest day (\\textbf{${tx(bestDayLatex)}}).
   \\item Reshare two of your strongest mentions or comments as social proof, each ending with one explicit next step.
 \\end{enumerate}
@@ -995,7 +998,7 @@ ${stratRows}
   \\item Re-run this analysis in 90 days to measure progress against this baseline.
 \\end{enumerate}
 
-\\section*{\\color{tregreen}Glossary — Plain-English Definitions}
+\\section*{\\color{tregreen}Glossary: Plain-English Definitions}
 
 \\begin{center}
 \\begin{tabular}{>{\\raggedright\\arraybackslash}p{3.6cm}>{\\raggedright\\arraybackslash}p{11cm}}
@@ -1003,13 +1006,13 @@ ${stratRows}
 \\textbf{Term} & \\textbf{What it means} \\\\
 \\midrule
 Engagement score & A single number combining likes, comments and video plays so posts compare fairly. Higher means more interaction. Formula: likes + (comments $\\times$ 5) + (video plays $\\div$ 100). \\\\
-Reel / short video & Instagram's short vertical video, pushed to people who do not yet follow you — the main way to reach new audiences. \\\\
+Reel / short video & Instagram's short vertical video, pushed to people who do not yet follow you, the main way to reach new audiences. \\\\
 Feed post / carousel & A standard image or multi-image post on your grid, seen mostly by existing followers. \\\\
 Content category (pillar) & A theme we grouped your posts into, so we can see which themes earn the most engagement. \\\\
-Comment intent & What a commenter actually wants — praise, a question, a booking or collaboration request — not just the words. \\\\
+Comment intent & What a commenter actually wants (praise, a question, a booking or collaboration request), not just the words. \\\\
 Warm lead & Someone who has signalled real interest and is far likelier to convert than a passive viewer. \\\\
 Simulation (Monte Carlo) & Re-playing your likely results thousands of times from your own past performance, to show a range rather than one guess. \\\\
-Likely range & The band most outcomes fell into across the simulations — a realistic spread, not a promise. \\\\
+Likely range & The band most outcomes fell into across the simulations, a realistic spread, not a promise. \\\\
 Baseline & Your current performance, used as the reference everything else is compared against. \\\\
 CTA (call to action) & The one specific next step you ask the audience to take in a caption. \\\\
 Highlight & The saved, pinned story circles under your bio; permanent, so ideal for repeated questions. \\\\
@@ -1020,7 +1023,7 @@ Highlight & The saved, pinned story circles under your bio; permanent, so ideal 
 \\section*{\\color{tregreen}How to Read This Report}
 
 All figures are based on \\textbf{public} Instagram data only.
-Private metrics — reach, impressions, saves, profile visits, link clicks — are not included
+Private metrics (reach, impressions, saves, profile visits, link clicks) are not included
 and remain visible only in your native Instagram Insights dashboard.
 The engagement score used throughout is: \\textit{likes + (comments $\\times$ 5) + (video plays $\\div$ 100)}.
 A higher score indicates a post attracted more visible audience interaction.

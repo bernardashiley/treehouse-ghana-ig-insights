@@ -144,7 +144,7 @@ function commentNextStep(intent, share = 0) {
   if (/menu|food|price|cost|value/.test(i))
     return `Product/price curiosity. Answer it proactively with a monthly menu/price carousel and a pinned FAQ, so buyers don't have to ask.${big}`;
   if (/service|complaint|issue|wait/.test(i))
-    return `Operational feedback. Route these to a person, respond fast and privately, and track resolution time — visible unanswered complaints cost trust.`;
+    return `Operational feedback. Route these to a person, respond fast and privately, and track resolution time, because visible unanswered complaints cost trust.`;
   if (/praise|hype|love|congrat|support/.test(i))
     return `Warm sentiment rather than direct intent. Reshare the best as social proof (stories/highlights) and end those captions with one explicit next step to turn affection into action.`;
   return `Mostly low-intent reactions. The opportunity is to convert warmth into action: end captions with a single, specific call to action and measure whether the next-step comments rise.`;

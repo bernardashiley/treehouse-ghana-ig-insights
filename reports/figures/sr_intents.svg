@@ -60,8 +60,8 @@
 
 <rect x="30" y="538" width="14" height="14" fill="#E07B39" rx="3"/>
 <text x="50" y="550" font-family="Arial, Helvetica, sans-serif" font-size="12"
-  font-weight="normal" fill="#E07B39" text-anchor="start">Commercial opportunities — these comments indicate intent to visit, book, or learn more</text>
+  font-weight="normal" fill="#E07B39" text-anchor="start">Commercial opportunities: these comments indicate intent to visit, book, or learn more</text>
 <rect x="30" y="560" width="14" height="14" fill="#95D5B2" rx="3"/>
 <text x="50" y="572" font-family="Arial, Helvetica, sans-serif" font-size="12"
-  font-weight="normal" fill="#6B7280" text-anchor="start">Positive sentiment — social proof you can reshare</text>
+  font-weight="normal" fill="#6B7280" text-anchor="start">Positive sentiment: social proof you can reshare</text>
 </svg>
