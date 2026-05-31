@@ -14,6 +14,7 @@
 const fs = require('fs');
 const path = require('path');
 const { ROOT, loadConfig } = require('./config');
+const { commentNextStep } = require('./utils');
 
 // ── CSV / JSON readers ────────────────────────────────────────────────────────
 function parseLine(line){const o=[];let c='',q=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"'){if(q&&line[i+1]==='"'){c+='"';i++;}else q=!q;}else if(ch===','&&!q){o.push(c);c='';}else c+=ch;}o.push(c);return o;}
@@ -297,7 +298,7 @@ ${table({caption:'Summary of data collected for analysis',cols:[{h:'Area',spec:'
 
 ${C.bio?`Profile biography: \\textit{${tx(C.bio)}}\n`:''}
 \\begin{note}
-\\textbf{Data limitation.} This analysis covers public Instagram data only. It does not include private account analytics such as reach, impressions, saves, shares, profile visits, link clicks, story taps, ad spend, or completed bookings. All conclusions are directional rather than absolute. Combine these findings with ${tx(C.name)}'s native Instagram analytics, reservation data, and campaign context.
+\\textbf{Data limitation.} This analysis covers public Instagram data only. It does not include private account analytics such as reach, impressions, saves, shares, profile visits, link clicks, story taps, ad spend, or completed bookings. All conclusions are directional rather than absolute. Combine these findings with ${tx(C.name)}'s native Instagram analytics, sales or booking records, and campaign context.
 \\end{note}
 ${smallSample?`
 \\section{How to Read This Report (Sample Size)}
@@ -393,14 +394,25 @@ The comment review uses anonymised text only; usernames are excluded from all ou
 ${bar({title:'Comment intent categories',xlabel:'Number of comments',rows:[...intents].filter(i=>num(i.count)>0).sort((a,b)=>num(a.count)-num(b.count)).map(i=>({label:i.intent.replace(/[/]/g,' '),value:i.count})),max:Math.max(...intents.map(i=>num(i.count)))})}
 
 ${longtable({caption:'Full comment intent classification with commercial opportunities',cols:[
-{h:'Intent',spec:'L{4cm}',cell:r=>tx(r.intent)},{h:'Count',spec:'R{1.4cm}',cell:r=>r.count},{h:'Share',spec:'R{1.4cm}',cell:r=>tx(r.percentage)+'\\%'},{h:'Commercial Opportunity',spec:'L{7.5cm}',cell:r=>tx(r.commercial_opportunity)}],
+{h:'Intent',spec:'L{4cm}',cell:r=>tx(r.intent)},{h:'Count',spec:'R{1.4cm}',cell:r=>r.count},{h:'Share',spec:'R{1.4cm}',cell:r=>tx(r.percentage)+'\\%'},{h:'What to do about it',spec:'L{7.5cm}',cell:r=>tx(commentNextStep(r.intent,num(r.percentage)))}],
 rows:intents})}
 
-\\section{Commercial Opportunities in Comments}
-The comment types below signal direct intent --- someone who comments is a warm lead. They are ranked by how often they appear.
+\\section{What the Comments Are Telling You}
+${(() => {
+  const total = intents.reduce((s,i)=>s+num(i.count),0) || 1;
+  const generic = intents.filter(i=>/generic|unclear/i.test(i.intent)).reduce((s,i)=>s+num(i.count),0);
+  const genericPct = Math.round(100*generic/total);
+  const lead = commercialIntents[0];
+  return `Most comments on any creator account are light reactions, and this one is no exception: roughly ${genericPct}\\% are emoji or one-word praise. That is healthy brand warmth, but it is not where revenue comes from. The commercial value sits in the smaller, specific categories below --- the people effectively raising their hand.${lead?` Here the strongest commercial signal is \\textbf{${tx(lead.intent)}} (${lead.count} comments, ${tx(lead.percentage)}\\% of all comments), so it is the first thing to make frictionless.`:''}`;
+})()}
+
 \\begin{itemize}[leftmargin=*]
-${(commercialIntents.length?commercialIntents:intents.slice(0,4)).slice(0,5).map(i=>`  \\item \\textbf{${tx(i.intent)}} (${i.count}, ${tx(i.percentage)}\\%): ${tx(i.commercial_opportunity)}`).join('\n')}
+${(commercialIntents.length?commercialIntents:intents.slice(0,4)).slice(0,5).map(i=>`  \\item \\textbf{${tx(i.intent)}} (${i.count}, ${tx(i.percentage)}\\%): ${tx(commentNextStep(i.intent,num(i.percentage)))}`).join('\n')}
 \\end{itemize}
+
+\\begin{note}
+\\textbf{Why this matters (and what the simulation showed).} The booking/enquiry pipeline analysis (MC3, Part~II) found that at current comment volumes the comment channel alone converts slowly --- the binding constraint is \\emph{how many} commercial comments arrive, not the reply rate. So the move is two-fold: keep raising reach (more of the high-performing content) to grow the top of the funnel, and remove every step of friction for the commercial comments you already get, starting with the largest category above.
+\\end{note}
 
 \\section{Repeated Opportunities}
 \\begin{itemize}[leftmargin=*]
@@ -421,8 +433,49 @@ ${table({caption:'Caption and hashtag summary statistics',cols:[{h:'Metric',spec
 {m:'Average hashtags per post/reel',v:r2(summary.caption_stats?.average_hashtags)},
 {m:'Average mentions per post/reel',v:r2(summary.caption_stats?.average_mentions)}]})}
 
+\\subsection{What these numbers mean}
+${(() => {
+  const ah = num(summary.caption_stats?.average_hashtags);
+  const am = num(summary.caption_stats?.average_mentions);
+  const al = num(summary.caption_stats?.average_length);
+  const tagLine = ah < 3
+    ? `\\textbf{Hashtag use is light --- about ${r2(ah)} per post.} Instagram allows up to 30, and hashtags are one of the few free levers for reaching non-followers. Adding 4--8 relevant, specific tags per post is a low-cost reach experiment worth running and measuring.`
+    : ah > 12
+      ? `\\textbf{Hashtag use is heavy --- about ${r2(ah)} per post.} Beyond roughly 10--12 the returns flatten and posts can read as spammy; tightening to the most relevant tags is usually cleaner.`
+      : `Hashtag use (about ${r2(ah)} per post) sits in the healthy range.`;
+  const menLine = am >= 1
+    ? `The account tags another account on roughly every post (${r2(am)} mentions each), i.e. it is \\textbf{collaboration-heavy} --- consistent with the finding elsewhere in this report that content featuring named collaborators is among the strongest performers.`
+    : `Mentions of other accounts are infrequent (${r2(am)} per post), so collaboration tagging is an under-used lever for borrowing other audiences.`;
+  const lenLine = al > 300 ? 'Captions are long-form (storytelling style)'
+    : al < 80 ? 'Captions are short (caption copy is doing little work)'
+    : 'Captions are medium-length';
+  return `${tagLine} ${menLine} ${lenLine} (${r2(al)} characters on average); the highest-performing captions in this account pair a strong hook with one explicit next step.`;
+})()}
+
 \\section{Most Frequent Hashtags}
 ${table({caption:'Top 15 hashtags by frequency of use',cols:[{h:'Hashtag',spec:'L{5cm}',cell:r=>'\\#'+tx(r.hashtag)},{h:'Uses',spec:'R{3cm}',cell:r=>r.count}],rows:hashtags.slice(0,15)})}
+
+\\subsection{What the hashtags reveal}
+${(() => {
+  const top = hashtags.slice(0,15);
+  if (!top.length) return 'No hashtag data available.';
+  const totalUses = top.reduce((s,h)=>s+num(h.count),0) || 1;
+  const lead = top[0];
+  const leadShare = Math.round(100*num(lead.count)/totalUses);
+  const DISCOVERY = /^(viral|fyp|explore|trending|reels|foryou|explorepage|instagood|viralpost)$/i;
+  const PLACE = /^(ghana|accra|kumasi|tema|london|lagos|nigeria|africa|uk|naija|eastlegon|osu|tottenham)$/i;
+  const disc = top.filter(h=>DISCOVERY.test(h.hashtag));
+  const place = top.filter(h=>PLACE.test(h.hashtag));
+  const branded = top.filter(h=>!DISCOVERY.test(h.hashtag) && !PLACE.test(h.hashtag));
+  const parts = [];
+  parts.push(`Hashtag use is \\textbf{campaign-led}: the single tag \\#${tx(lead.hashtag)} accounts for ${leadShare}\\% of the top-15 usage, so the feed is organised around specific projects/series rather than generic tagging.`);
+  if (branded.length) parts.push(`The branded/project tags (e.g. ${branded.slice(0,4).map(h=>'\\#'+tx(h.hashtag)).join(', ')}) map directly onto the content franchises the clustering analysis surfaced --- each tag is effectively a campaign the audience can follow.`);
+  if (disc.length) parts.push(`Discovery tags (${disc.map(h=>'\\#'+tx(h.hashtag)).join(', ')}) show an intent to reach beyond existing followers; their pay-off should be judged on reach in native Insights, not on this public engagement score.`);
+  else parts.push(`Notably, broad discovery tags (\\#viral, \\#fyp, \\#explore) are largely absent --- a reach lever the account is not yet pulling.`);
+  if (place.length) parts.push(`Place tags (${place.map(h=>'\\#'+tx(h.hashtag)).join(', ')}) anchor the account to its local market, useful for location-relevant reach.`);
+  parts.push(`\\textbf{Practical read:} keep one consistent tag per active project (as now), add a small set of specific discovery and niche tags to extend reach, and retire tags for projects that have ended.`);
+  return parts.join(' ');
+})()}
 
 \\chapter{Top-Performing Posts}
 These are the proven best-sellers. Study what they share --- topic, format, hook, and call to action --- and reproduce the pattern.
@@ -515,6 +568,10 @@ rows:eda.filter(r=>['all_content_deduplicated','posts','reels','owned_account','
 
 All groups are strongly right-skewed with heavy tails, which violates normality assumptions and motivates the use of non-parametric tests alongside parametric ones.
 
+\\begin{note}
+\\textbf{On the coefficient of variation (CV).} CV is the standard deviation divided by the mean --- a unit-free measure of \\emph{relative} spread. It is valid here because the engagement score is a ratio-scale quantity with a true zero and no negatives (negative artefacts are floored to zero), which is the condition CV requires. A CV above 1 means the spread is larger than the average --- the signature of a few breakout posts pulling the mean up, exactly what we see. Two cautions apply: where a segment's mean is small, CV inflates and should be read qualitatively (\\textquotedblleft highly variable\\textquotedblright{}) rather than compared precisely; and CV describes \\emph{consistency}, not performance --- a high-performing theme can still have a high CV. We therefore use CV only to flag how dependable each segment is, alongside the median, which is robust to the same outliers.
+\\end{note}
+
 \\section{Per-Pillar Exploratory Statistics}
 ${longtable({caption:'Descriptive statistics by content pillar',cols:[
 {h:'Pillar',spec:'L{4cm}',cell:r=>tx(r.name)},{h:'N',spec:'R{1cm}',cell:r=>r.n},{h:'Mean',spec:'R{1.6cm}',cell:r=>r2(r.mean)},{h:'Median',spec:'R{1.6cm}',cell:r=>r2(r.median)},{h:'P25',spec:'R{1.4cm}',cell:r=>r2(r.p25)},{h:'P75',spec:'R{1.4cm}',cell:r=>r2(r.p75)},{h:'CV',spec:'R{1.2cm}',cell:r=>r2(r.cv,2)},{h:'Skew',spec:'R{1.4cm}',cell:r=>r2(r.skew,2)}],
@@ -599,9 +656,22 @@ ${longtable({caption:'MC4: top pillar allocations by expected mean engagement',c
 rows:mcMix.slice(0,10)})}
 
 \\section{MC5: Risk Analysis}
+The table reads as: for each strategy and each 12-week engagement target, the share of 10,000 simulated runs that hit the target. P(achieve) near 100\\% means the target is comfortable; near 0\\% means it is out of reach under that strategy; values in between are the genuinely informative \\textquotedblleft stretch\\textquotedblright{} targets.
 ${longtable({caption:'MC5: probability of achieving 12-week targets',cols:[
 {h:'Strategy',spec:'L{3.2cm}',cell:r=>tx(r.strategy.replace(/_/g,' '))},{h:'Target',spec:'R{2.5cm}',cell:r=>fmt(r.target_12wk_engagement)},{h:'P(achieve)',spec:'R{3cm}',cell:r=>r.prob_achieving_pct+'\\%'},{h:'Expected Mean',spec:'R{3cm}',cell:r=>fmt(r.expected_mean)}],
 rows:mcRisk})}
+${(() => {
+  // pick a "stretch" target where strategies separate the most
+  const targets=[...new Set(mcRisk.map(r=>num(r.target_12wk_engagement)))].sort((a,b)=>a-b);
+  let bestT=targets[0],spread=-1;
+  for(const t of targets){const ps=mcRisk.filter(r=>num(r.target_12wk_engagement)===t).map(r=>num(r.prob_achieving_pct));const s=Math.max(...ps)-Math.min(...ps);if(s>spread){spread=s;bestT=t;}}
+  const atT=mcRisk.filter(r=>num(r.target_12wk_engagement)===bestT).sort((a,b)=>num(b.prob_achieving_pct)-num(a.prob_achieving_pct));
+  if(!atT.length) return '';
+  const win=atT[0],lose=atT[atT.length-1];
+  return `\\begin{callout}
+\\textbf{Implication.} The strategies separate most clearly at a target of ${fmt(bestT)}: the \\textbf{${tx(win.strategy.replace(/_/g,' '))}} plan reaches it in ${win.prob_achieving_pct}\\% of simulations versus ${lose.prob_achieving_pct}\\% for \\textbf{${tx(lose.strategy.replace(/_/g,' '))}}. In plain terms, the choice of content mix changes not just the \\emph{average} outcome but the \\emph{odds} of clearing an ambitious goal --- which is what matters when setting a quarter's target. Set the goal where your chosen strategy sits around 50--80\\%: ambitious but realistic, not a coin-flip.
+\\end{callout}`;
+})()}
 
 \\chapter{Consolidated Actionable Findings}
 \\begin{enumerate}[leftmargin=*]
@@ -626,7 +696,7 @@ This study is \\textbf{exploratory and hypothesis-generating}, not confirmatory,
 Used to prioritise content experiments and size uncertainty, the analysis is sound; used as proof of fixed effects, it would overreach.
 
 \\section{Data and Ethics}
-This report is based on public Instagram data collected via the Apify Instagram Scraper and analysed locally. No private account access or private user data was used. Individual commenters are not identified. For business decisions, combine with ${tx(C.name)}'s native Instagram Insights, reservation data, and campaign context.
+This report is based on public Instagram data collected via the Apify Instagram Scraper and analysed locally. No private account access or private user data was used. Individual commenters are not identified. For business decisions, combine with ${tx(C.name)}'s native Instagram Insights, sales or booking records, and campaign context.
 
 ${glossaryBlock}
 

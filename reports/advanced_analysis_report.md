@@ -99,11 +99,11 @@ Pearson r = 0.1114 (95% CI: -0.0498 to 0.2669), p = 0.1741
 Result: **not significant** (p = 0.1741) — insufficient evidence to reject H₀
 The correlation is weak. Do not over-index on hashtag volume.
 
-### H6 — Cocktails/Drinks Pillar vs Overall Baseline
+### H6 — Top Pillar (events/live music/DJ) vs Overall Baseline
 
-t = 0.9155, p = 0.3731, Cohen's d = 0.389 (small effect, n = 8)
-Result: **not significant** (p = 0.3731) — insufficient evidence to reject H₀
-Mean cocktails: 261.27 vs baseline: 126.75 (+134.52). With n = 8, the test is underpowered. The effect size (0.389) is real but more posts needed before this conclusion is conclusive.
+t = 1.089, p = 0.3076, Cohen's d = 0.604 (medium effect, n = 5)
+Result: **not significant** (p = 0.3076) — insufficient evidence to reject H₀
+Mean events/live music/DJ: 358.17 vs baseline: 126.75 (difference 231.41). With n = 5, the test is underpowered; the effect is directional, not conclusive.
 
 ---
 
@@ -149,9 +149,9 @@ MC1 and MC5 share identical strategy definitions.
 
 | Strategy | Total Posts | Mean | Median | P5 (worst 5%) | P95 (best 5%) | CV | Uplift vs Current % |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| current_mix | 58 | 6773 | 6630 | 3696 | 10378 | 0.302 | 0 |
-| optimised | 60 | 8836 | 8717 | 5360 | 12787 | 0.257 | 30.5 |
-| heavy_reels | 66 | 12004 | 11896 | 7877 | 16451 | 0.218 | 77.2 |
+| current_mix | 62 | 7288 | 7103 | 4160 | 11057 | 0.291 | 0 |
+| optimised | 61 | 9903 | 9745 | 6106 | 14185 | 0.247 | 35.9 |
+| heavy_reels | 77 | 12462 | 12314 | 8189 | 17275 | 0.221 | 71 |
 
 The wide P5–P95 range reflects genuine empirical uncertainty from small historical sample sizes.
 Treat bands as directional, not as precise delivery guarantees.
@@ -195,7 +195,7 @@ Faster replies to commercial comments is the operationally cheapest lever.
 | events/live music/DJ:1.45 \| cocktails/drinks:1.48 \| dinner/nightlife:0.39 \| food:0.14 \| date night/romance | 9340 | 7936 | 10691 | 0.227 |
 | events/live music/DJ:1.5 \| cocktails/drinks:0.84 \| dinner/nightlife:1.55 \| food:0.44 \| date night/romance: | 9322 | 7679 | 10928 | 0.247 |
 
-The optimiser consistently allocates to **cocktails/drinks**, **events/live music/DJ**, and **ambience/decor/vibe**.
+The optimiser consistently allocates to **events/live music/DJ**, **cocktails/drinks**, **ambience/decor/vibe** — the categories with the highest mean engagement in your own data.
 Choose mixes with CV < 0.25 (lower downside risk) unless high mean justifies volatility.
 
 ### MC5 — Risk Analysis: P(Achieving 12-Week Targets)
@@ -204,18 +204,18 @@ Choose mixes with CV < 0.25 (lower downside risk) unless high mean justifies vol
 
 | Strategy | Target | P(achieve) % | Expected Mean | Shortfall P50 |
 | --- | --- | --- | --- | --- |
-| current_mix | 5000 | 80 | 6771 | 0 |
-| current_mix | 10000 | 6.9 | 6771 | 3405 |
-| current_mix | 15000 | 0 | 6771 | 8405 |
-| current_mix | 20000 | 0 | 6771 | 13405 |
-| optimised | 5000 | 96.6 | 8922 | 0 |
-| optimised | 10000 | 30.3 | 8922 | 1192 |
-| optimised | 15000 | 0.9 | 8922 | 6192 |
-| optimised | 20000 | 0 | 8922 | 11192 |
-| heavy_reels | 5000 | 99.9 | 12043 | 0 |
-| heavy_reels | 10000 | 78.2 | 12043 | 0 |
-| heavy_reels | 15000 | 12.9 | 12043 | 3067 |
-| heavy_reels | 20000 | 0.3 | 12043 | 8067 |
+| current_mix | 5000 | 86.1 | 7301 | 0 |
+| current_mix | 10000 | 11.6 | 7301 | 2904 |
+| current_mix | 15000 | 0.2 | 7301 | 7904 |
+| current_mix | 20000 | 0 | 7301 | 12904 |
+| optimised | 5000 | 98.9 | 9939 | 0 |
+| optimised | 10000 | 46.9 | 9939 | 196 |
+| optimised | 15000 | 2.8 | 9939 | 5196 |
+| optimised | 20000 | 0 | 9939 | 10196 |
+| heavy_reels | 5000 | 100 | 12489 | 0 |
+| heavy_reels | 10000 | 80.9 | 12489 | 0 |
+| heavy_reels | 15000 | 18.2 | 12489 | 2653 |
+| heavy_reels | 20000 | 0.7 | 12489 | 7653 |
 
 ---
 
@@ -225,7 +225,7 @@ Choose mixes with CV < 0.25 (lower downside risk) unless high mean justifies vol
 
 2. **Post on Monday or Tuesday.** Day-of-week has a statistically significant effect (p = 0.0073). Monday mean (223.65) and Tuesday mean (130.23) exceed all other days.
 
-3. **Cocktails/drinks and ambience are the highest-ROI pillars.** Both exceed the baseline by > 60% lift. The MC4 optimizer always places them in top allocations. The hypothesis test for cocktails is currently underpowered (n = 8) — prioritise producing more content in these pillars to confirm the signal.
+3. **The top pillar (events/live music/DJ) is the highest-ROI category.** It is the strongest by mean engagement; the H6 test compares it against the overall baseline (n = 5). Prioritise producing more content in the top pillars to confirm and extend the signal.
 
 4. **Caption length and hashtag count have negligible effect** (r < 0.13 both, neither significant). Direct copy effort toward a single clear CTA and occasion cue, not word count or tag volume.
 

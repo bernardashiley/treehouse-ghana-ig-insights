@@ -16,7 +16,7 @@
 
 const fs   = require('fs');
 const path = require('path');
-const { ROOT, ensureDir, writeText, num, round, mean } = require('./utils');
+const { ROOT, ensureDir, writeText, num, round, mean, commentNextStep } = require('./utils');
 
 // ─── CSV reader ───────────────────────────────────────────────────────────────
 function parseLine(line) {
@@ -300,15 +300,17 @@ function chartIntents(intents) {
 
   const totalComments = rows.reduce((s, r) => s + num(r.count), 0);
 
-  const COMMERCIAL = ['booking/reservation intent','location/access question',
-    'event interest','menu/food curiosity','price/value concern','date-night/romantic ambience'];
+  // Commercial = any specific, high-intent comment type (anything that is not a
+  // generic reaction, unclear, or pure praise). Defined as a predicate so the
+  // chart highlights the right bars for ANY client, not just a fixed list.
+  const isCommercial = (intent) => !/generic|unclear|praise/i.test(String(intent || ''));
 
   let bars = '';
   rows.forEach((r, i) => {
     const y   = MT + i * ROW;
     const val = num(r.count);
     const bw  = Math.round(barW * val / maxVal);
-    const isComm = COMMERCIAL.includes(r.intent);
+    const isComm = isCommercial(r.intent);
     const col = isComm ? C.amber : i === 0 ? C.grey3 : C.green4;
     const lbl = PLAIN[r.intent] || r.intent;
     const pct = Math.round(val / totalComments * 100);
@@ -525,7 +527,18 @@ The chart below shows how different types of content perform. The longer the bar
 ![Content pillar performance](figures/sr_pillars.svg)
 
 ### Key takeaways
-${pillars.slice(0,5).map((r,i) => `${['🥇','🥈','🥉','4️⃣','5️⃣'][i]||'▪'} **${PILLAR_LABELS[r.pillar]||r.pillar}** — average engagement score of **${round(num(r.avg_engagement_score),0)}**. ${r.interpretation||''}`).join('\n')}
+${(() => {
+  const ranked = [...pillars].filter(p=>num(p.avg_engagement_score)>0).sort((a,b)=>num(b.avg_engagement_score)-num(a.avg_engagement_score));
+  const base = num((eda.find(r=>r.label==='all_content_deduplicated')||{}).mean) || num((eda.find(r=>r.label==='owned_account')||{}).mean) || 0;
+  return ranked.slice(0,5).map((r,i) => {
+    const sc = round(num(r.avg_engagement_score),0), n = num(r.posts_count);
+    const vsBase = base ? Math.round((num(r.avg_engagement_score)/base - 1)*100) : 0;
+    const read = n < 10 ? `only ${n} posts so far — a promising signal worth testing with more`
+      : vsBase >= 0 ? `about ${vsBase}% above your typical post — a proven strength to do more of`
+      : `below your average — lower priority unless reframed`;
+    return `${['🥇','🥈','🥉','4️⃣','5️⃣'][i]||'▪'} **${PILLAR_LABELS[r.pillar]||r.pillar}** — avg score **${sc}** (${n} posts): ${read}.`;
+  }).join('\n');
+})()}
 
 ---
 
@@ -580,14 +593,15 @@ The comments on your top posts reveal exactly what people want to know. We analy
 
 ### Commercial opportunities hiding in your comments
 
-These comment types signal direct business intent — someone who comments is a warm lead:
+Most comments are light praise — lovely, but not where business comes from. The value is in the smaller, specific categories below: people effectively raising their hand. These are your actual comment types, ranked by how often they appear, with the move each one calls for:
 
-| What they're asking | What to do |
+| Comment type (and how often) | What to do about it |
 |---|---|
-| 📍 "Where are you located?" | Pin your address in every caption. Add a Highlights story called "Find Us". |
-| 🗓 "Is this event still on?" | Always include the date, time and "link in bio" in event posts. |
-| 🍽 "What's on the menu?" | Post one carousel per month showing your top 5 dishes with prices. |
-| 📲 "How do I book?" | Add your WhatsApp number to every post that mentions dining. |
+${(() => {
+  const commercial = [...intents].filter(i=>!/generic|unclear|praise/i.test(i.intent) && num(i.count)>0).sort((a,b)=>num(b.count)-num(a.count));
+  const rowsToShow = (commercial.length ? commercial : [...intents].sort((a,b)=>num(b.count)-num(a.count))).slice(0,5);
+  return rowsToShow.map(i => `| **${i.intent}** (${i.count}, ${i.percentage}%) | ${commentNextStep(i.intent, num(i.percentage))} |`).join('\n');
+})()}
 
 ---
 
@@ -611,22 +625,50 @@ We simulated three content approaches by drawing on your past performance. Each 
 
 ## Recommended Actions
 
-Take these steps in order. Each one builds on the last.
+Take these steps in order. Each one builds on the last, and every one is drawn from what your own data shows above.
 
-### This week (quick wins)
-1. **Reply to every commercial comment** — booking requests, location questions, menu curiosity. A fast reply converts a warm lead into a customer. Aim for under 30 minutes.
-2. **Add your WhatsApp number and reservation link to your bio** if not already there.
-3. **Create one Instagram Highlight called "Book a Table"** — pin your address, opening hours, reservation number and a link.
+${(() => {
+  const commercial = [...intents].filter(i=>!/generic|unclear|praise/i.test(i.intent) && num(i.count)>0).sort((a,b)=>num(b.count)-num(a.count));
+  const topIntent = commercial[0];
+  const topPillarName = (PILLAR_LABELS[topPillar.pillar] || topPillar.pillar || 'your strongest content type');
+  const bestDay = topDay.period || 'your best-performing day';
+  const optName = (strategies.find(r=>r.strategy==='optimised')||{});
+  const optUplift = optName.uplift_vs_current || 0;
+  return `### This week (quick wins)
+1. **Reply to every high-intent comment within 30 minutes during posting hours.**${topIntent ? ` Your most common commercial signal is *${topIntent.intent}* (${topIntent.percentage}% of comments) — those are warm leads, and a fast reply is what converts them.` : ' These are warm leads; a fast reply is what converts them.'}
+2. **Make the one next step you most want frictionless in your bio.** Whatever action your top comments are asking for, put a single tap to it (link, form, or saved reply) at the top of your profile so nobody has to hunt for it.
+3. **Pin a Highlight that answers your most-asked question.** Build it around the comment type above so the answer is always one tap away instead of being re-typed in DMs.
 
 ### This month
-4. **Film three short videos** (15–30 seconds each): one of food being served, one of the bar/cocktails, one of the venue atmosphere at night. Post one per week.
-5. **Post your next event with full details**: date, time, entertainment, and how to book. Tag the performers.
-6. **Reshare two positive customer mentions** and add your own booking CTA.
+4. **Publish more of what already works.** Your strongest category is **${topPillarName}**. Schedule more of it deliberately rather than leaving your best content to chance.
+5. **Post on your strongest day.** Engagement peaks around **${bestDay}** — anchor your most important posts there.
+6. **Reshare your best social proof.** Take two of your strongest mentions or comments, reshare them, and end the caption with one explicit next step.
 
 ### This quarter
-7. **Shift your content calendar** to post more cocktails/drinks and ambience content (currently your highest-performing categories) and fewer generic brand posts.
-8. **Set a response-time target** for Instagram comments: 30 minutes during business hours. Assign a specific person to this.
-9. **Track one metric monthly**: average engagement score per content type. Ask us to re-run this analysis in 90 days to measure progress.
+7. **Rebalance your calendar toward the "Improved mix" above** (the simulated path worth roughly +${optUplift}% over 12 weeks): more of your top categories, fewer low-engagement generic posts.
+8. **Set and assign a comment response-time target** (30 minutes in working hours) so high-intent comments are never missed.
+9. **Track one metric monthly** — average engagement score per content type — and ask us to re-run this analysis in 90 days to measure progress against this baseline.`;
+})()}
+
+---
+
+## Glossary — plain-English definitions
+
+A few terms appear above. Here is what each one means, in everyday language:
+
+| Term | What it means |
+|---|---|
+| **Engagement score** | A single number combining likes, comments and video plays, so different posts can be compared fairly. Higher means more people interacted. The exact formula is *likes + (comments × 5) + (video plays ÷ 100)*; comments count for more because they take more effort than a like. |
+| **Reel / short video** | Instagram's short vertical video format. Reels are pushed to people who don't follow you yet, so they are the main way to reach new audiences. |
+| **Feed post / carousel** | A standard image or multi-image ("carousel") post that appears on your grid. Mostly seen by people who already follow you. |
+| **Content category (pillar)** | A theme we grouped your posts into (for example, behind-the-scenes, projects, events) so we can see which themes earn the most engagement. |
+| **Comment intent** | What a commenter actually wants — praise, a question, a booking/collaboration request — rather than just the words. High-intent comments are warm leads. |
+| **Warm lead** | Someone who has signalled real interest (a question or request) and is far more likely to convert into a customer or collaborator than a passive viewer. |
+| **Simulation (Monte Carlo)** | We re-played your likely results thousands of times using your own past performance, to show a *range* of outcomes rather than a single guess. |
+| **Likely range** | The band most outcomes fell into across those simulations — a realistic best-to-worst spread, not a promise. |
+| **Baseline** | Your current performance, used as the reference point everything else is compared against. |
+| **CTA (call to action)** | The one specific next step you ask the audience to take in a caption — "book here", "watch now", "send your reel". |
+| **Highlight** | The saved, pinned story circles under your bio. They stay permanently, so they are ideal for answers people ask for repeatedly. |
 
 ---
 
@@ -672,6 +714,18 @@ function makeLatex(data) {
     : (reelMean > postMean)
       ? `\\textbf{Short videos attract more engagement than feed posts on average} and reach beyond existing followers; expanding video is a clear opportunity.`
       : `\\textbf{Feed posts outperform short videos for this account.} Keep investing in strong post formats; treat video as an experiment to grow reach.`;
+
+  // Data-driven commercial signal + next-step prose (industry-agnostic).
+  const commercialIntents = [...intents]
+    .filter(i => !/generic|unclear|praise/i.test(i.intent) && num(i.count) > 0)
+    .sort((a, b) => num(b.count) - num(a.count));
+  const topCommercial = commercialIntents[0] || null;
+  const topCommercialTxt = topCommercial
+    ? `\\textbf{Your most common high-intent comment is \\textquotedblleft${tx(topCommercial.intent)}\\textquotedblright{}} (${topCommercial.percentage}\\% of comments). Replying quickly turns these warm leads into customers.`
+    : `\\textbf{Most comments are warm but low-intent.} The opportunity is to end captions with one explicit next step so that affection turns into action.`;
+  const topPillarLatex = top1Txt;
+  const bestDayLatex = topDay.period || 'your best-performing day';
+  const optUpliftLatex = optimised.uplift_vs_current || 0;
 
   // "Nice" round tick step (~4 ticks) so axis labels never crowd/collide.
   const niceStep = (range) => {
@@ -767,7 +821,7 @@ function makeLatex(data) {
   \\begin{tabular}{@{}llll@{}}
     \\textbf{${tx(followers)}} followers &
     \\textbf{${tx(posts.toString())}} posts analysed &
-    \\textbf{${tx(topPillar.pillar ? (topPillar.pillar.replace(/[\\{}$&#_%^~<>]/g,'')) : 'cocktails')} is \\#1} &
+    \\textbf{${tx(topPillar.pillar ? (topPillar.pillar.replace(/[\\{}$&#_%^~<>]/g,'')) : 'top category')} is \\#1} &
     \\textbf{${tx(topDay.period||'Monday')} best day}\\\\
   \\end{tabular}
 };
@@ -785,8 +839,8 @@ ${smallSample ? `\\textbf{It is a descriptive content audit, not a statistical f
   \\item \\textbf{${tx(top1Txt.charAt(0).toUpperCase()+top1Txt.slice(1))} is the strongest content category}, followed by ${tx(top3Txt)}. Do more of what already works.
   \\item ${formatFinding}
   \\item \\textbf{${tx(topDay.period||'')} is the best day to post}, with the highest average engagement.
-  \\item \\textbf{Audience comments are warm and specific} — praise for the food and questions about events and booking. Replying quickly turns a comment into a customer.
-  \\item \\textbf{Posts that feature the business (customer posts, collaborations) draw strong engagement} — reshare them and lean into that social proof.
+  \\item ${topCommercialTxt}
+  \\item \\textbf{Posts that feature the account in collaborations and mentions draw strong engagement} — reshare them and lean into that social proof.
 \\end{enumerate}
 
 % ─── CONTENT PERFORMANCE ──────────────────────────────────────────────────────
@@ -882,7 +936,7 @@ ${dayRows}
 \\section*{\\color{tregreen}What Your Audience is Saying}
 
 We classified \\textbf{${tx(String(data.commCt||106))} comments} from your top-performing posts.
-Every location question, booking request and menu enquiry is a warm lead.
+Most are light praise, but the smaller, specific categories below are where business hides — every one is someone effectively raising their hand.
 
 \\begin{center}
 \\begin{tabular}{lrr}
@@ -894,8 +948,10 @@ ${intentRows}
 \\end{tabular}
 \\end{center}
 
-\\textbf{Actionable:} Reply to every booking request, location question and event enquiry within 30 minutes.
-Include your WhatsApp number in every post that mentions dining or bookings.
+\\textbf{Actionable:} ${topCommercial
+  ? `Reply to every \\textquotedblleft${tx(topCommercial.intent)}\\textquotedblright{} comment within 30 minutes during posting hours — that is your highest-intent signal.`
+  : `Reply to every high-intent comment within 30 minutes during posting hours.`}
+Make the single next step those comments are asking for one tap away from your bio.
 
 % ─── STRATEGY SCENARIOS ───────────────────────────────────────────────────────
 \\section*{\\color{tregreen}Three Scenarios for Growth}
@@ -918,26 +974,48 @@ ${stratRows}
 
 \\subsection*{This week}
 \\begin{enumerate}
-  \\item Reply to every commercial comment (booking, location, menu, event questions).
-  \\item Add your WhatsApp number and reservation link to your Instagram bio.
-  \\item Create a \\textquotedblleft Book a Table\\textquotedblright{} Highlight with address, hours and contact details.
+  \\item Reply to every high-intent comment within 30 minutes during posting hours${topCommercial ? ` (your most common is \\textquotedblleft${tx(topCommercial.intent)}\\textquotedblright{})` : ''} — these are warm leads.
+  \\item Put the single next step your top comments ask for one tap away in your bio (link, form or saved reply).
+  \\item Pin a Highlight that answers your most-asked question, so the answer is always one tap away.
 \\end{enumerate}
 
 \\subsection*{This month}
 \\begin{enumerate}
   \\setcounter{enumi}{3}
-  \\item Film three short videos: food being served, cocktails being poured, venue atmosphere.
-  \\item Post your next event with full date, time, lineup and booking instructions.
-  \\item Reshare two positive customer mentions and add your booking CTA.
+  \\item Publish more of what already works — your strongest category is \\textbf{${tx(topPillarLatex)}}. Schedule it deliberately.
+  \\item Anchor your most important posts on your strongest day (\\textbf{${tx(bestDayLatex)}}).
+  \\item Reshare two of your strongest mentions or comments as social proof, each ending with one explicit next step.
 \\end{enumerate}
 
 \\subsection*{This quarter}
 \\begin{enumerate}
   \\setcounter{enumi}{6}
-  \\item Shift your content calendar toward cocktails, events and ambience (your top categories).
-  \\item Set a 30-minute response-time target for Instagram comments during business hours.
-  \\item Re-run this analysis in 90 days to measure progress.
+  \\item Rebalance your calendar toward the \\textquotedblleft Improved mix\\textquotedblright{} above (about +${optUpliftLatex}\\% over 12 weeks): more of your top categories, fewer low-engagement generic posts.
+  \\item Set and assign a 30-minute comment response-time target during working hours.
+  \\item Re-run this analysis in 90 days to measure progress against this baseline.
 \\end{enumerate}
+
+\\section*{\\color{tregreen}Glossary — Plain-English Definitions}
+
+\\begin{center}
+\\begin{tabular}{>{\\raggedright\\arraybackslash}p{3.6cm}>{\\raggedright\\arraybackslash}p{11cm}}
+\\toprule
+\\textbf{Term} & \\textbf{What it means} \\\\
+\\midrule
+Engagement score & A single number combining likes, comments and video plays so posts compare fairly. Higher means more interaction. Formula: likes + (comments $\\times$ 5) + (video plays $\\div$ 100). \\\\
+Reel / short video & Instagram's short vertical video, pushed to people who do not yet follow you — the main way to reach new audiences. \\\\
+Feed post / carousel & A standard image or multi-image post on your grid, seen mostly by existing followers. \\\\
+Content category (pillar) & A theme we grouped your posts into, so we can see which themes earn the most engagement. \\\\
+Comment intent & What a commenter actually wants — praise, a question, a booking or collaboration request — not just the words. \\\\
+Warm lead & Someone who has signalled real interest and is far likelier to convert than a passive viewer. \\\\
+Simulation (Monte Carlo) & Re-playing your likely results thousands of times from your own past performance, to show a range rather than one guess. \\\\
+Likely range & The band most outcomes fell into across the simulations — a realistic spread, not a promise. \\\\
+Baseline & Your current performance, used as the reference everything else is compared against. \\\\
+CTA (call to action) & The one specific next step you ask the audience to take in a caption. \\\\
+Highlight & The saved, pinned story circles under your bio; permanent, so ideal for repeated questions. \\\\
+\\bottomrule
+\\end{tabular}
+\\end{center}
 
 \\section*{\\color{tregreen}How to Read This Report}
 
@@ -950,7 +1028,7 @@ A higher score indicates a post attracted more visible audience interaction.
 \\vfill
 \\begin{center}
 {\\small\\color{tregrey}Generated automatically from the Treehouse Ghana Instagram analysis pipeline.
-Source code and data: \\url{https://github.com/bernardashiley/treehouse-ghana-ig-insights}}
+Charts and figures update whenever the analysis is re-run.}
 \\end{center}
 
 \\end{document}

@@ -326,30 +326,42 @@ function randNormal(mu, sigma, rng) {
 // making their expected means incomparable. Now both read from this object.
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const STRATEGIES = {
-  current_mix: {
-    food: 2,
-    'general brand/content': 1,
-    'dinner/nightlife': 1,
-    'ambience/decor/vibe': 0.5,
-    'events/live music/DJ': 0.3,
-  },
-  optimised: {
-    'cocktails/drinks': 1,
-    'events/live music/DJ': 0.5,
-    'ambience/decor/vibe': 1,
-    'dinner/nightlife': 1,
-    food: 1,
-    'general brand/content': 0.5,
-  },
-  heavy_reels: {
-    'cocktails/drinks': 1.5,
-    'events/live music/DJ': 1,
-    'ambience/decor/vibe': 1.5,
-    'dinner/nightlife': 1,
-    food: 0.5,
-  },
-};
+// Strategies are DERIVED FROM THE CLIENT'S OWN DATA, not hardcoded. This makes
+// the simulations meaningful for any client (a previous hardcoded restaurant
+// mix collapsed to a single fallback distribution for non-restaurant clients,
+// so every "strategy" was identical). The three strategies are:
+//   current_mix — posts allocated in proportion to how often each pillar is
+//                 actually posted today (the status quo);
+//   optimised   — the SAME weekly volume, re-weighted toward the pillars that
+//                 actually earn higher engagement (better mix, same effort);
+//   heavy_reels — the same engagement-tilted mix at a higher posting cadence
+//                 (~30% more output — "do more of what works").
+// plan values are posts-per-week per pillar (fractional allowed).
+function buildStrategies(ownedPillarDist) {
+  const WEEKLY = 5; // target posts/week, keeps 12-week totals on a realistic scale
+  const pillars = Object.entries(ownedPillarDist)
+    .map(([p, xs]) => ({ p, n: xs.length, m: mean(xs) }))
+    .filter(d => d.n > 0);
+  if (!pillars.length) {
+    const one = { 'all content': WEEKLY };
+    return { current_mix: one, optimised: one, heavy_reels: { 'all content': round(WEEKLY * 1.3, 3) } };
+  }
+  const totalN = pillars.reduce((s, d) => s + d.n, 0);
+  const overallMean = pillars.reduce((s, d) => s + d.m * d.n, 0) / totalN || 1;
+  const alloc = (weights, weekly) => {
+    const wsum = weights.reduce((s, w) => s + w, 0) || 1;
+    const plan = {};
+    pillars.forEach((d, i) => { plan[d.p] = round(weekly * weights[i] / wsum, 3); });
+    return plan;
+  };
+  // tilt toward higher-engagement pillars, anchored to how often they are posted
+  const tilt = pillars.map(d => d.n * Math.max(0.05, d.m / overallMean));
+  return {
+    current_mix: alloc(pillars.map(d => d.n), WEEKLY),
+    optimised:   alloc(tilt, WEEKLY),
+    heavy_reels: alloc(tilt, round(WEEKLY * 1.3, 3)),
+  };
+}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // MONTE CARLO SIMULATIONS
@@ -359,9 +371,10 @@ const STRATEGIES = {
  * MC1 — Content strategy comparison (12 weeks, 10 000 sims).
  * Uses STRATEGIES constant so MC1 and MC5 are always consistent.
  */
-function mcStrategyComparison(ownedPillarDist, rng, sims = 10000) {
+function mcStrategyComparison(ownedPillarDist, rng, sims = 10000, strategies = null) {
   const WEEKS = 12;
-  const fallback = ownedPillarDist['general brand/content'] || [50];
+  const STRATEGIES = strategies || buildStrategies(ownedPillarDist);
+  const fallback = Object.values(ownedPillarDist).find(xs => xs && xs.length) || [50];
   const results = [];
 
   for (const [name, plan] of Object.entries(STRATEGIES)) {
@@ -553,8 +566,9 @@ function mcPillarMix(ownedPillarDist, rng, sims = 2000) {
  * MC5 — Risk analysis.
  * FIX: uses same STRATEGIES constant as MC1 so expected means are identical.
  */
-function mcRisk(ownedPillarDist, rng, sims = 10000) {
-  const fallback = ownedPillarDist['general brand/content'] || [50];
+function mcRisk(ownedPillarDist, rng, sims = 10000, strategies = null) {
+  const STRATEGIES = strategies || buildStrategies(ownedPillarDist);
+  const fallback = Object.values(ownedPillarDist).find(xs => xs && xs.length) || [50];
   const targets = [5000, 10000, 15000, 20000, 30000, 50000];
   const WEEKS = 12;
   const rows = [];
@@ -805,13 +819,17 @@ function main() {
     { t: h5?.t, df: h5?.n ? h5.n - 2 : '', p: h5?.p, significant: h5?.significant, cohens_d: '' },
     { r: h5?.r, r_ci_lo: h5?.r_ci_lo, r_ci_hi: h5?.r_ci_hi, n: h5?.n });
 
-  // H6: Top pillar (cocktails/drinks) vs all content
-  const cocktailScores = allPillarDist['cocktails/drinks'] || [];
-  const h6 = welchTest(cocktailScores, allScores, 'cocktails/drinks', 'all_content');
-  addHt('H6_cocktails_vs_all', 'Welch t-test',
-    'μ(cocktails/drinks) = μ(all content)',
+  // H6: The account's TOP pillar (by mean, among pillars with n>=5) vs all content.
+  // Chosen from the data so the test is meaningful for any client/industry.
+  const eligiblePillars = Object.entries(allPillarDist)
+    .filter(([, xs]) => xs.length >= 5)
+    .sort((a, b) => mean(b[1]) - mean(a[1]));
+  const [topPillarName, topPillarScores] = eligiblePillars[0] || [Object.keys(allPillarDist)[0] || 'top pillar', allPillarDist[Object.keys(allPillarDist)[0]] || []];
+  const h6 = welchTest(topPillarScores, allScores, topPillarName, 'all_content');
+  addHt('H6_top_pillar_vs_all', 'Welch t-test',
+    `μ(${topPillarName}) = μ(all content)`,
     h6,
-    { note: cocktailScores.length < 5 ? `cocktails n=${cocktailScores.length} — low power` : '' });
+    { pillar: topPillarName, note: topPillarScores.length < 5 ? `${topPillarName} n=${topPillarScores.length} — low power` : '' });
 
   writeCsv('data/processed/adv_hypothesis_tests.csv', htRows);
   console.log('✓ Hypothesis tests written');
@@ -871,7 +889,9 @@ function main() {
   const mc4Rng = makePrng(SEED + 74);
   const mc5Rng = makePrng(SEED + 75);
 
-  const stratRows = mcStrategyComparison(ownedPillarDist, mc1Rng, MC);
+  // Single source of truth so MC1 and MC5 share identical strategy definitions.
+  const mcStrategies = buildStrategies(ownedPillarDist);
+  const stratRows = mcStrategyComparison(ownedPillarDist, mc1Rng, MC, mcStrategies);
   writeCsv('data/processed/adv_mc_strategies.csv', stratRows);
   console.log('✓ MC1 strategy comparison written');
 
@@ -887,7 +907,7 @@ function main() {
   writeCsv('data/processed/adv_mc_pillar_mix.csv', mixRows);
   console.log('✓ MC4 pillar mix written');
 
-  const riskRows = mcRisk(ownedPillarDist, mc5Rng, MC);
+  const riskRows = mcRisk(ownedPillarDist, mc5Rng, MC, mcStrategies);
   writeCsv('data/processed/adv_mc_risk.csv', riskRows);
   console.log('✓ MC5 risk analysis written');
 
@@ -1001,11 +1021,11 @@ Pearson r = ${h5?.r} (95% CI: ${h5?.r_ci_lo} to ${h5?.r_ci_hi}), p = ${h5?.p}
 Result: ${sig(h5?.p, 'hashtag count is a meaningful predictor of engagement')}
 The correlation is ${Math.abs(h5?.r ?? 0) < 0.1 ? 'negligible' : Math.abs(h5?.r ?? 0) < 0.3 ? 'weak' : 'moderate'}. Do not over-index on hashtag volume.
 
-### H6 — Cocktails/Drinks Pillar vs Overall Baseline
+### H6 — Top Pillar (${topPillarName}) vs Overall Baseline
 
-t = ${h6?.t}, p = ${h6?.p}, Cohen's d = ${h6?.cohens_d} (${effectLabel(h6?.cohens_d ?? 0)} effect, n = ${cocktailScores.length})
-Result: ${sig(h6?.p, 'cocktails/drinks significantly outperforms average content')}
-Mean cocktails: ${h6?.mean_a} vs baseline: ${h6?.mean_b} (+${h6?.diff}). ${cocktailScores.length < 10 ? `With n = ${cocktailScores.length}, the test is underpowered. The effect size (${h6?.cohens_d}) is real but more posts needed before this conclusion is conclusive.` : ''}
+t = ${h6?.t}, p = ${h6?.p}, Cohen's d = ${h6?.cohens_d} (${effectLabel(h6?.cohens_d ?? 0)} effect, n = ${topPillarScores.length})
+Result: ${sig(h6?.p, `${topPillarName} significantly outperforms average content`)}
+Mean ${topPillarName}: ${h6?.mean_a} vs baseline: ${h6?.mean_b} (difference ${h6?.diff}). ${topPillarScores.length < 10 ? `With n = ${topPillarScores.length}, the test is underpowered; the effect is directional, not conclusive.` : ''}
 
 ---
 
@@ -1098,7 +1118,13 @@ ${mdTable(mixRows.slice(0, 10), [
   { label: 'CV',               key: 'cv'              },
 ])}
 
-The optimiser consistently allocates to **cocktails/drinks**, **events/live music/DJ**, and **ambience/decor/vibe**.
+The optimiser consistently allocates to ${
+  Object.entries(allPillarDist)
+    .filter(([, xs]) => xs.length >= 3)
+    .sort((a, b) => mean(b[1]) - mean(a[1]))
+    .slice(0, 3)
+    .map(([p]) => `**${p}**`)
+    .join(', ') || '**the highest-engagement pillars**'} — the categories with the highest mean engagement in your own data.
 Choose mixes with CV < 0.25 (lower downside risk) unless high mean justifies volatility.
 
 ### MC5 — Risk Analysis: P(Achieving 12-Week Targets)
@@ -1121,7 +1147,7 @@ ${mdTable(riskRows.filter(r => [5000, 10000, 15000, 20000].includes(r.target_12w
 
 2. **Post on Monday or Tuesday.** Day-of-week has a ${h2Kw?.significant ? 'statistically significant' : 'directional'} effect (p = ${h2Kw?.p}). Monday mean (${edaRows.find(r => r.label === 'day:Monday')?.mean}) and Tuesday mean (${edaRows.find(r => r.label === 'day:Tuesday')?.mean}) exceed all other days.
 
-3. **Cocktails/drinks and ambience are the highest-ROI pillars.** Both exceed the baseline by > 60% lift. The MC4 optimizer always places them in top allocations. The hypothesis test for cocktails is currently underpowered (n = ${cocktailScores.length}) — prioritise producing more content in these pillars to confirm the signal.
+3. **The top pillar (${topPillarName}) is the highest-ROI category.** It is the strongest by mean engagement; the H6 test compares it against the overall baseline (n = ${topPillarScores.length}). Prioritise producing more content in the top pillars to confirm and extend the signal.
 
 4. **Caption length and hashtag count have negligible effect** (r < 0.13 both, ${h4?.significant || h5?.significant ? 'one reaches significance but effect size is small' : 'neither significant'}). Direct copy effort toward a single clear CTA and occasion cue, not word count or tag volume.
 
@@ -1143,7 +1169,7 @@ ${mdTable(riskRows.filter(r => [5000, 10000, 15000, 20000].includes(r.target_12w
   console.log(`Observed mean comments/owned post: ${round(meanCommentsPerPost, 2)}`);
   console.log(`H1 Welch p=${h1Welch?.p} | MWU p=${h1Mwu?.p}`);
   console.log(`H2 KW p=${h2Kw?.p} | H4 r=${h4?.r} p=${h4?.p} | H5 r=${h5?.r} p=${h5?.p}`);
-  console.log(`H6 cocktails vs all: p=${h6?.p}, d=${h6?.cohens_d}`);
+  console.log(`H6 top pillar (${topPillarName}) vs all: p=${h6?.p}, d=${h6?.cohens_d}`);
   console.log(`MC1 strategies: ${stratRows.map(r => `${r.strategy}=${r.mean}`).join(', ')}`);
   console.log(`MC3 bookings P50: ${conversionRows.map(r => `${r.scenario}=${r.bookings_p50}`).join(', ')}`);
 

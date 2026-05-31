@@ -125,6 +125,31 @@ function topN(rows, key, n = 10) {
   return [...rows].sort((a, b) => num(b[key]) - num(a[key])).slice(0, n);
 }
 
+// Data-driven, industry-agnostic "what to do next" for a comment-intent category.
+// Keyed on the intent name so it works for any client (restaurant, film, retail...).
+// `share` (0-100) lets the wording reflect how big the opportunity is.
+function commentNextStep(intent, share = 0) {
+  const i = String(intent || '').toLowerCase();
+  const big = share >= 5 ? ' This is a sizeable share of your comments, so treat it as a priority.' : '';
+  if (/book|reservation|collab|enquir|work with|hire/.test(i))
+    return `Highest-value signal: people trying to engage you commercially. Add a one-tap "work with me / book" link in the bio and a saved reply with rates/availability so these never get lost in DMs.${big}`;
+  if (/project|release|watch|launch|premiere|drop/.test(i))
+    return `Demand for your next release. Put the date and the watch/buy link in every related caption and a pinned "What's out now" Highlight, so interest converts the moment it appears.${big}`;
+  if (/cast|talent|audition|feature|join/.test(i))
+    return `People want to take part. Publish one clear submission route (link in bio / form) so you capture this interest instead of fielding it ad hoc.${big}`;
+  if (/ambien|romanc|romantic|vibe|decor|aesthetic|atmospher|beautiful|gorgeous|date.?night/.test(i))
+    return `People are drawn to the look and feel, not a specific question. Lead with this in your visuals, reshare the strongest examples as social proof, and pair the aspiration with one concrete next step (visit / book / watch).${big}`;
+  if (/location|event|where|venue|address|ticket|directions|parking|opening|hours|when is/.test(i))
+    return `Logistics questions. Pin the address, date or ticket link in captions and a "Find Us / Events" Highlight so the answer is always one tap away.${big}`;
+  if (/menu|food|price|cost|value/.test(i))
+    return `Product/price curiosity. Answer it proactively with a monthly menu/price carousel and a pinned FAQ, so buyers don't have to ask.${big}`;
+  if (/service|complaint|issue|wait/.test(i))
+    return `Operational feedback. Route these to a person, respond fast and privately, and track resolution time — visible unanswered complaints cost trust.`;
+  if (/praise|hype|love|congrat|support/.test(i))
+    return `Warm sentiment rather than direct intent. Reshare the best as social proof (stories/highlights) and end those captions with one explicit next step to turn affection into action.`;
+  return `Mostly low-intent reactions. The opportunity is to convert warmth into action: end captions with a single, specific call to action and measure whether the next-step comments rise.`;
+}
+
 module.exports = {
   ROOT,
   ensureDir,
@@ -144,4 +169,5 @@ module.exports = {
   round,
   pct,
   topN,
+  commentNextStep,
 };
