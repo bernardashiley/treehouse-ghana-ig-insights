@@ -18,9 +18,13 @@ const {
   round,
   pct,
   topN,
+  metricNum,
+  cleanMetric,
+  dedupeByShortcode,
+  splitOwned,
 } = require("./utils");
 
-const { loadRules } = require("./config");
+const { loadRules, loadConfig } = require("./config");
 
 const processedDir = path.join(ROOT, "data", "processed");
 const figuresDir = path.join(ROOT, "reports", "figures");
@@ -41,8 +45,11 @@ function primaryPillar(text) {
   return classify(text, pillarRules, "general brand/content")[0];
 }
 
+// Scraper artefacts (Apify returns -1 for hidden public metrics) are floored to 0
+// for the score via metricNum; the per-field missing flags are preserved on the
+// row so display tables can show "NA" instead of 0 or -1.
 function engagementScore(row) {
-  return round(num(row.likes) + num(row.comments) * 5 + num(row.views) * 0.01, 2);
+  return round(metricNum(row.likes) + metricNum(row.comments) * 5 + metricNum(row.views) * 0.01, 2);
 }
 
 function normaliseContent(records, contentType) {
@@ -69,9 +76,11 @@ function normaliseContent(records, contentType) {
       hashtags: tags.join(" "),
       mention_count: mentions.length,
       mentions: mentions.join(" "),
-      likes: num(record.likesCount),
-      comments: num(record.commentsCount),
+      likes: metricNum(record.likesCount),
+      likes_missing: cleanMetric(record.likesCount).missing,
+      comments: metricNum(record.commentsCount),
       views,
+      views_missing: cleanMetric(views).missing,
       owner_username: str(record.ownerUsername || record.username),
       pillar: primaryPillar(`${caption} ${tags.join(" ")} ${mentions.join(" ")}`),
     };
@@ -160,15 +169,18 @@ function pillarInterpretation(pillar) {
   return map[pillar] || "General brand content; use stronger occasion, menu, or booking cues.";
 }
 
+// Single-label: each comment is counted once under its PRIMARY intent, so counts
+// sum to the number of comments analysed and percentages sum to 100%. (A comment
+// can touch several themes, but for a clean, auditable table we report the single
+// dominant intent.)
 function commentIntentSummary(comments) {
   const total = comments.length;
   const rows = [];
   const groups = new Map();
   for (const comment of comments) {
-    for (const intent of comment.all_intents.split("; ")) {
-      if (!groups.has(intent)) groups.set(intent, []);
-      groups.get(intent).push(comment);
-    }
+    const intent = comment.primary_intent || "generic/unclear";
+    if (!groups.has(intent)) groups.set(intent, []);
+    groups.get(intent).push(comment);
   }
   for (const [intent, values] of groups.entries()) {
     rows.push({
@@ -506,19 +518,40 @@ function escapeXml(value) {
 function main() {
   // Raw-data filenames are prefixed with the client slug from config, so the
   // same code processes any client's scrape (e.g. "treehouse_posts_full.json").
-  const { loadConfig } = require("./config");
-  const slug = loadConfig().client.slug;
+  const cfg = loadConfig();
+  const slug = cfg.client.slug;
+  // (loadConfig imported at top alongside loadRules)
+  const handle = String(cfg.client.handle || cfg.client.short_name || "").toLowerCase();
   const raw = (suffix) => `data/raw/${slug}_${suffix}.json`;
   const profile = readJson(raw("profile_details"), {});
-  const posts = normaliseContent(readJson(raw("posts_full"), []), "post");
-  const reels = normaliseContent(readJson(raw("reels_full"), []), "reel");
+  const rawPosts = normaliseContent(readJson(raw("posts_full"), []), "post");
+  const rawReels = normaliseContent(readJson(raw("reels_full"), []), "reel");
   const mentions = normaliseContent(readJson(raw("mentions"), []), "mention");
   const comments = normaliseComments(readJson(raw("comments_top_posts"), []));
-  const ownedContent = [...posts, ...reels];
+
+  // Canonical working dataset: deduplicate the overlapping posts/reels scrapes by
+  // shortcode (the same item appears in both), then split owned vs third-party.
+  // Every descriptive table below is built on the deduplicated OWNED set so that
+  // Part I of the report agrees with the deduplicated Part II analysis.
+  const deduped = dedupeByShortcode([...rawPosts, ...rawReels]);
+  const { owned, thirdParty, ownerHandle } = splitOwned(deduped, handle);
+  const ownedContent = owned;
+  const dedupedReels = deduped.filter((row) => row.content_type === "reel");
+  const ownedReels = owned.filter((row) => row.content_type === "reel");
+
+  const reconciliation = [
+    { stage: "Raw feed-post records", records: rawPosts.length },
+    { stage: "Raw reel records", records: rawReels.length },
+    { stage: "Raw total (pre-deduplication)", records: rawPosts.length + rawReels.length },
+    { stage: "Deduplicated unique records", records: deduped.length },
+    { stage: "Owned-account records", records: owned.length },
+    { stage: "Third-party / feature records", records: thirdParty.length },
+    { stage: "Deduplicated reels", records: dedupedReels.length },
+  ];
 
   const profileRows = profileSummary(profile, {
-    posts: posts.length,
-    reels: reels.length,
+    posts: rawPosts.length,
+    reels: rawReels.length,
     mentions: mentions.length,
     comments: comments.length,
   });
@@ -529,8 +562,10 @@ function main() {
   const advanced = advancedStatistics(ownedContent, comments, mentions);
 
   writeCsv("data/processed/profile_summary.csv", profileRows);
-  writeCsv("data/processed/posts_clean.csv", posts);
-  writeCsv("data/processed/reels_clean.csv", reels);
+  // posts_clean / reels_clean keep the RAW normalised records so advanced_analysis.js
+  // can deduplicate them identically; all summaries below use the deduplicated owned set.
+  writeCsv("data/processed/posts_clean.csv", rawPosts);
+  writeCsv("data/processed/reels_clean.csv", rawReels);
   writeCsv("data/processed/mentions_clean.csv", mentions);
   writeCsv("data/processed/comments_clean.csv", comments);
   writeCsv("data/processed/content_pillar_summary.csv", pillarRows);
@@ -541,6 +576,7 @@ function main() {
   writeCsv("data/processed/pillar_lift_summary.csv", advanced.pillarStats);
   writeCsv("data/processed/correlation_summary.csv", advanced.correlations);
   writeCsv("data/processed/outlier_content.csv", advanced.outliers);
+  writeCsv("data/processed/data_reconciliation.csv", reconciliation);
 
   const topEngagement = topN(ownedContent, "engagement_score", 10);
   const dayRows = timingRows.filter((row) => row.period_type === "day_of_week");
@@ -561,15 +597,21 @@ function main() {
   const summary = {
     generated_at: new Date().toISOString(),
     counts: {
-      posts: posts.length,
-      reels: reels.length,
+      posts: rawPosts.length,
+      reels: rawReels.length,
       mentions: mentions.length,
       comments: comments.length,
+      deduplicated_unique: deduped.length,
+      owned: owned.length,
+      third_party: thirdParty.length,
+      deduplicated_reels: dedupedReels.length,
     },
+    owner_handle: ownerHandle,
+    reconciliation,
     profile: profileRows[0],
-    top_by_likes: topN(posts, "likes", 10),
-    top_by_comments: topN(posts, "comments", 10),
-    top_reels_by_views: topN(reels, "views", 10),
+    top_by_likes: topN(ownedContent, "likes", 10),
+    top_by_comments: topN(ownedContent, "comments", 10),
+    top_reels_by_views: topN(ownedReels, "views", 10),
     top_by_engagement: topEngagement,
     pillars: pillarRows,
     comment_intents: intentRows,
@@ -600,7 +642,7 @@ function main() {
   };
 
   writeJson("data/processed/analysis_summary.json", summary);
-  console.log(`Analysed ${posts.length} posts, ${reels.length} reels, ${mentions.length} mentions, and ${comments.length} comments.`);
+  console.log(`Raw: ${rawPosts.length} posts + ${rawReels.length} reels = ${rawPosts.length + rawReels.length}; deduplicated ${deduped.length} unique (owned ${owned.length}, third-party ${thirdParty.length}, reels ${dedupedReels.length}). Comments: ${comments.length}.`);
 }
 
 main();

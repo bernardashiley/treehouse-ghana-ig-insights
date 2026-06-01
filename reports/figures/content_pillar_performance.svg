@@ -1,34 +1,34 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="920" height="430" viewBox="0 0 920 430">
 <rect width="100%" height="100%" fill="#ffffff"/>
 <text x="16" y="30" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2933">Content pillar performance</text>
-<g font-family="Arial, sans-serif"><text x="16" y="75" font-size="13" fill="#28323c">cocktails/drinks</text>
+<g font-family="Arial, sans-serif"><text x="16" y="75" font-size="13" fill="#28323c">events/live music/DJ</text>
 <rect x="260" y="61" width="628" height="18" fill="#2f6f73"/>
-<text x="896" y="75" font-size="12" fill="#28323c">289.59</text>
-<text x="16" y="109" font-size="13" fill="#28323c">events/live music/DJ</text>
-<rect x="260" y="95" width="546" height="18" fill="#2f6f73"/>
-<text x="814" y="109" font-size="12" fill="#28323c">251.93</text>
-<text x="16" y="143" font-size="13" fill="#28323c">ambience/decor/vibe</text>
-<rect x="260" y="129" width="505" height="18" fill="#2f6f73"/>
-<text x="773" y="143" font-size="12" fill="#28323c">232.75</text>
-<text x="16" y="177" font-size="13" fill="#28323c">dinner/nightlife</text>
-<rect x="260" y="163" width="429" height="18" fill="#2f6f73"/>
-<text x="697" y="177" font-size="12" fill="#28323c">197.94</text>
-<text x="16" y="211" font-size="13" fill="#28323c">promotions/offers</text>
-<rect x="260" y="197" width="312" height="18" fill="#2f6f73"/>
-<text x="580" y="211" font-size="12" fill="#28323c">143.81</text>
+<text x="896" y="75" font-size="12" fill="#28323c">415.83</text>
+<text x="16" y="109" font-size="13" fill="#28323c">cocktails/drinks</text>
+<rect x="260" y="95" width="315" height="18" fill="#2f6f73"/>
+<text x="583" y="109" font-size="12" fill="#28323c">208.29</text>
+<text x="16" y="143" font-size="13" fill="#28323c">dinner/nightlife</text>
+<rect x="260" y="129" width="233" height="18" fill="#2f6f73"/>
+<text x="501" y="143" font-size="12" fill="#28323c">154</text>
+<text x="16" y="177" font-size="13" fill="#28323c">promotions/offers</text>
+<rect x="260" y="163" width="217" height="18" fill="#2f6f73"/>
+<text x="485" y="177" font-size="12" fill="#28323c">143.81</text>
+<text x="16" y="211" font-size="13" fill="#28323c">birthdays/celebrations</text>
+<rect x="260" y="197" width="201" height="18" fill="#2f6f73"/>
+<text x="469" y="211" font-size="12" fill="#28323c">133.41</text>
 <text x="16" y="245" font-size="13" fill="#28323c">food</text>
-<rect x="260" y="231" width="290" height="18" fill="#2f6f73"/>
-<text x="558" y="245" font-size="12" fill="#28323c">133.73</text>
-<text x="16" y="279" font-size="13" fill="#28323c">general brand/content</text>
-<rect x="260" y="265" width="174" height="18" fill="#2f6f73"/>
-<text x="442" y="279" font-size="12" fill="#28323c">80.36</text>
-<text x="16" y="313" font-size="13" fill="#28323c">price/value</text>
-<rect x="260" y="299" width="173" height="18" fill="#2f6f73"/>
-<text x="441" y="313" font-size="12" fill="#28323c">79.84</text>
-<text x="16" y="347" font-size="13" fill="#28323c">birthdays/celebrations</text>
-<rect x="260" y="333" width="166" height="18" fill="#2f6f73"/>
-<text x="434" y="347" font-size="12" fill="#28323c">76.73</text>
-<text x="16" y="381" font-size="13" fill="#28323c">date night/romance</text>
-<rect x="260" y="367" width="165" height="18" fill="#2f6f73"/>
-<text x="433" y="381" font-size="12" fill="#28323c">76.07</text></g>
+<rect x="260" y="231" width="172" height="18" fill="#2f6f73"/>
+<text x="440" y="245" font-size="12" fill="#28323c">113.96</text>
+<text x="16" y="279" font-size="13" fill="#28323c">date night/romance</text>
+<rect x="260" y="265" width="156" height="18" fill="#2f6f73"/>
+<text x="424" y="279" font-size="12" fill="#28323c">103.22</text>
+<text x="16" y="313" font-size="13" fill="#28323c">ambience/decor/vibe</text>
+<rect x="260" y="299" width="62" height="18" fill="#2f6f73"/>
+<text x="330" y="313" font-size="12" fill="#28323c">41.33</text>
+<text x="16" y="347" font-size="13" fill="#28323c">reservations/bookings</text>
+<rect x="260" y="333" width="54" height="18" fill="#2f6f73"/>
+<text x="322" y="347" font-size="12" fill="#28323c">35.54</text>
+<text x="16" y="381" font-size="13" fill="#28323c">general brand/content</text>
+<rect x="260" y="367" width="37" height="18" fill="#2f6f73"/>
+<text x="305" y="381" font-size="12" fill="#28323c">24.64</text></g>
 </svg>

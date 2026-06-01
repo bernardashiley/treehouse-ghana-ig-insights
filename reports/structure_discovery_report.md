@@ -25,7 +25,7 @@ Ordered by average engagement (highest first):
 | 2 | 40 (29.4%) | **189** | soulmusic, rnb, soulfridays, goodvibesonly, soul, friday, soulfriday, dinner |
 | 3 | 3 (2.2%) | **168** | jazz, bluejackets_cover, tunes, 7pm, thursday, restaurant, delicious, join |
 | 4 | 20 (14.7%) | **143** | treehousegh, accra, ghana, fashion, entertainment, tickets, december, weekgh |
-| 5 | 17 (12.5%) | **127** | afroson1cx, cavemen, thecavemen, malaikurd, afx2026, mx24gh, mxbreaks, accra2026 |
+| 5 | 17 (12.5%) | **128** | afroson1cx, cavemen, thecavemen, malaikurd, afx2026, mx24gh, mxbreaks, accra2026 |
 | 6 | 27 (19.9%) | **87** | goodfood, lunch, dinner, treehouserestaurant, foodie, foodinsta, food, call |
 | 7 | 7 (5.1%) | **83** | drinks, cocktails, treehouserestaurant, friends, friday, together, valentine, sweet |
 | 8 | 15 (11%) | **51** | explore, reels, goodtimes, foodlover, dinner, treehouserestaurant, food, perfection |

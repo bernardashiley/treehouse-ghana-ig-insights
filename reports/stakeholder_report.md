@@ -1,5 +1,5 @@
 # Treehouse Ghana: Instagram Performance Report
-*Prepared 2026-05-31 · Based on 135 posts, 84 reels, 21 external mentions and 106 audience comments*
+*Prepared 2026-06-01 · Based on 135 posts, 84 reels, 21 external mentions and 106 audience comments*
 
 ---
 
@@ -9,11 +9,11 @@
 |---|---|
 | 👥 **Followers** | **27,386** at time of analysis |
 | 📊 **Posts analysed** | 135 feed posts + 84 short videos |
-| 🏆 **Best-performing content type** | Cocktails & Drinks (avg score 290) |
-| 📅 **Best day to post** | **Monday** (avg score 199) |
-| 🎬 **Posts vs short videos** | Only 16 short videos posted: this account is **posts-driven**; feed posts carry the engagement |
+| 🏆 **Best-performing content type** | Events & Live Music (avg score 416) |
+| 📅 **Best day to post** | **Monday** (avg score 193) |
+| 🎬 **Posts vs short videos** | Only 7 short videos posted: this account is **posts-driven**; feed posts carry the engagement |
 
-> **What this means in plain English:** This account is small but engaged. Its strongest content is **cocktails & drinks**, and almost all engagement comes from **feed posts** (carousels and images); it has posted very few short videos. The biggest opportunities are to keep producing the Cocktails & Drinks, Events & Live Music, Ambience & Vibe content that already works, and to make every post end with a clear next step (book, call, or visit).
+> **What this means in plain English:** This account is small but engaged. Its strongest content is **events & live music**, and almost all engagement comes from **feed posts** (carousels and images); it has posted very few short videos. The biggest opportunities are to keep producing the Events & Live Music, Cocktails & Drinks, Dinner & Nightlife content that already works, and to make every post end with a clear next step (book, call, or visit).
 
 ---
 
@@ -24,11 +24,11 @@ The chart below shows how different types of content perform. The longer the bar
 ![Content pillar performance](figures/sr_pillars.svg)
 
 ### Key takeaways
-🥇 **Cocktails & Drinks**, avg score **290** (11 posts): about 128% above your typical post, a proven strength to do more of.
-🥈 **Events & Live Music**, avg score **252** (8 posts): only 8 posts so far, a promising signal worth testing with more.
-🥉 **Ambience & Vibe**, avg score **233** (15 posts): about 84% above your typical post, a proven strength to do more of.
-4️⃣ **Dinner & Nightlife**, avg score **198** (17 posts): about 56% above your typical post, a proven strength to do more of.
-5️⃣ **Promotions**, avg score **144** (2 posts): only 2 posts so far, a promising signal worth testing with more.
+🥇 **Events & Live Music**, avg score **416** (4 posts): only 4 posts so far, a promising signal worth testing with more.
+🥈 **Cocktails & Drinks**, avg score **208** (5 posts): only 5 posts so far, a promising signal worth testing with more.
+🥉 **Dinner & Nightlife**, avg score **154** (10 posts): about 21% above your typical post, a proven strength to do more of.
+4️⃣ **Promotions**, avg score **144** (1 posts): only 1 posts so far, a promising signal worth testing with more.
+5️⃣ **Birthdays & Events**, avg score **133** (1 posts): only 1 posts so far, a promising signal worth testing with more.
 
 ---
 
@@ -47,7 +47,7 @@ These posts and videos are your proven best-sellers. Study what made them work:
 
 ![Short videos vs feed posts](figures/sr_type_compare.svg)
 
-**Why this matters:** This account is **posts-driven**. You have posted only 16 short videos in the period analysed, and your feed posts (carousels and images of food and events) carry almost all of the engagement. Short videos (Reels) do something posts cannot: Instagram shows them to people who don't yet follow you, so the opportunity is to **test** a few short videos as a way to reach new people, not to assume they will beat your already-strong posts. Keep doing what works, and treat video as an experiment to grow reach, measured in your Instagram Insights.
+**Why this matters:** This account is **posts-driven**. You have posted only 7 short videos in the period analysed, and your feed posts (carousels and images of food and events) carry almost all of the engagement. Short videos (Reels) do something posts cannot: Instagram shows them to people who don't yet follow you, so the opportunity is to **test** a few short videos as a way to reach new people, not to assume they will beat your already-strong posts. Keep doing what works, and treat video as an experiment to grow reach, measured in your Instagram Insights.
 
 > **Practical tip:** You don't need expensive equipment. A smartphone held still for 15–30 seconds of a dish being plated or an event being set up is enough to test the format.
 
@@ -59,13 +59,13 @@ These posts and videos are your proven best-sellers. Study what made them work:
 
 | Day | Average Engagement | Recommendation |
 |---|---|---|
-| **Monday** | 199 | ✅ Best day: post your most important content here |
-| **Tuesday** | 180 | ✅ Second-best: strong engagement |
-| **Friday** | 148 | 🟡 Good: solid performance |
-| **Thursday** | 141 | 🟡 Good: solid performance |
-| **Sunday** | 121 | ⚪ Lower priority |
-| **Saturday** | 104 | ⚪ Lower priority |
-| **Wednesday** | 95 | ⚪ Lower priority |
+| **Monday** | 193 | ✅ Best day: post your most important content here |
+| **Friday** | 127 | ✅ Second-best: strong engagement |
+| **Thursday** | 121 | 🟡 Good: solid performance |
+| **Tuesday** | 119 | 🟡 Good: solid performance |
+| **Wednesday** | 82 | ⚪ Lower priority |
+| **Saturday** | 57 | ⚪ Lower priority |
+| **Sunday** | 54 | ⚪ Lower priority |
 
 ---
 
@@ -81,9 +81,9 @@ Most comments are light praise: lovely, but not where business comes from. The v
 
 | Comment type (and how often) | What to do about it |
 |---|---|
-| **location/access question** (5, 4.7%) | Logistics questions. Pin the address, date or ticket link in captions and a "Find Us / Events" Highlight so the answer is always one tap away. |
+| **location/access question** (4, 3.8%) | Logistics questions. Pin the address, date or ticket link in captions and a "Find Us / Events" Highlight so the answer is always one tap away. |
 | **event interest** (3, 2.8%) | Logistics questions. Pin the address, date or ticket link in captions and a "Find Us / Events" Highlight so the answer is always one tap away. |
-| **date-night/romantic ambience** (3, 2.8%) | People are drawn to the look and feel, not a specific question. Lead with this in your visuals, reshare the strongest examples as social proof, and pair the aspiration with one concrete next step (visit / book / watch). |
+| **date-night/romantic ambience** (2, 1.9%) | People are drawn to the look and feel, not a specific question. Lead with this in your visuals, reshare the strongest examples as social proof, and pair the aspiration with one concrete next step (visit / book / watch). |
 | **menu/food curiosity** (2, 1.9%) | Product/price curiosity. Answer it proactively with a monthly menu/price carousel and a pinned FAQ, so buyers don't have to ask. |
 | **service issue/complaint** (1, 0.9%) | Operational feedback. Route these to a person, respond fast and privately, and track resolution time, because visible unanswered complaints cost trust. |
 
@@ -110,12 +110,12 @@ We simulated three content approaches by drawing on your past performance. Each 
 Take these steps in order. Each one builds on the last, and every one is drawn from what your own data shows above.
 
 ### This week (quick wins)
-1. **Reply to every high-intent comment within 30 minutes during posting hours.** Your most common commercial signal is *location/access question* (4.7% of comments). Those are warm leads, and a fast reply is what converts them.
+1. **Reply to every high-intent comment within 30 minutes during posting hours.** Your most common commercial signal is *location/access question* (3.8% of comments). Those are warm leads, and a fast reply is what converts them.
 2. **Make the one next step you most want frictionless in your bio.** Whatever action your top comments are asking for, put a single tap to it (link, form, or saved reply) at the top of your profile so nobody has to hunt for it.
 3. **Pin a Highlight that answers your most-asked question.** Build it around the comment type above so the answer is always one tap away instead of being re-typed in DMs.
 
 ### This month
-4. **Publish more of what already works.** Your strongest category is **Cocktails & Drinks**. Schedule more of it deliberately rather than leaving your best content to chance.
+4. **Publish more of what already works.** Your strongest category is **Events & Live Music**. Schedule more of it deliberately rather than leaving your best content to chance.
 5. **Post on your strongest day.** Engagement peaks around **Monday**, so anchor your most important posts there.
 6. **Reshare your best social proof.** Take two of your strongest mentions or comments, reshare them, and end the caption with one explicit next step.
 
@@ -150,4 +150,4 @@ A few terms appear above. Here is what each one means, in everyday language:
 
 This report is based entirely on **public** Instagram data: posts, reels, comments and mentions visible to anyone. It does not use your private Instagram analytics (reach, impressions, saves, shares, profile visits). For a complete picture, combine these findings with your native Instagram Insights.
 
-*Analysis by: data pipeline in this repository. Charts and numbers update automatically when the analysis is re-run. Last generated: 2026-05-31.*
+*Analysis by: data pipeline in this repository. Charts and numbers update automatically when the analysis is re-run. Last generated: 2026-06-01.*

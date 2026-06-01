@@ -1,11 +1,11 @@
 analysis,n,metric,estimate,ci_low,ci_high,interpretation
-posts_vs_reels_effect,219,engagement_score,75.63,,,Reels average 75.63 engagement-score points versus posts; Cohen's d 0.256.
-engagement_concentration,219,top_10_share,40.4,,,"The top 10 posts/reels account for 40.4% of public engagement score, indicating how concentrated performance is."
+posts_vs_reels_effect,107,engagement_score,247.33,,,Reels average 247.33 engagement-score points versus posts; Cohen's d 0.73.
+engagement_concentration,107,top_10_share,67.1,,,"The top 10 posts/reels account for 67.1% of public engagement score, indicating how concentrated performance is."
 comments_per_selected_top_post,106,comment_volume,4.24,,,Average comments captured per selected high-performing post URL.
-external_social_proof_ratio,21,mentions_per_100_owned_posts,9.59,,,Public third-party mentions per 100 owned posts/reels in the collected sample.
-simple_regression_caption_length,219,caption_length,0.0856,,,Each one-unit increase in caption length is associated with 0.0856 engagement-score points in a simple public-metric model; R-squared 0.003.
-simple_regression_hashtag_count,219,hashtag_count,13.0716,,,Each one-unit increase in hashtag count is associated with 13.0716 engagement-score points in a simple public-metric model; R-squared 0.015.
-simple_regression_mention_count,219,mention_count,-2.2427,,,Each one-unit increase in caption mention count is associated with -2.2427 engagement-score points in a simple public-metric model; R-squared 0.
-simple_regression_views,219,views,0.0165,,,Each one-unit increase in views/plays is associated with 0.0165 engagement-score points in a simple public-metric model; R-squared 0.863.
-bootstrap_mean_post,135,engagement_score,114.57,76.17,157.4,Bootstrap 95% confidence interval for average public engagement score for posts.
-bootstrap_mean_reel,84,engagement_score,190.2,126.31,265.8,Bootstrap 95% confidence interval for average public engagement score for reels.
+external_social_proof_ratio,21,mentions_per_100_owned_posts,19.63,,,Public third-party mentions per 100 owned posts/reels in the collected sample.
+simple_regression_caption_length,107,caption_length,0.2348,,,Each one-unit increase in caption length is associated with 0.2348 engagement-score points in a simple public-metric model; R-squared 0.006.
+simple_regression_hashtag_count,107,hashtag_count,14.782,,,Each one-unit increase in hashtag count is associated with 14.782 engagement-score points in a simple public-metric model; R-squared 0.016.
+simple_regression_mention_count,107,mention_count,87.6868,,,Each one-unit increase in caption mention count is associated with 87.6868 engagement-score points in a simple public-metric model; R-squared 0.016.
+simple_regression_views,107,views,0.0165,,,Each one-unit increase in views/plays is associated with 0.0165 engagement-score points in a simple public-metric model; R-squared 0.946.
+bootstrap_mean_post,100,engagement_score,102.72,55.52,158.23,Bootstrap 95% confidence interval for average public engagement score for posts.
+bootstrap_mean_reel,7,engagement_score,350.05,126.03,655.34,Bootstrap 95% confidence interval for average public engagement score for reels.

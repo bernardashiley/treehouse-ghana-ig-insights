@@ -33,9 +33,11 @@ this report. \\[4pt]
 
 \textbf{Bootstrap / Bootstrap CI} &
 A statistical method that estimates uncertainty by repeatedly re-drawing random
-samples from the data and measuring how much the result varies. A \textbf{bootstrap
-confidence interval (CI)} is a range of values that is likely to contain the true
-answer 95\% of the time. \\[4pt]
+samples (with replacement) from the observed data and measuring how much the
+result varies. A \textbf{bootstrap confidence interval (CI)} uses that spread to
+give a plausible range for the estimate; a 95\% CI is constructed so that, under
+repeated sampling, intervals of this kind contain the true value about 95\% of the
+time. \\[4pt]
 
 \textbf{Call to Action (CTA)} &
 A direct instruction in a caption or story that tells the viewer what to do next.
@@ -146,11 +148,11 @@ that pillar. Small $n$ leads to wide confidence intervals and unreliable
 conclusions. \\[4pt]
 
 \textbf{$p$-value} &
-The probability that the observed result (or one more extreme) would occur by
-chance alone, assuming there is no real effect. A $p$-value below 0.05 is the
-conventional threshold for declaring a result ``statistically significant''.
-A $p$-value of 0.07, for example, means the result is not conclusive but is
-directionally informative. \\[4pt]
+The probability of observing a result at least as extreme as the one seen, if the
+null hypothesis (no real effect) were true. A $p$-value below the chosen threshold
+(0.05, or the Bonferroni-corrected value when several tests are run) is the
+conventional cut-off for ``statistically significant''. A $p$-value of 0.07, for
+example, is not conclusive but is directionally informative. \\[4pt]
 
 \textbf{Pearson Correlation ($r$)} &
 A measure of the straight-line relationship between two variables, ranging from
@@ -160,16 +162,16 @@ between caption length and engagement would indicate that longer captions do not
 reliably produce more engagement. \\[4pt]
 
 \textbf{Percentile (P5, P25, P75, P95)} &
-A value below which a given percentage of observations fall. P5 means the bottom
-5\% of results; P95 means the top 5\%. In the Monte Carlo tables, P5 represents
-the worst-case outcome seen in 5\% of simulations and P95 represents the best-case
-outcome seen in 5\% of simulations. \\[4pt]
+A value below which a given percentage of observations fall. P5 is the value below
+which 5\% of outcomes fall (a low, pessimistic outcome); P95 is the value below
+which 95\% fall (a high, optimistic outcome). In the Monte Carlo tables they mark
+the lower and upper ends of the likely range. \\[4pt]
 
 \textbf{Reel} &
-Instagram's short-video format, typically 15 to 90 seconds. Reels are distributed
-by Instagram's recommendation algorithm and therefore reach audiences beyond the
-account's existing followers. Feed posts (images and carousels) are distributed
-primarily to existing followers. \\[4pt]
+Instagram's short-video format, typically 15 to 90 seconds. Reels may be
+distributed beyond the account's existing followers through Instagram's
+recommendation surfaces, so they are the main lever for reaching new audiences.
+Feed posts (images and carousels) are seen mostly by existing followers. \\[4pt]
 
 \textbf{Seed (Random Seed)} &
 A fixed starting number given to a random number generator so that the same
@@ -229,12 +231,6 @@ An adjustment made when running multiple hypothesis tests at the same time. It
 lowers the $p$-value threshold (from 0.05 to 0.0083 when running six tests) to
 reduce the chance that at least one result appears significant purely by accident. \\[4pt]
 
-\textbf{Excess Kurtosis} &
-A measure of how ``heavy-tailed'' a distribution is compared to a normal bell
-curve. Positive excess kurtosis means extreme values (very high-performing posts)
-occur more often than a normal distribution would predict. A large positive value
-indicates the distribution is dominated by a few outlier posts. \\[4pt]
-
 \textbf{Lift vs Baseline} &
 The percentage difference between a pillar's average engagement score and the
 overall average. A lift of +100\% for a pillar means that, on average, a post in
@@ -247,9 +243,10 @@ percentage) that a strategy will reach a specified engagement target over 12 wee
 P(achieve) of 80\% means that in 8 out of every 10 simulated runs, the strategy
 reached the target. \\[4pt]
 
-\textbf{Top-20 Hit Rate} &
-The proportion of posts within a pillar that scored in the top 20\% of all posts
-by engagement score. A high hit rate means the pillar consistently produces
-strong content; a low hit rate means performance is variable. \\[4pt]
+\textbf{Holm correction} &
+A step-down method for adjusting $p$-values when several tests are run together
+(here, pairwise day-of-week comparisons). It controls the chance of a false
+positive across the whole family of tests while being less conservative than a
+plain Bonferroni adjustment. \\[4pt]
 
 \end{longtable}

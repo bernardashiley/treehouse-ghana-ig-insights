@@ -22,7 +22,8 @@ function dedupe(rows){const seen=new Map();for(const r of rows){const k=r.shortc
 const r2=x=>Math.round(x*1000)/1000;
 
 console.log('='.repeat(70));
-console.log('INDEPENDENT STATISTICAL VALIDITY AUDIT — Treehouse Ghana');
+let __cn='this client';try{__cn=require(path.join(ROOT,'config','client.config.json')).client.name;}catch(e){}
+console.log('INDEPENDENT STATISTICAL VALIDITY AUDIT — '+__cn);
 console.log('='.repeat(70));
 
 const posts=readCsv('data/processed/posts_clean.csv');
@@ -102,6 +103,19 @@ for(const f of ['data/processed/posts_clean.csv','data/processed/reels_clean.csv
   console.log(`  ${f}  sha256:${h}`);
 }
 console.log('  Fixed MC seed 20260530 + committed CSVs => bit-identical re-runs.');
+
+// ── CHECK 6: Cross-section consistency (Part I vs Part II) ──
+console.log('\n[CHECK 6] CROSS-SECTION CONSISTENCY (regression guard)');
+console.log('-'.repeat(70));
+const partIPillarN  = readCsv('data/processed/content_pillar_summary.csv').reduce((s, r) => s + num(r.posts_count), 0);
+const partIIPillarN = readCsv('data/processed/adv_eda_summary.csv').filter(r => /^pillar:/.test(r.label)).reduce((s, r) => s + num(r.n), 0);
+const intentRows    = readCsv('data/processed/comment_intent_summary.csv');
+const intentPctSum  = intentRows.reduce((s, r) => s + num(r.percentage), 0);
+const noNegLikes    = readCsv('data/processed/posts_clean.csv').every(r => num(r.likes) >= 0);
+const ok = (label, cond) => console.log(`  [${cond ? 'PASS' : 'FAIL'}] ${label}`);
+ok(`Part I pillar n (${partIPillarN}) == Part II pillar n (${partIIPillarN})`, partIPillarN === partIIPillarN && partIPillarN > 0);
+ok(`Comment-intent percentages sum to ~100% (got ${intentPctSum.toFixed(1)})`, Math.abs(intentPctSum - 100) <= 1.0);
+ok('No negative metric values in posts_clean likes (floored)', noNegLikes);
 
 console.log('\n'+'='.repeat(70));
 console.log('Audit complete. See interpretation in chat.');

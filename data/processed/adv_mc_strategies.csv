@@ -1,4 +1,4 @@
-strategy,weeks,total_posts,mean,median,p5,p25,p75,p95,stddev,cv,uplift_vs_current
-current_mix,12,62,7288,7103,4160,5741,8652,11057,2119,0.291,0
-optimised,12,61,9903,9745,6106,8176,11458,14185,2448,0.247,35.9
-heavy_reels,12,77,12462,12314,8189,10538,14199,17275,2757,0.221,71
+strategy,weeks,total_posts,mean,mean_per_post,median,p5,p25,p75,p95,stddev,cv,uplift_vs_current,uplift_per_post_vs_current
+current_mix,12,62,7288,118,7103,4160,5741,8652,11057,2119,0.291,0,0
+optimised,12,61,9903,162,9745,6106,8176,11458,14185,2448,0.247,35.9,37.3
+heavy_reels,12,77,12462,162,12314,8189,10538,14199,17275,2757,0.221,71,37.3

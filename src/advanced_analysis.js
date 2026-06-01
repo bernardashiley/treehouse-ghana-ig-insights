@@ -17,7 +17,7 @@
 
 const fs   = require('fs');
 const path = require('path');
-const { ROOT, ensureDir, writeText, writeCsv, num, round, mean, median } = require('./utils');
+const { ROOT, ensureDir, writeText, writeCsv, num, round, mean, median, dedupeByShortcode, splitOwned } = require('./utils');
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // CSV PARSER
@@ -389,11 +389,15 @@ function mcStrategyComparison(ownedPillarDist, rng, sims = 10000, strategies = n
       totals.push(total);
     }
     totals.sort((a, b) => a - b);
+    const totalPosts = Object.values(plan).reduce((s, v) => s + Math.round(v * WEEKS), 0);
     results.push({
       strategy: name,
       weeks: WEEKS,
-      total_posts: Object.values(plan).reduce((s, v) => s + Math.round(v * WEEKS), 0),
+      total_posts: totalPosts,
       mean: round(mean(totals), 0),
+      // Per-post expected engagement isolates content QUALITY from posting VOLUME,
+      // so strategies that simply post more are not credited unfairly.
+      mean_per_post: round(mean(totals) / (totalPosts || 1), 0),
       median: round(median(totals), 0),
       p5:  round(pctile(totals, 0.05), 0),
       p25: round(pctile(totals, 0.25), 0),
@@ -402,10 +406,15 @@ function mcStrategyComparison(ownedPillarDist, rng, sims = 10000, strategies = n
       stddev: round(stddev(totals), 0),
       cv: round(stddev(totals) / (mean(totals) || 1), 3),
       uplift_vs_current: null,
+      uplift_per_post_vs_current: null,
     });
   }
   const base = results[0].mean;
-  for (const r of results) r.uplift_vs_current = round((r.mean - base) / (base || 1) * 100, 1);
+  const basePer = results[0].mean_per_post;
+  for (const r of results) {
+    r.uplift_vs_current = round((r.mean - base) / (base || 1) * 100, 1);
+    r.uplift_per_post_vs_current = round((r.mean_per_post - basePer) / (basePer || 1) * 100, 1);
+  }
   return results;
 }
 
@@ -516,9 +525,11 @@ function mcConversion(ownedScores, meanCommentsPerPost, rng, sims = 10000) {
  * are always available to the optimizer.
  */
 function mcPillarMix(ownedPillarDist, rng, sims = 2000) {
-  // Only use pillars with n >= 3 owned posts (enough data to be meaningful)
+  // Only optimise over pillars with n >= 10 owned posts. Allocating budget to a
+  // pillar whose mean rests on 1-3 posts is not credible (the estimate is noise);
+  // small-n pillars are treated as "test slots" in the narrative, not anchors.
   const pillars = Object.entries(ownedPillarDist)
-    .filter(([, xs]) => xs.length >= 3)
+    .filter(([, xs]) => xs.length >= 10)
     .sort(([, a], [, b]) => mean(b) - mean(a))  // highest mean first
     .map(([p]) => p);
 
@@ -569,10 +580,17 @@ function mcPillarMix(ownedPillarDist, rng, sims = 2000) {
 function mcRisk(ownedPillarDist, rng, sims = 10000, strategies = null) {
   const STRATEGIES = strategies || buildStrategies(ownedPillarDist);
   const fallback = Object.values(ownedPillarDist).find(xs => xs && xs.length) || [50];
-  const targets = [5000, 10000, 15000, 20000, 30000, 50000];
   const WEEKS = 12;
   const rows = [];
 
+  // Simulate every strategy first so targets can be set from the ACTUAL outcome
+  // distribution. A fixed low grid (5k-50k) was uninformative because all
+  // strategies clear it ~100% of the time. We derive targets from percentiles of
+  // the pooled simulated totals, rounded to readable round numbers, so the
+  // probabilities land in an informative range and support "aim where you sit
+  // around 50-80%" advice.
+  const sim = {};
+  const pooled = [];
   for (const [strat, plan] of Object.entries(STRATEGIES)) {
     const totals = [];
     for (let s = 0; s < sims; s++) {
@@ -584,6 +602,19 @@ function mcRisk(ownedPillarDist, rng, sims = 10000, strategies = null) {
       }
       totals.push(total);
     }
+    sim[strat] = totals;
+    pooled.push(...totals);
+  }
+  pooled.sort((a, b) => a - b);
+  const roundNice = (x) => {
+    if (x <= 0) return 0;
+    const mag = Math.pow(10, Math.floor(Math.log10(x)));
+    return Math.round(x / (mag / 2)) * (mag / 2);
+  };
+  const targets = [...new Set([0.2, 0.4, 0.6, 0.8, 0.95]
+    .map(q => roundNice(pctile(pooled, q))))].filter(t => t > 0).sort((a, b) => a - b);
+
+  for (const [strat, totals] of Object.entries(sim)) {
     for (const target of targets) {
       rows.push({
         strategy:                strat,
@@ -669,28 +700,19 @@ function main() {
   const comments    = readCsv('data/processed/comments_clean.csv');
 
   // FIX: deduplicate before any analysis to avoid double-counting posts that
-  // appear in both the posts and reels scrape results.
-  const all      = dedupe([...rawPosts, ...rawReels]);
+  // appear in both the posts and reels scrape results. Uses the SAME shared
+  // helper as analyse.js so Part I and Part II can never disagree on counts.
+  const all      = dedupeByShortcode([...rawPosts, ...rawReels]);
   const dupCount = (rawPosts.length + rawReels.length) - all.length;
-  console.log(`Loaded: ${rawPosts.length} posts + ${rawReels.length} reels → ${all.length} unique after dedup (${dupCount} duplicates removed)`);
 
-  // Separate owned vs third-party on the deduplicated set.
-  // Owner handle comes from config (case-insensitive). If config is missing or
-  // the handle matches nothing, fall back to the most frequent owner so the
-  // owned/third-party split never silently collapses to empty.
-  let ownerHandle = OWNER;
-  const ownerCounts = {};
-  for (const r of all) { const u = String(r.owner_username || '').toLowerCase(); ownerCounts[u] = (ownerCounts[u] || 0) + 1; }
-  if (!ownerHandle || !(ownerHandle in ownerCounts)) {
-    const top = Object.entries(ownerCounts).sort((a, b) => b[1] - a[1])[0];
-    if (top) { console.warn(`[warn] config handle "${OWNER}" not found in data; using most frequent owner "${top[0]}" (${top[1]} posts)`); ownerHandle = top[0]; }
-  }
-  const owned      = all.filter(r => String(r.owner_username || '').toLowerCase() === ownerHandle);
-  const thirdParty = all.filter(r => String(r.owner_username || '').toLowerCase() !== ownerHandle);
+  // Separate owned vs third-party with the shared helper (config handle,
+  // most-frequent-owner fallback). Descriptive analysis below uses OWNED only.
+  const { owned, thirdParty, ownerHandle } = splitOwned(all, OWNER);
+  console.log(`Loaded: ${rawPosts.length} posts + ${rawReels.length} reels → ${all.length} unique (owned ${owned.length}, third-party ${thirdParty.length}); ${dupCount} duplicates removed`);
 
-  // Separate by content_type on deduplicated set (for posts vs reels test)
-  const posts = all.filter(r => r.content_type === 'post');
-  const reels  = all.filter(r => r.content_type === 'reel');
+  // Posts vs reels test uses OWNED content only (what the account itself publishes).
+  const posts = owned.filter(r => r.content_type === 'post');
+  const reels  = owned.filter(r => r.content_type === 'reel');
 
   // Score arrays — all clamped at 0
   const allScores       = safeScores(all);
@@ -701,11 +723,11 @@ function main() {
 
   if (!allScores.length) { console.error('[FATAL] No engagement scores found.'); process.exit(1); }
 
-  // ── Pillar distributions — owned only ─────────────────────────────────────
-  // FIX: MC simulations should model what treehousegh can publish.
-  // Third-party posts inflate some pillars (esp. general brand/content) and
-  // can't be controlled. We keep an "all-content" pillarMap for EDA but use
-  // ownedPillarDist for all strategy MCs.
+  // ── Pillar distributions — OWNED only ─────────────────────────────────────
+  // All descriptive analysis (pillar EDA, lift, H6, bootstrap, MC) uses the
+  // deduplicated OWNED set, so the report's Part I and Part II agree. Third-party
+  // feature/mention performance is reported only via the owned-vs-third H3 test
+  // and the EDA segment table.
   const ownedPillarDist = {};
   for (const row of owned) {
     const p = row.pillar || 'general brand/content';
@@ -714,17 +736,9 @@ function main() {
     if (Number.isFinite(s)) ownedPillarDist[p].push(Math.max(0, s));
   }
 
-  const allPillarDist = {};
-  for (const row of all) {
-    const p = row.pillar || 'general brand/content';
-    if (!allPillarDist[p]) allPillarDist[p] = [];
-    const s = num(row.engagement_score);
-    if (Number.isFinite(s)) allPillarDist[p].push(Math.max(0, s));
-  }
-
   const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
   const dayMap = {};
-  for (const row of all) {
+  for (const row of owned) {
     const d = row.day_of_week;
     if (!DAYS.includes(d)) continue;
     if (!dayMap[d]) dayMap[d] = [];
@@ -745,7 +759,7 @@ function main() {
     summarise(reelScores,       'reels'),
     summarise(ownedScores,      'owned_account'),
     summarise(thirdPartyScores, 'third_party'),
-    ...Object.entries(allPillarDist).map(([p, xs]) => summarise(xs, `pillar:${p}`)),
+    ...Object.entries(ownedPillarDist).map(([p, xs]) => summarise(xs, `pillar:${p}`)),
     ...DAYS.map(d => summarise(dayMap[d] || [], `day:${d}`)),
     summarise(safeScores(comments, 'likes'), 'comment_likes'),
   ];
@@ -787,14 +801,42 @@ function main() {
     { p: h1Mwu?.p, significant: h1Mwu?.significant, t: '', df: '', cohens_d: '' },
     { U: h1Mwu?.U, z: h1Mwu?.z, n_a: h1Mwu?.n_a, n_b: h1Mwu?.n_b, mean_a: round(mean(reelScores), 2), mean_b: round(mean(postScores), 2), diff: round(mean(reelScores) - mean(postScores), 2) });
 
-  // H2: Day-of-week effect
+  // H2: Day-of-week effect (omnibus) + post-hoc pairwise tests.
   const dayGroups = DAYS.map(d => dayMap[d] || []).filter(g => g.length >= 3);
   const h2Kw = kruskalWallis(dayGroups);
-  addHt('H2_day_of_week_kruskal_wallis', 'Kruskal-Wallis H-test',
+
+  // Post-hoc: pairwise Mann-Whitney U with Holm-Bonferroni step-down correction.
+  // The omnibus KW only says "some day differs"; we need these to claim a SPECIFIC
+  // best day. The report only names a best day if a pairwise test survives Holm.
+  const dayNames = DAYS.filter(d => (dayMap[d] || []).length >= 5);
+  const posthoc = [];
+  for (let i = 0; i < dayNames.length; i++)
+    for (let j = i + 1; j < dayNames.length; j++) {
+      const a = dayNames[i], b = dayNames[j];
+      const mw = mannWhitneyU(dayMap[a], dayMap[b]);
+      if (mw && mw.p != null)
+        posthoc.push({ day_a: a, day_b: b, mean_a: round(mean(dayMap[a]), 1), mean_b: round(mean(dayMap[b]), 1), U: mw.U, z: mw.z, p_raw: mw.p });
+    }
+  posthoc.sort((x, y) => x.p_raw - y.p_raw);
+  let prevSig = true, anyDaySignificant = false;
+  posthoc.forEach((row, k) => {
+    const holm = Math.min(1, row.p_raw * (posthoc.length - k));
+    row.p_holm = round(holm, 4);
+    row.significant_holm = prevSig && holm < 0.05;
+    prevSig = row.significant_holm;
+    if (row.significant_holm) anyDaySignificant = true;
+    row.p_raw = round(row.p_raw, 4);
+  });
+  writeCsv('data/processed/adv_day_posthoc.csv', posthoc);
+
+  addHt('H2_day_of_week_kruskal_wallis', 'Kruskal-Wallis H-test (omnibus) + Holm post-hoc',
     'Engagement distributions equal across all posting days',
     { t: '', df: h2Kw?.df, p: h2Kw?.p, significant: h2Kw?.significant },
     { H: h2Kw?.H, k: h2Kw?.k, n: h2Kw?.n,
-      note: dayGroups.some(g => g.length < 5) ? 'some day groups n<5 (low power)' : '' });
+      posthoc_significant_pairs: posthoc.filter(r => r.significant_holm).length,
+      any_day_significant: anyDaySignificant,
+      note: (dayGroups.some(g => g.length < 5) ? 'some day groups n<5 (low power); ' : '') +
+        (anyDaySignificant ? 'at least one pairwise day difference survives Holm correction' : 'no pairwise day difference survives Holm correction: day-of-week effect is directional only') });
 
   // H3: Owned vs third-party
   const h3 = welchTest(ownedScores, thirdPartyScores, 'owned', 'third_party');
@@ -803,33 +845,41 @@ function main() {
     h3,
     { note: thirdPartyScores.length < 10 ? 'third-party n<10 after dedup' : '' });
 
-  // H4: Caption length vs engagement
-  const pairs4  = all.map(r => [num(r.caption_length), Math.max(0, num(r.engagement_score))]).filter(([a, b]) => Number.isFinite(a) && Number.isFinite(b));
+  // H4: Caption length vs engagement (owned content)
+  const pairs4  = owned.map(r => [num(r.caption_length), Math.max(0, num(r.engagement_score))]).filter(([a, b]) => Number.isFinite(a) && Number.isFinite(b));
   const h4      = pearsonTest(pairs4.map(p => p[0]), pairs4.map(p => p[1]));
   addHt('H4_caption_length_pearson', 'Pearson r + t-test',
     'ρ(caption_length, engagement) = 0',
     { t: h4?.t, df: h4?.n ? h4.n - 2 : '', p: h4?.p, significant: h4?.significant, cohens_d: '' },
     { r: h4?.r, r_ci_lo: h4?.r_ci_lo, r_ci_hi: h4?.r_ci_hi, n: h4?.n });
 
-  // H5: Hashtag count vs engagement
-  const pairs5  = all.map(r => [num(r.hashtag_count), Math.max(0, num(r.engagement_score))]).filter(([a, b]) => Number.isFinite(a) && Number.isFinite(b));
+  // H5: Hashtag count vs engagement (owned content)
+  const pairs5  = owned.map(r => [num(r.hashtag_count), Math.max(0, num(r.engagement_score))]).filter(([a, b]) => Number.isFinite(a) && Number.isFinite(b));
   const h5      = pearsonTest(pairs5.map(p => p[0]), pairs5.map(p => p[1]));
   addHt('H5_hashtag_count_pearson', 'Pearson r + t-test',
     'ρ(hashtag_count, engagement) = 0',
     { t: h5?.t, df: h5?.n ? h5.n - 2 : '', p: h5?.p, significant: h5?.significant, cohens_d: '' },
     { r: h5?.r, r_ci_lo: h5?.r_ci_lo, r_ci_hi: h5?.r_ci_hi, n: h5?.n });
 
-  // H6: The account's TOP pillar (by mean, among pillars with n>=5) vs all content.
-  // Chosen from the data so the test is meaningful for any client/industry.
-  const eligiblePillars = Object.entries(allPillarDist)
-    .filter(([, xs]) => xs.length >= 5)
+  // H6: The account's TOP pillar vs the REST of its content (independent groups).
+  // FIX (was top-pillar-vs-all, which is invalid because the top pillar is part of
+  // "all" — the samples overlap). We now compare the top pillar (by mean, among
+  // pillars with n>=10 for adequate power) against all OTHER owned content, which
+  // are disjoint and independent. Chosen from the data so it fits any client.
+  const eligiblePillars = Object.entries(ownedPillarDist)
+    .filter(([, xs]) => xs.length >= 10)
     .sort((a, b) => mean(b[1]) - mean(a[1]));
-  const [topPillarName, topPillarScores] = eligiblePillars[0] || [Object.keys(allPillarDist)[0] || 'top pillar', allPillarDist[Object.keys(allPillarDist)[0]] || []];
-  const h6 = welchTest(topPillarScores, allScores, topPillarName, 'all_content');
-  addHt('H6_top_pillar_vs_all', 'Welch t-test',
-    `μ(${topPillarName}) = μ(all content)`,
+  const topPillarName = (eligiblePillars[0] || Object.entries(ownedPillarDist).sort((a, b) => b[1].length - a[1].length)[0] || ['top pillar', []])[0];
+  const topPillarScores = ownedPillarDist[topPillarName] || [];
+  const nonTopScores = owned
+    .filter(r => (r.pillar || 'general brand/content') !== topPillarName)
+    .map(r => Math.max(0, num(r.engagement_score)))
+    .filter(Number.isFinite);
+  const h6 = welchTest(topPillarScores, nonTopScores, topPillarName, 'other_content');
+  addHt('H6_top_pillar_vs_rest', 'Welch t-test',
+    `μ(${topPillarName}) = μ(other owned content)`,
     h6,
-    { pillar: topPillarName, note: topPillarScores.length < 5 ? `${topPillarName} n=${topPillarScores.length}, low power` : '' });
+    { pillar: topPillarName, note: topPillarScores.length < 10 ? `${topPillarName} n=${topPillarScores.length}, low power` : 'independent groups: top pillar vs all other owned content' });
 
   writeCsv('data/processed/adv_hypothesis_tests.csv', htRows);
   console.log('✓ Hypothesis tests written');
@@ -841,7 +891,14 @@ function main() {
   const ciRows = [];
 
   const addCi = (label, xs, fn) => {
-    if (xs.length < 2) { ciRows.push({ label, estimate: 0, lower: 0, upper: 0, n: xs.length, width: 0, includes_zero: true }); return; }
+    if (xs.length === 0) { ciRows.push({ label, estimate: 0, lower: 0, upper: 0, n: 0, width: 0, includes_zero: true, note: 'no data' }); return; }
+    if (xs.length === 1) {
+      // n=1: bootstrap is degenerate. Report the single observed value as a point
+      // estimate with no interval, NOT 0 (fixes promotions/announcements showing 0).
+      const v = round(num(xs[0]), 2);
+      ciRows.push({ label, estimate: v, lower: v, upper: v, n: 1, width: 0, includes_zero: v === 0, note: 'n=1: observed value, no interval' });
+      return;
+    }
     const ci = bootstrapCi(xs, fn, ciRng, BOOT);
     ciRows.push({ ...ci, label, includes_zero: ci.lower <= 0 && ci.upper >= 0 });
   };
@@ -871,7 +928,7 @@ function main() {
     includes_zero: pctile(diffSamples, 0.025) <= 0 && pctile(diffSamples, 0.975) >= 0,
   });
 
-  for (const [p, xs] of Object.entries(allPillarDist))
+  for (const [p, xs] of Object.entries(ownedPillarDist))
     addCi(`pillar_${p.replace(/[/ ]/g, '_')}_mean`, xs, mean);
   for (const d of DAYS)
     addCi(`day_${d}_mean`, dayMap[d] || [], mean);
@@ -1021,11 +1078,11 @@ Pearson r = ${h5?.r} (95% CI: ${h5?.r_ci_lo} to ${h5?.r_ci_hi}), p = ${h5?.p}
 Result: ${sig(h5?.p, 'hashtag count is a meaningful predictor of engagement')}
 The correlation is ${Math.abs(h5?.r ?? 0) < 0.1 ? 'negligible' : Math.abs(h5?.r ?? 0) < 0.3 ? 'weak' : 'moderate'}. Do not over-index on hashtag volume.
 
-### H6: Top Pillar (${topPillarName}) vs Overall Baseline
+### H6: Top Pillar (${topPillarName}) vs Other Owned Content
 
 t = ${h6?.t}, p = ${h6?.p}, Cohen's d = ${h6?.cohens_d} (${effectLabel(h6?.cohens_d ?? 0)} effect, n = ${topPillarScores.length})
-Result: ${sig(h6?.p, `${topPillarName} significantly outperforms average content`)}
-Mean ${topPillarName}: ${h6?.mean_a} vs baseline: ${h6?.mean_b} (difference ${h6?.diff}). ${topPillarScores.length < 10 ? `With n = ${topPillarScores.length}, the test is underpowered; the effect is directional, not conclusive.` : ''}
+Result: ${sig(h6?.p, `${topPillarName} significantly outperforms the account's other content`)}
+This compares the top pillar against all OTHER owned content (independent groups), not against a total that contains it. Mean ${topPillarName}: ${h6?.mean_a} vs other owned content: ${h6?.mean_b} (difference ${h6?.diff}). ${topPillarScores.length < 10 ? `With n = ${topPillarScores.length}, the test is underpowered; the effect is directional, not conclusive.` : ''}
 
 ---
 
@@ -1062,15 +1119,17 @@ MC1 and MC5 share identical strategy definitions.
 ${mdTable(stratRows, [
   { label: 'Strategy',     key: 'strategy'        },
   { label: 'Total Posts',  key: 'total_posts'     },
-  { label: 'Mean',         key: 'mean'            },
-  { label: 'Median',       key: 'median'          },
+  { label: 'Mean Total',   key: 'mean'            },
+  { label: 'Per Post',     key: 'mean_per_post'   },
   { label: 'P5 (worst 5%)',key: 'p5'              },
   { label: 'P95 (best 5%)',key: 'p95'             },
   { label: 'CV',           key: 'cv'              },
-  { label: 'Uplift vs Current %', key: 'uplift_vs_current' },
+  { label: 'Total Uplift %', key: 'uplift_vs_current' },
+  { label: 'Per-Post Uplift %', key: 'uplift_per_post_vs_current' },
 ])}
 
-The wide P5–P95 range reflects genuine empirical uncertainty from small historical sample sizes.
+Read the per-post column alongside the total. A strategy can raise the 12-week total simply by posting more; the per-post figure isolates content quality from posting volume. Where a higher-volume strategy leads on total but not per post, its advantage is mostly volume, which costs proportionally more effort.
+The wide P5-P95 range reflects genuine empirical uncertainty from small historical sample sizes.
 Treat bands as directional, not as precise delivery guarantees.
 
 ### MC2: Engagement Forecast (30/60/90 days, 10,000 simulations)
@@ -1118,13 +1177,13 @@ ${mdTable(mixRows.slice(0, 10), [
   { label: 'CV',               key: 'cv'              },
 ])}
 
-The optimiser consistently allocates to ${
-  Object.entries(allPillarDist)
-    .filter(([, xs]) => xs.length >= 3)
+The optimiser is restricted to pillars with at least 10 owned posts, so it never anchors on a category whose mean rests on one or two posts. Within that eligible set it consistently allocates to ${
+  Object.entries(ownedPillarDist)
+    .filter(([, xs]) => xs.length >= 10)
     .sort((a, b) => mean(b[1]) - mean(a[1]))
     .slice(0, 3)
     .map(([p]) => `**${p}**`)
-    .join(', ') || '**the highest-engagement pillars**'}, the categories with the highest mean engagement in your own data.
+    .join(', ') || '**the highest-engagement pillars**'}, the categories with the highest mean engagement in your own data. Smaller pillars are better treated as test slots than as optimisation anchors.
 Choose mixes with CV < 0.25 (lower downside risk) unless high mean justifies volatility.
 
 ### MC5: Risk Analysis of Achieving 12-Week Targets
@@ -1169,7 +1228,7 @@ ${mdTable(riskRows.filter(r => [5000, 10000, 15000, 20000].includes(r.target_12w
   console.log(`Observed mean comments/owned post: ${round(meanCommentsPerPost, 2)}`);
   console.log(`H1 Welch p=${h1Welch?.p} | MWU p=${h1Mwu?.p}`);
   console.log(`H2 KW p=${h2Kw?.p} | H4 r=${h4?.r} p=${h4?.p} | H5 r=${h5?.r} p=${h5?.p}`);
-  console.log(`H6 top pillar (${topPillarName}) vs all: p=${h6?.p}, d=${h6?.cohens_d}`);
+  console.log(`H6 top pillar (${topPillarName}) vs other owned: p=${h6?.p}, d=${h6?.cohens_d}`);
   console.log(`MC1 strategies: ${stratRows.map(r => `${r.strategy}=${r.mean}`).join(', ')}`);
   console.log(`MC3 bookings P50: ${conversionRows.map(r => `${r.scenario}=${r.bookings_p50}`).join(', ')}`);
 

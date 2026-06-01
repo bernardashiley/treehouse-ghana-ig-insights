@@ -1,0 +1,16 @@
+day_a,day_b,mean_a,mean_b,U,z,p_raw,p_holm,significant_holm
+Tuesday,Friday,119.4,127.1,188,-2.5366,0.0112,0.168,false
+Thursday,Friday,120.7,127.1,145,-2.4636,0.0138,0.1932,false
+Thursday,Saturday,120.7,57.3,18,-2.3095,0.0209,0.2717,false
+Monday,Tuesday,192.9,119.4,82,-2.2471,0.0246,0.2952,false
+Monday,Thursday,192.9,120.7,65,-2.1386,0.0325,0.3575,false
+Tuesday,Saturday,119.4,57.3,28,-2.1088,0.035,0.35,false
+Monday,Wednesday,192.9,81.9,56,-1.4013,0.1611,1,false
+Monday,Friday,192.9,127.1,97,-1.086,0.2775,1,false
+Wednesday,Saturday,81.9,57.3,26,-1.0038,0.3155,1,false
+Friday,Saturday,127.1,57.3,41,-0.9898,0.3223,1,false
+Wednesday,Friday,81.9,127.1,144,-0.8511,0.3947,1,false
+Tuesday,Wednesday,119.4,81.9,191,-0.4969,0.6193,1,false
+Wednesday,Thursday,81.9,120.7,150,-0.464,0.6426,1,false
+Tuesday,Thursday,119.4,120.7,293,-0.3029,0.7619,1,false
+Monday,Saturday,192.9,57.3,25,-0.2832,0.777,0.777,false

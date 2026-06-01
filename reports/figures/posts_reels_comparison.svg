@@ -3,8 +3,8 @@
 <text x="16" y="30" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#1f2933">Posts vs reels average engagement</text>
 <g font-family="Arial, sans-serif"><text x="16" y="75" font-size="13" fill="#28323c">reel</text>
 <rect x="260" y="61" width="628" height="18" fill="#2f6f73"/>
-<text x="896" y="75" font-size="12" fill="#28323c">190.2</text>
+<text x="896" y="75" font-size="12" fill="#28323c">350.05</text>
 <text x="16" y="109" font-size="13" fill="#28323c">post</text>
-<rect x="260" y="95" width="378" height="18" fill="#2f6f73"/>
-<text x="646" y="109" font-size="12" fill="#28323c">114.57</text></g>
+<rect x="260" y="95" width="184" height="18" fill="#2f6f73"/>
+<text x="452" y="109" font-size="12" fill="#28323c">102.72</text></g>
 </svg>

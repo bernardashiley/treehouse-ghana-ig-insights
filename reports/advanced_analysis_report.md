@@ -1,6 +1,6 @@
 # Treehouse Ghana: Advanced Statistical & Predictive Analysis
 
-*Date: 2026-05-31 · Seed: 20260530 · Simulations: 10,000 per test · n = 150 unique posts/reels (69 duplicate shortcodes removed before analysis)*
+*Date: 2026-06-01 · Seed: 20260530 · Simulations: 10,000 per test · n = 150 unique posts/reels (69 duplicate shortcodes removed before analysis)*
 
 ---
 
@@ -20,11 +20,11 @@
 
 | Segment | N | Mean | Median | Std Dev | CV | Skewness | Ex. Kurt |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| all_content_deduplicated | 150 | 126.75 | 38.57 | 265.01 | 2.091 | 3.881 | 16.563 |
-| posts | 134 | 112.24 | 38.1 | 251.99 | 2.245 | 4.452 | 21.903 |
-| reels | 16 | 248.34 | 76.77 | 341.94 | 1.377 | 1.544 | 1.214 |
+| all_content_deduplicated | 150 | 126.83 | 38.87 | 264.99 | 2.089 | 3.881 | 16.564 |
+| posts | 100 | 102.72 | 35.27 | 270.28 | 2.631 | 4.596 | 21.981 |
+| reels | 7 | 350.05 | 259.18 | 395.31 | 1.129 | 1.047 | -0.293 |
 | owned_account | 107 | 118.9 | 36 | 284.34 | 2.391 | 4.03 | 16.956 |
-| third_party | 43 | 146.3 | 71 | 211.06 | 1.443 | 2.506 | 5.678 |
+| third_party | 43 | 146.58 | 71 | 210.96 | 1.439 | 2.507 | 5.681 |
 
 **Distribution shape.** All groups are strongly right-skewed (skewness 2–4) with positive excess kurtosis, indicating heavy tails.
 This violates normality assumptions and motivates paired use of non-parametric tests alongside parametric ones.
@@ -34,29 +34,28 @@ The high coefficient of variation (CV ≈ 2) confirms performance is driven by i
 
 | Pillar | N | Mean | P25 | P75 | P95 | CV | Skew |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| food | 76 | 108.41 | 17 | 65.66 | 408.39 | 2.468 | 4.934 |
-| general brand/content | 26 | 81.01 | 13.17 | 70.5 | 279.48 | 1.742 | 3.078 |
-| dinner/nightlife | 12 | 151.75 | 33.36 | 87.67 | 613.34 | 2.168 | 2.57 |
-| price/value | 1 | 79.84 | 79.84 | 79.84 | 79.84 | 0 | 0 |
-| cocktails/drinks | 8 | 261.27 | 15 | 298.01 | 927.4 | 1.573 | 0.931 |
-| events/live music/DJ | 5 | 358.17 | 53.87 | 403.9 | 1010.65 | 1.32 | 0.849 |
-| ambience/decor/vibe | 10 | 184.47 | 34.41 | 195.64 | 691.28 | 1.528 | 1.488 |
+| food | 63 | 113.96 | 17 | 54.79 | 425.65 | 2.563 | 4.52 |
+| general brand/content | 14 | 24.64 | 11.25 | 34.98 | 61.05 | 0.874 | 1.41 |
+| dinner/nightlife | 10 | 154 | 26.45 | 54.25 | 685.22 | 2.362 | 2.266 |
+| cocktails/drinks | 5 | 208.29 | 12 | 72.84 | 759.86 | 1.945 | 1.062 |
+| events/live music/DJ | 4 | 415.83 | 51.21 | 593.51 | 1048.57 | 1.263 | 0.547 |
 | promotions/offers | 1 | 143.81 | 143.81 | 143.81 | 143.81 | 0 | 0 |
-| birthdays/celebrations | 3 | 76.73 | 48.39 | 97.5 | 126.23 | 0.662 | 0.272 |
-| date night/romance | 7 | 90.18 | 22.81 | 120.1 | 226.34 | 0.978 | 0.85 |
+| ambience/decor/vibe | 3 | 41.33 | 35.5 | 44.5 | 51.3 | 0.245 | 0.381 |
+| date night/romance | 5 | 103.22 | 20.92 | 149.73 | 237.29 | 0.987 | 0.515 |
 | reservations/bookings | 1 | 35.54 | 35.54 | 35.54 | 35.54 | 0 | 0 |
+| birthdays/celebrations | 1 | 133.41 | 133.41 | 133.41 | 133.41 | 0 | 0 |
 
 ### Per-Day EDA
 
 | Day | N | Mean | Median | P75 | Std Dev |
 | --- | --- | --- | --- | --- | --- |
-| Monday | 14 | 223.65 | 60.49 | 148.25 | 362.71 |
-| Tuesday | 34 | 130.23 | 23.73 | 38.94 | 285.76 |
-| Wednesday | 20 | 78.89 | 34.39 | 94.6 | 103.25 |
-| Thursday | 26 | 111.71 | 30.97 | 37.64 | 282.4 |
-| Friday | 29 | 126.83 | 52 | 77.78 | 331.65 |
-| Saturday | 16 | 108.74 | 50.88 | 130.05 | 123.12 |
-| Sunday | 11 | 141.31 | 83.24 | 142.5 | 190.94 |
+| Monday | 11 | 192.87 | 55.4 | 146.77 | 339.17 |
+| Tuesday | 28 | 119.43 | 19 | 38.49 | 278.2 |
+| Wednesday | 15 | 81.93 | 31.96 | 80.59 | 117.03 |
+| Thursday | 22 | 120.73 | 26.24 | 35.89 | 306.89 |
+| Friday | 23 | 127.08 | 47.94 | 60.5 | 371.98 |
+| Saturday | 5 | 57.29 | 52.75 | 67.63 | 16.14 |
+| Sunday | 3 | 54.15 | 43.21 | 63.22 | 25.45 |
 
 ---
 
@@ -65,45 +64,45 @@ The high coefficient of variation (CV ≈ 2) confirms performance is driven by i
 ### H1: Reels vs Posts Engagement
 
 **Welch t-test** (parametric):
-t = 1.5429, df = 17, p = 0.1355, Cohen's d = 0.453 (small effect)
-Result: **not significant** (p = 0.1355): insufficient evidence to reject H₀
+t = 1.6289, df = 6.4, p = 0.1363, Cohen's d = 0.73 (medium effect)
+Result: **not significant** (p = 0.1363): insufficient evidence to reject H₀
 
 **Mann-Whitney U** (non-parametric, preferred given high skewness):
-U = 759, z = -1.9056, p = 0.0567
-Result: **not significant** (p = 0.0567): insufficient evidence to reject H₀
+U = 205, z = -1.8268, p = 0.0677
+Result: **not significant** (p = 0.0677): insufficient evidence to reject H₀
 
-Neither test reaches significance. The bootstrap CI for the difference includes zero. The reels advantage is directional but not statistically established at this sample size. Continue tracking.
+Neither test reaches significance. The . The reels advantage is directional but not statistically established at this sample size. Continue tracking.
 
 ### H2: Day-of-Week Effect (Kruskal-Wallis)
 
-H = 17.5941, df = 6, p = 0.0073
-Result: **significant** (p = 0.0073): posting day has a statistically real effect on engagement
+H = 14.7121, df = 6, p = 0.0226
+Result: **significant** (p = 0.0226): posting day has a statistically real effect on engagement
 
 Monday and Tuesday show the highest mean engagement scores. Prioritise early-week slots for high-quality posts.
 
 ### H3: Owned vs Third-Party Engagement
 
-t = -0.6474, p = 0.5178, Cohen's d = -0.109
-Result: **not significant** (p = 0.5178): insufficient evidence to reject H₀
-Mean owned: 118.9, mean third-party: 146.3.
+t = -0.6542, p = 0.5134, Cohen's d = -0.111
+Result: **not significant** (p = 0.5134): insufficient evidence to reject H₀
+Mean owned: 118.9, mean third-party: 146.58.
 
 ### H4: Caption Length vs Engagement
 
-Pearson r = 0.1021 (95% CI: -0.0591 to 0.2581), p = 0.213
-Result: **not significant** (p = 0.213): insufficient evidence to reject H₀
+Pearson r = 0.0768 (95% CI: -0.1148 to 0.2628), p = 0.4308
+Result: **not significant** (p = 0.4308): insufficient evidence to reject H₀
 Caption length explains a negligible share of variance. Copy effort should be directed at clarity and CTA, not character count.
 
 ### H5: Hashtag Count vs Engagement
 
-Pearson r = 0.1114 (95% CI: -0.0498 to 0.2669), p = 0.1741
-Result: **not significant** (p = 0.1741): insufficient evidence to reject H₀
+Pearson r = 0.1269 (95% CI: -0.0645 to 0.3093), p = 0.1917
+Result: **not significant** (p = 0.1917): insufficient evidence to reject H₀
 The correlation is weak. Do not over-index on hashtag volume.
 
-### H6: Top Pillar (events/live music/DJ) vs Overall Baseline
+### H6: Top Pillar (dinner/nightlife) vs Other Owned Content
 
-t = 1.089, p = 0.3076, Cohen's d = 0.604 (medium effect, n = 5)
-Result: **not significant** (p = 0.3076): insufficient evidence to reject H₀
-Mean events/live music/DJ: 358.17 vs baseline: 126.75 (difference 231.41). With n = 5, the test is underpowered; the effect is directional, not conclusive.
+t = 0.327, p = 0.7443, Cohen's d = 0.12 (negligible effect, n = 10)
+Result: **not significant** (p = 0.7443): insufficient evidence to reject H₀
+This compares the top pillar against all OTHER owned content (independent groups), not against a total that contains it. Mean dinner/nightlife: 154 vs other owned content: 115.28 (difference 38.72). 
 
 ---
 
@@ -111,30 +110,29 @@ Mean events/live music/DJ: 358.17 vs baseline: 126.75 (difference 231.41). With 
 
 | Label | Estimate | Lower 95% | Upper 95% | Width | Includes 0 |
 | --- | --- | --- | --- | --- | --- |
-| all_mean | 126.75 | 87.99 | 171.15 | 83.16 | false |
-| posts_mean | 112.24 | 74.36 | 157.32 | 82.96 | false |
-| reels_mean | 248.34 | 104.59 | 420.5 | 315.91 | false |
-| owned_mean | 118.9 | 70.63 | 177.41 | 106.77 | false |
-| third_party_mean | 146.3 | 89.54 | 213.13 | 123.59 | false |
-| reels_minus_posts | 136.1 | -11.43 | 314.29 | 325.72 | true |
+| all_mean | 126.83 | 88.04 | 171.21 | 83.17 | false |
+| posts_mean | 102.72 | 57.69 | 161.87 | 104.17 | false |
+| reels_mean | 350.05 | 126.59 | 643.85 | 517.27 | false |
+| owned_mean | 118.9 | 71.13 | 176.68 | 105.55 | false |
+| third_party_mean | 146.58 | 89.17 | 215.9 | 126.74 | false |
+| reels_minus_posts | 247.33 | 7.78 | 561.92 | 554.14 | false |
 
-The reels−posts CI includes zero: the advantage is directional but not yet confirmed by this interval. This is **consistent** with the hypothesis test results above: treat as a strong signal requiring more data before budget commitment.
+The reels−posts CI **excludes zero**: the engagement advantage of reels is statistically confirmed by both the hypothesis tests and the bootstrap interval.
 
 ### Pillar Bootstrap CIs (all content)
 
 | Pillar | N | Mean | Lower | Upper | CI Width |
 | --- | --- | --- | --- | --- | --- |
-| food mean | 76 | 108.41 | 59.18 | 175.48 | 116.3 |
-| general brand content mean | 26 | 81.01 | 37.05 | 141.04 | 103.99 |
-| dinner nightlife mean | 12 | 151.75 | 39.62 | 352.69 | 313.07 |
-| price value mean | 1 | 0 | 0 | 0 | 0 |
-| cocktails drinks mean | 8 | 261.27 | 30.43 | 583.88 | 553.45 |
-| events live music DJ mean | 5 | 358.17 | 64.33 | 786.83 | 722.49 |
-| ambience decor vibe mean | 10 | 184.47 | 40.66 | 374.21 | 333.55 |
-| promotions offers mean | 1 | 0 | 0 | 0 | 0 |
-| birthdays celebrations mean | 3 | 76.73 | 35.2 | 133.41 | 98.21 |
-| date night romance mean | 7 | 90.18 | 37.71 | 156.96 | 119.25 |
-| reservations bookings mean | 1 | 0 | 0 | 0 | 0 |
+| food mean | 63 | 113.96 | 55.14 | 195 | 139.85 |
+| general brand content mean | 14 | 24.64 | 15.2 | 36.06 | 20.86 |
+| dinner nightlife mean | 10 | 154 | 30.88 | 387.47 | 356.59 |
+| cocktails drinks mean | 5 | 208.29 | 11.6 | 575.35 | 563.75 |
+| events live music DJ mean | 4 | 415.83 | 48.54 | 885.22 | 836.68 |
+| promotions offers mean | 1 | 143.81 | 143.81 | 143.81 | 0 |
+| ambience decor vibe mean | 3 | 41.33 | 35 | 53 | 18 |
+| date night romance mean | 5 | 103.22 | 29.76 | 189.64 | 159.88 |
+| reservations bookings mean | 1 | 35.54 | 35.54 | 35.54 | 0 |
+| birthdays celebrations mean | 1 | 133.41 | 133.41 | 133.41 | 0 |
 
 CIs on pillars with n ≤ 5 are pinned or very wide: do not make investment decisions based on those until sample sizes increase.
 
@@ -147,22 +145,23 @@ MC1 and MC5 share identical strategy definitions.
 
 ### MC1: Content Strategy Comparison (12 weeks, 10,000 simulations)
 
-| Strategy | Total Posts | Mean | Median | P5 (worst 5%) | P95 (best 5%) | CV | Uplift vs Current % |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| current_mix | 62 | 7288 | 7103 | 4160 | 11057 | 0.291 | 0 |
-| optimised | 61 | 9903 | 9745 | 6106 | 14185 | 0.247 | 35.9 |
-| heavy_reels | 77 | 12462 | 12314 | 8189 | 17275 | 0.221 | 71 |
+| Strategy | Total Posts | Mean Total | Per Post | P5 (worst 5%) | P95 (best 5%) | CV | Total Uplift % | Per-Post Uplift % |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| current_mix | 62 | 7288 | 118 | 4160 | 11057 | 0.291 | 0 | 0 |
+| optimised | 61 | 9903 | 162 | 6106 | 14185 | 0.247 | 35.9 | 37.3 |
+| heavy_reels | 77 | 12462 | 162 | 8189 | 17275 | 0.221 | 71 | 37.3 |
 
-The wide P5–P95 range reflects genuine empirical uncertainty from small historical sample sizes.
+Read the per-post column alongside the total. A strategy can raise the 12-week total simply by posting more; the per-post figure isolates content quality from posting volume. Where a higher-volume strategy leads on total but not per post, its advantage is mostly volume, which costs proportionally more effort.
+The wide P5-P95 range reflects genuine empirical uncertainty from small historical sample sizes.
 Treat bands as directional, not as precise delivery guarantees.
 
 ### MC2: Engagement Forecast (30/60/90 days, 10,000 simulations)
 
 | Horizon (days) | Expected Posts | Forecast Mean | P10 (low) | P90 (high) | Peak P90 | CV |
 | --- | --- | --- | --- | --- | --- | --- |
-| 30 | 16 | 2087 | 823 | 3630 | 1828 | 0.543 |
-| 60 | 33 | 4165 | 2201 | 6368 | 1828 | 0.394 |
-| 90 | 50 | 6257 | 3772 | 8936 | 1828 | 0.327 |
+| 30 | 16 | 2088 | 824 | 3631 | 1828 | 0.543 |
+| 60 | 33 | 4168 | 2204 | 6371 | 1828 | 0.394 |
+| 90 | 50 | 6261 | 3776 | 8941 | 1828 | 0.327 |
 
 CV > 0.5 at all horizons confirms a "burst" engagement pattern: a few viral posts drive the period total.
 
@@ -184,18 +183,18 @@ Faster replies to commercial comments is the operationally cheapest lever.
 
 | Allocation | Mean Engagement | P25 | P75 | CV |
 | --- | --- | --- | --- | --- |
-| events/live music/DJ:2.17 \| cocktails/drinks:0.98 \| dinner/nightlife:0.88 \| food:0.49 \| date night/romance | 10474 | 8880 | 12035 | 0.224 |
-| events/live music/DJ:2.21 \| cocktails/drinks:0.3 \| dinner/nightlife:0.28 \| food:0.65 \| date night/romance: | 9860 | 8412 | 11204 | 0.216 |
-| events/live music/DJ:1.99 \| cocktails/drinks:0.8 \| food:1.51 \| date night/romance:0.45 \| ambience/decor/vi | 9774 | 8154 | 11245 | 0.233 |
-| events/live music/DJ:1.51 \| cocktails/drinks:1.87 \| dinner/nightlife:0.19 \| food:0.17 \| date night/romance | 9568 | 7959 | 10999 | 0.235 |
-| events/live music/DJ:2.1 \| cocktails/drinks:0.51 \| dinner/nightlife:0.1 \| food:1.16 \| date night/romance:0 | 9529 | 8034 | 10953 | 0.227 |
-| events/live music/DJ:2.13 \| cocktails/drinks:0.18 \| dinner/nightlife:0.12 \| food:0.65 \| date night/romance | 9523 | 8056 | 10873 | 0.215 |
-| events/live music/DJ:1.55 \| cocktails/drinks:1.8 \| dinner/nightlife:0.59 \| food:0.29 \| date night/romance: | 9494 | 7871 | 10987 | 0.239 |
-| events/live music/DJ:1.7 \| cocktails/drinks:0.84 \| food:1.77 \| date night/romance:0.54 | 9361 | 7748 | 10769 | 0.235 |
-| events/live music/DJ:1.45 \| cocktails/drinks:1.48 \| dinner/nightlife:0.39 \| food:0.14 \| date night/romance | 9340 | 7936 | 10691 | 0.227 |
-| events/live music/DJ:1.5 \| cocktails/drinks:0.84 \| dinner/nightlife:1.55 \| food:0.44 \| date night/romance: | 9322 | 7679 | 10928 | 0.247 |
+| dinner/nightlife:4.12 \| food:0.85 | 5915 | 4177 | 7372 | 0.365 |
+| dinner/nightlife:4.29 \| food:0.49 \| general brand/content:0.23 | 5788 | 4121 | 7234 | 0.368 |
+| dinner/nightlife:4.46 \| food:0.16 \| general brand/content:0.38 | 5772 | 3950 | 7218 | 0.367 |
+| dinner/nightlife:4.23 \| food:0.37 \| general brand/content:0.4 | 5701 | 4023 | 7234 | 0.351 |
+| dinner/nightlife:3.39 \| food:1.57 | 5663 | 4126 | 7011 | 0.365 |
+| dinner/nightlife:3.98 \| food:0.7 \| general brand/content:0.31 | 5627 | 4006 | 7173 | 0.384 |
+| dinner/nightlife:4.41 \| food:0.13 \| general brand/content:0.46 | 5608 | 3891 | 7167 | 0.372 |
+| dinner/nightlife:3.36 \| food:1.46 \| general brand/content:0.18 | 5579 | 4042 | 6850 | 0.375 |
+| dinner/nightlife:3.72 \| food:0.84 \| general brand/content:0.43 | 5491 | 3962 | 6682 | 0.368 |
+| dinner/nightlife:3.43 \| food:1.39 \| general brand/content:0.19 | 5441 | 4034 | 6622 | 0.361 |
 
-The optimiser consistently allocates to **events/live music/DJ**, **cocktails/drinks**, **ambience/decor/vibe**, the categories with the highest mean engagement in your own data.
+The optimiser is restricted to pillars with at least 10 owned posts, so it never anchors on a category whose mean rests on one or two posts. Within that eligible set it consistently allocates to **dinner/nightlife**, **food**, **general brand/content**, the categories with the highest mean engagement in your own data. Smaller pillars are better treated as test slots than as optimisation anchors.
 Choose mixes with CV < 0.25 (lower downside risk) unless high mean justifies volatility.
 
 ### MC5: Risk Analysis of Achieving 12-Week Targets
@@ -204,28 +203,22 @@ Choose mixes with CV < 0.25 (lower downside risk) unless high mean justifies vol
 
 | Strategy | Target | P(achieve) % | Expected Mean | Shortfall P50 |
 | --- | --- | --- | --- | --- |
-| current_mix | 5000 | 86.1 | 7301 | 0 |
 | current_mix | 10000 | 11.6 | 7301 | 2904 |
 | current_mix | 15000 | 0.2 | 7301 | 7904 |
-| current_mix | 20000 | 0 | 7301 | 12904 |
-| optimised | 5000 | 98.9 | 9939 | 0 |
 | optimised | 10000 | 46.9 | 9939 | 196 |
 | optimised | 15000 | 2.8 | 9939 | 5196 |
-| optimised | 20000 | 0 | 9939 | 10196 |
-| heavy_reels | 5000 | 100 | 12489 | 0 |
 | heavy_reels | 10000 | 80.9 | 12489 | 0 |
 | heavy_reels | 15000 | 18.2 | 12489 | 2653 |
-| heavy_reels | 20000 | 0.7 | 12489 | 7653 |
 
 ---
 
 ## 5. Actionable Summary
 
-1. **Reels first.** Both tests are directional in favour of reels. The bootstrap mean difference is 136.1 points. Shift the weekly mix toward video, especially for pillars with high-view potential (Soul Fridays, Afro-house, events).
+1. **Reels first.** Both tests are directional in favour of reels. The bootstrap mean difference is 247.33 points. Shift the weekly mix toward video, especially for pillars with high-view potential (Soul Fridays, Afro-house, events).
 
-2. **Post on Monday or Tuesday.** Day-of-week has a statistically significant effect (p = 0.0073). Monday mean (223.65) and Tuesday mean (130.23) exceed all other days.
+2. **Post on Monday or Tuesday.** Day-of-week has a statistically significant effect (p = 0.0226). Monday mean (192.87) and Tuesday mean (119.43) exceed all other days.
 
-3. **The top pillar (events/live music/DJ) is the highest-ROI category.** It is the strongest by mean engagement; the H6 test compares it against the overall baseline (n = 5). Prioritise producing more content in the top pillars to confirm and extend the signal.
+3. **The top pillar (dinner/nightlife) is the highest-ROI category.** It is the strongest by mean engagement; the H6 test compares it against the overall baseline (n = 10). Prioritise producing more content in the top pillars to confirm and extend the signal.
 
 4. **Caption length and hashtag count have negligible effect** (r < 0.13 both, neither significant). Direct copy effort toward a single clear CTA and occasion cue, not word count or tag volume.
 

@@ -150,6 +150,60 @@ function commentNextStep(intent, share = 0) {
   return `Mostly low-intent reactions. The opportunity is to convert warmth into action: end captions with a single, specific call to action and measure whether the next-step comments rise.`;
 }
 
+// ── Canonical dataset helpers (shared by analyse.js and advanced_analysis.js) ──
+// Both engines MUST derive their working dataset the same way so Part I and
+// Part II of the report can never disagree on record counts.
+
+// Floor scraper artefacts (Apify returns -1 for some private/hidden metrics) to 0
+// for computation. Returns the cleaned number plus a missing flag so display code
+// can render "NA" instead of a misleading 0 or -1.
+function cleanMetric(value) {
+  const n = num(value);
+  const missing = !Number.isFinite(Number(value)) || n < 0;
+  return { value: missing ? 0 : n, missing };
+}
+
+// Floored numeric value only (negatives -> 0). Use for any arithmetic on metrics.
+function metricNum(value) {
+  return cleanMetric(value).value;
+}
+
+// Deduplicate by shortcode: the posts and reels scrapes overlap, so the same item
+// can appear twice with different content_type labels. Keep the row with the
+// highest engagement_score (most complete scrape). Falls back to id, then a
+// unique token, so nothing is silently dropped when a shortcode is absent.
+function dedupeByShortcode(rows) {
+  const seen = new Map();
+  let i = 0;
+  for (const r of rows) {
+    const key = (r.shortcode && String(r.shortcode)) || (r.id && `id:${r.id}`) || `row:${i++}`;
+    const existing = seen.get(key);
+    if (!existing || metricNum(r.engagement_score) > metricNum(existing.engagement_score)) {
+      seen.set(key, r);
+    }
+  }
+  return [...seen.values()];
+}
+
+// Split a deduplicated set into owned vs third-party by owner_username against the
+// configured handle (case-insensitive). If the handle is missing or matches no
+// rows, fall back to the most frequent owner so the split never collapses to empty.
+function splitOwned(rows, handle) {
+  let h = String(handle || '').toLowerCase();
+  const counts = {};
+  for (const r of rows) {
+    const u = String(r.owner_username || '').toLowerCase();
+    counts[u] = (counts[u] || 0) + 1;
+  }
+  if (!h || !(h in counts)) {
+    const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+    if (top) h = top[0];
+  }
+  const owned = rows.filter(r => String(r.owner_username || '').toLowerCase() === h);
+  const thirdParty = rows.filter(r => String(r.owner_username || '').toLowerCase() !== h);
+  return { owned, thirdParty, ownerHandle: h };
+}
+
 module.exports = {
   ROOT,
   ensureDir,
@@ -170,4 +224,8 @@ module.exports = {
   pct,
   topN,
   commentNextStep,
+  cleanMetric,
+  metricNum,
+  dedupeByShortcode,
+  splitOwned,
 };

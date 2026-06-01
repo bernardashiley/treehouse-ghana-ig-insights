@@ -1,0 +1,8 @@
+stage,records
+Raw feed-post records,135
+Raw reel records,84
+Raw total (pre-deduplication),219
+Deduplicated unique records,150
+Owned-account records,107
+Third-party / feature records,43
+Deduplicated reels,16

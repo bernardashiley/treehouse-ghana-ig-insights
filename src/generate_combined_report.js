@@ -27,7 +27,7 @@ const r2=(n,d=2)=>{const f=10**d;return Math.round(num(n)*f)/f;};
 // ── LaTeX escaping ──────────────────────────────────────────────────────────
 function tx(s){return String(s??'').replace(/\\/g,'\\textbackslash{}').replace(/[&%$#_{}]/g,m=>'\\'+m).replace(/\^/g,'\\textasciicircum{}').replace(/~/g,'\\textasciitilde{}').replace(/—/g,'---').replace(/–/g,'--').replace(/[“”]/g,'"').replace(/[‘’]/g,"'");}
 // dedupe a pgfplots symbolic-coord-safe label (no slashes/commas/spaces issues handled by caller)
-function pillarLabel(p){const M={'food':'Food and Dining','cocktails/drinks':'Cocktails and Drinks','ambience/decor/vibe':'Ambience and Vibe','date night/romance':'Date Night and Romance','birthdays/celebrations':'Birthdays and Celebrations','brunch/lunch':'Brunch and Lunch','dinner/nightlife':'Dinner and Nightlife','events/live music/DJ':'Events and Live Music','customer/influencer/social proof':'Social Proof','promotions/offers':'Promotions and Offers','reservations/bookings':'Reservations and Bookings','location/parking/access':'Location and Access','service/wait time':'Service','price/value':'Price and Value','general brand/content':'General Brand'};return M[p]||p;}
+function pillarLabel(p){const M={'food':'Food and Dining','cocktails/drinks':'Cocktails and Drinks','ambience/decor/vibe':'Ambience and Vibe','date night/romance':'Date Night and Romance','birthdays/celebrations':'Birthdays and Celebrations','brunch/lunch':'Brunch and Lunch','dinner/nightlife':'Dinner and Nightlife','events/live music/DJ':'Events and Live Music','customer/influencer/social proof':'Social Proof','promotions/offers':'Promotions and Offers','reservations/bookings':'Reservations and Bookings','location/parking/access':'Location and Access','service/wait time':'Service','price/value':'Price and Value'};return M[p]||p;}
 // pgfplots coord name: strip slashes, commas; collapse spaces
 function coordName(p){return pillarLabel(p).replace(/[/,]/g,' ').replace(/\s+/g,' ').trim();}
 
@@ -48,6 +48,23 @@ const mcFore  = readCsv('data/processed/adv_mc_forecast.csv');
 const mcConv  = readCsv('data/processed/adv_mc_conversion.csv');
 const mcMix   = readCsv('data/processed/adv_mc_pillar_mix.csv');
 const mcRisk  = readCsv('data/processed/adv_mc_risk.csv');
+const recon   = readCsv('data/processed/data_reconciliation.csv');
+const dayPosthoc = readCsv('data/processed/adv_day_posthoc.csv');
+
+// Format a p-value for display: never print "0" (use < 0.0001) and cap precision.
+function fmtP(p){
+  const n = Number(p);
+  if (!Number.isFinite(n)) return '=\\,n/a';
+  if (n < 0.0001) return '<0.0001';
+  return '='+ (n < 0.001 ? n.toExponential(1) : n.toFixed(4));
+}
+// Does any pairwise day comparison survive Holm correction? (gate "best day" claims)
+const anyDaySignificant = dayPosthoc.some(r => String(r.significant_holm) === 'true');
+
+// Display a metric, or "NA" when the scraper could not read it (missing flag set).
+function naf(value, missing){
+  return (missing === true || missing === 'true') ? 'NA' : fmt(value);
+}
 
 const counts = summary.counts || {};
 const profile = summary.profile || {};
@@ -219,7 +236,14 @@ const topReels     = summary.top_reels_by_views || [];
 const topByEng     = summary.top_by_engagement || [];
 const correlations = summary.correlations || readCsv('data/processed/correlation_summary.csv');
 const sortedPillars= [...pillars].filter(p=>num(p.avg_engagement_score)>0).sort((a,b)=>num(b.avg_engagement_score)-num(a.avg_engagement_score));
-const top3Pillars  = sortedPillars.slice(0,3).map(p=>pillarLabel(p.pillar));
+// Only pillars with n>=10 owned posts are "proven"; smaller pillars are test slots,
+// not recommendation anchors (a mean on 1-3 posts is noise). Recommendations and the
+// content calendar use the well-powered set so we never tell the client to scale a
+// category whose apparent strength rests on a couple of posts.
+const wellPoweredPillars = sortedPillars.filter(p=>num(p.posts_count)>=10);
+const top3Pillars  = (wellPoweredPillars.length?wellPoweredPillars:sortedPillars).slice(0,3).map(p=>pillarLabel(p.pillar));
+const provenTopPillar = top3Pillars[0] || 'the top category';
+const secondaryThemes = top3Pillars.slice(1);
 const baselineMean = num((edaBy.all_content_deduplicated||{}).mean) || num((edaBy.owned_account||{}).mean) || 0;
 const pillarEda    = eda.filter(r=>/^pillar:/.test(r.label)).map(r=>({...r,name:pillarLabel(r.label.replace(/^pillar:/,''))}));
 const sortedDays   = [...dayRows];
@@ -277,7 +301,7 @@ return `%% ============================================================
 {\\fontsize{12}{16}\\selectfont Public engagement, audience intent, and content strategy analysis\\\\[4pt]
 Prepared from public Instagram data for ${tx(C.name)} (\\texttt{@${tx(C.handle)}})}\\\\[40pt]
 {\\fontsize{11}{14}\\selectfont \\textbf{Prepared by:} ${tx(RP.prepared_by)}\\\\[4pt]\\textbf{Organisation:} ${tx(RP.organisation)}\\\\[4pt]\\textbf{Date:} ${tx(RP.date)}\\\\[4pt]\\textbf{Classification:} ${tx(RP.classification)}}
-\\end{center}\\vfill\\begin{center}{\\small\\color{white!70!tggreen}This document integrates a performance overview, a detailed engagement analysis, and a full advanced statistical and predictive analysis including Monte Carlo simulation. It is exploratory and fully reproducible; see the Statistical Scope section.}\\end{center}\\end{titlepage}
+\\end{center}\\vfill\\begin{center}{\\small\\color{white!70!tggreen}This document integrates a performance overview, a detailed engagement analysis, and advanced statistical and predictive analysis including Monte Carlo simulation. It is exploratory and reproducible; see the Statistical Scope section.}\\end{center}\\end{titlepage}
 \\nopagecolor
 \\tableofcontents
 \\newpage
@@ -290,9 +314,9 @@ All metrics are derived entirely from public data. Private account analytics (re
 \\begin{callout}
 \\begin{tabularx}{\\linewidth}{@{}L{4.2cm} X@{}}
   \\textbf{Followers}            & ${tx(followers)} at time of collection \\\\[4pt]
-  \\textbf{Posts analysed}       & ${counts.posts||0} owned feed posts and ${counts.reels||0} short videos (reels) \\\\[4pt]
+  \\textbf{Records analysed}     & ${fmt((counts.posts||0)+(counts.reels||0))} raw records collected (${counts.posts||0} posts, ${counts.reels||0} reels); after de-duplication, ${counts.deduplicated_unique||0} unique items, of which \\textbf{${counts.owned||0} are owned-account posts} (${counts.deduplicated_reels||0} reels). All tables use the owned set; see the reconciliation table in Methodology. \\\\[4pt]
   \\textbf{Top content category} & ${tx(pillarLabel(topPillar.pillar||''))} (average engagement score: ${fmt(topPillar.avg_engagement_score)}) \\\\[4pt]
-  \\textbf{Best day to post}     & ${tx(bestDay.period||'')} (average engagement score: ${fmt(bestDay.avg_engagement_score)}) \\\\[4pt]
+  \\textbf{Best observed day}    & ${tx(bestDay.period||'')} (highest average engagement score: ${fmt(bestDay.avg_engagement_score)}; see the post-hoc note before treating as a rule) \\\\[4pt]
   \\textbf{Format signal}        & ${formatSignalRow} \\\\
 \\end{tabularx}
 \\end{callout}
@@ -373,7 +397,7 @@ rows:[
 \\begin{callout}
 \\textbf{Honest reading.} ${
   tooFewReels
-    ? `With only ${FV.nR} reels in the window, this comparison cannot be made meaningfully: the account is currently \\textbf{posts-driven}. Feed posts (particularly carousels of food and events) carry essentially all of the engagement. The opportunity is to test short video as an under-used format and measure reach with native Instagram analytics, not to assume it will replicate the performance of the existing posts.`
+    ? `With only ${FV.nR} reels in the window, this comparison cannot be made meaningfully: the account is currently \\textbf{posts-driven}. Feed posts (carousels and image posts) carry essentially all of the engagement. The opportunity is to test short video as an under-used format and measure reach with native Instagram analytics, not to assume it will replicate the performance of the existing posts.`
     : reelsWin
       ? `Short videos lead on the composite score, but much of that gap is the mechanical views term; on likes and comments the difference is ${FV.pLcMwu<0.05?'still present':'not statistically reliable'} at this sample size. Treat reels as a reach and discovery investment and confirm with native reach data.`
       : `\\textbf{Feed posts outperform short videos for this account} on every metric (engagement ${fmt(FV.escP)} vs ${fmt(FV.escR)}; likes ${fmt(FV.lkP)} vs ${fmt(FV.lkR)}). Reels are not currently a strength here. Keep investing in the high-performing post formats (food and event carousels) and treat reels as an experiment to grow reach, measured with native analytics, not as a proven channel for this account.`
@@ -388,10 +412,17 @@ ${table({caption:'Timing analysis by day of week',cols:[
 {h:'Day',spec:'L{2.8cm}',cell:r=>tx(r.period)},{h:'Posts',spec:'R{2cm}',cell:r=>r.content_count},{h:'Avg Score',spec:'R{2.2cm}',cell:r=>r2(r.avg_engagement_score)},{h:'Avg Likes',spec:'R{2cm}',cell:r=>r2(r.avg_likes)},{h:'Avg Cmts',spec:'R{2.2cm}',cell:r=>r2(r.avg_comments)}],
 rows:dayRows})}
 
+\\begin{note}
+\\textbf{How to read the day effect.} The omnibus Kruskal-Wallis test (Part~II) asks only whether \\emph{some} day differs; it does not single out a day. We therefore ran pairwise post-hoc tests with Holm correction. ${anyDaySignificant ? `At least one pairwise difference survives correction, so the leading day is more than noise.` : `\\textbf{No pairwise day difference survives correction}, so ${tx(bestDay.period||'the leading day')} has the highest observed average but is \\emph{not} statistically distinguishable from the others. Treat day-of-week as a directional test window, not a fixed rule, and check for content-type and campaign confounding.`}
+\\end{note}
+
 \\section{Timing by Hour (UTC)}
 ${longtable({caption:'Average engagement by publication hour (UTC)',cols:[
 {h:'Hour UTC',spec:'R{2.5cm}',cell:r=>tx(r.period)},{h:'Posts',spec:'R{2cm}',cell:r=>r.content_count},{h:'Avg Score',spec:'R{2.8cm}',cell:r=>r2(r.avg_engagement_score)},{h:'Avg Likes',spec:'R{2cm}',cell:r=>r2(r.avg_likes)},{h:'Avg Cmts',spec:'R{2.2cm}',cell:r=>r2(r.avg_comments)}],
 rows:hourRows})}
+\\begin{note}
+Most individual hours contain only a handful of posts, so per-hour averages are noisy. We do not recommend a specific posting hour from this table; interpret only hours backed by a meaningful number of posts, and confirm against native reach data.
+\\end{note}
 
 \\chapter{Audience Comment Intelligence}
 The comment review uses anonymised text only; usernames are excluded from all outputs.
@@ -401,6 +432,9 @@ ${bar({title:'Comment intent categories',xlabel:'Number of comments',rows:[...in
 ${longtable({caption:'Full comment intent classification with commercial opportunities',cols:[
 {h:'Intent',spec:'L{4cm}',cell:r=>tx(r.intent)},{h:'Count',spec:'R{1.4cm}',cell:r=>r.count},{h:'Share',spec:'R{1.4cm}',cell:r=>tx(r.percentage)+'\\%'},{h:'What to do about it',spec:'L{7.5cm}',cell:r=>tx(commentNextStep(r.intent,num(r.percentage)))}],
 rows:intents})}
+\\begin{note}
+Each comment is assigned its single \\textbf{primary} intent, so the counts sum to the number of comments analysed and the shares sum to 100\\%. A comment may touch more than one theme; the dominant one is used for this table.
+\\end{note}
 
 \\section{What the Comments Are Telling You}
 ${(() => {
@@ -408,7 +442,11 @@ ${(() => {
   const generic = intents.filter(i=>/generic|unclear/i.test(i.intent)).reduce((s,i)=>s+num(i.count),0);
   const genericPct = Math.round(100*generic/total);
   const lead = commercialIntents[0];
-  return `Most comments on any creator account are light reactions, and this one is no exception: roughly ${genericPct}\\% are emoji or one-word praise. That is healthy brand warmth, but it is not where revenue comes from. The commercial value sits in the smaller, specific categories below: the people effectively raising their hand.${lead?` Here the strongest commercial signal is \\textbf{${tx(lead.intent)}} (${lead.count} comments, ${tx(lead.percentage)}\\% of all comments), so it is the first thing to make frictionless.`:''}`;
+  const direct = commercialIntents.find(i=>/book|collab|enquir|hire|work with/i.test(i.intent));
+  const directClause = direct && (!lead || direct.intent!==lead.intent)
+    ? ` The largest \\emph{actionable} category is one thing; the strongest \\emph{direct commercial} signal is \\textbf{${tx(direct.intent)}} (${direct.count} comment${num(direct.count)===1?'':'s'}), which matters far more per occurrence even though it appears rarely.`
+    : '';
+  return `Most comments on any creator account are light reactions, and this one is no exception: roughly ${genericPct}\\% are emoji or one-word praise. That is healthy brand warmth, but it is not where revenue comes from. The commercial value sits in the smaller, specific categories below: the people effectively raising their hand.${lead?` Here the largest actionable signal is \\textbf{${tx(lead.intent)}} (${lead.count} comments, ${tx(lead.percentage)}\\% of all comments), so it is the first thing to make frictionless.`:''}${directClause}`;
 })()}
 
 \\begin{itemize}[leftmargin=*]
@@ -444,12 +482,12 @@ ${(() => {
   const am = num(summary.caption_stats?.average_mentions);
   const al = num(summary.caption_stats?.average_length);
   const tagLine = ah < 3
-    ? `\\textbf{Hashtag use is light, about ${r2(ah)} per post.} Instagram allows up to 30, and hashtags are one of the few free levers for reaching non-followers. Adding 4--8 relevant, specific tags per post is a low-cost reach experiment worth running and measuring.`
+    ? `\\textbf{Hashtag use is light, about ${r2(ah)} per post.} Instagram allows up to 30, and hashtags are one of the few free levers for reaching non-followers. Adding 4--8 relevant, specific tags per post is a low-cost reach experiment, but its value should be judged on native reach and impression data, not on the public engagement score (this report's own correlation between hashtag count and engagement is weak and not significant).`
     : ah > 12
       ? `\\textbf{Hashtag use is heavy, about ${r2(ah)} per post.} Beyond roughly 10--12 the returns flatten and posts can read as spammy; tightening to the most relevant tags is usually cleaner.`
       : `Hashtag use (about ${r2(ah)} per post) sits in the healthy range.`;
   const menLine = am >= 1
-    ? `The account tags another account on roughly every post (${r2(am)} mentions each), i.e. it is \\textbf{collaboration-heavy}, consistent with the finding elsewhere in this report that content featuring named collaborators is among the strongest performers.`
+    ? `The account tags another account on roughly every post (${r2(am)} mentions each), i.e. it is \\textbf{collaboration-heavy}, which is visible in the top-content table, where several strong posts co-tag collaborators. Whether co-tagging itself lifts engagement should be read from the correlation and top-content tables rather than assumed.`
     : `Mentions of other accounts are infrequent (${r2(am)} per post), so collaboration tagging is an under-used lever for borrowing other audiences.`;
   const lenLine = al > 300 ? 'Captions are long-form (storytelling style)'
     : al < 80 ? 'Captions are short (caption copy is doing little work)'
@@ -474,7 +512,7 @@ ${(() => {
   const branded = top.filter(h=>!DISCOVERY.test(h.hashtag) && !PLACE.test(h.hashtag));
   const parts = [];
   parts.push(`Hashtag use is \\textbf{campaign-led}: the single tag \\#${tx(lead.hashtag)} accounts for ${leadShare}\\% of the top-15 usage, so the feed is organised around specific projects/series rather than generic tagging.`);
-  if (branded.length) parts.push(`The branded/project tags (e.g. ${branded.slice(0,4).map(h=>'\\#'+tx(h.hashtag)).join(', ')}) map directly onto the content franchises the clustering analysis surfaced. Each tag is effectively a campaign the audience can follow.`);
+  if (branded.length) parts.push(`The branded/project tags (e.g. ${branded.slice(0,4).map(h=>'\\#'+tx(h.hashtag)).join(', ')}) map directly onto the account's active projects and series. Each tag is effectively a campaign the audience can follow.`);
   if (disc.length) parts.push(`Discovery tags (${disc.map(h=>'\\#'+tx(h.hashtag)).join(', ')}) show an intent to reach beyond existing followers; their pay-off should be judged on reach in native Insights, not on this public engagement score.`);
   else parts.push(`Notably, broad discovery tags (\\#viral, \\#fyp, \\#explore) are largely absent, a reach lever the account is not yet pulling.`);
   if (place.length) parts.push(`Place tags (${place.map(h=>'\\#'+tx(h.hashtag)).join(', ')}) anchor the account to its local market, useful for location-relevant reach.`);
@@ -486,31 +524,31 @@ ${(() => {
 These are the proven best-sellers. Study what they share (topic, format, hook, and call to action) and reproduce the pattern.
 
 \\section{Top Posts by Engagement Score}
-${table({caption:'Top 10 posts and reels by engagement score',cols:[
-{h:'Type',spec:'L{1.8cm}',cell:r=>tx(r.content_type||'')},{h:'Theme',spec:'L{3.5cm}',cell:r=>tx(pillarLabel(r.pillar||''))},{h:'Likes',spec:'R{1.6cm}',cell:r=>fmt(r.likes)},{h:'Comments',spec:'R{1.8cm}',cell:r=>fmt(r.comments)},{h:'Views',spec:'R{1.8cm}',cell:r=>fmt(r.views)},{h:'Score',spec:'R{1.8cm}',cell:r=>fmt(r.engagement_score)},{h:'Link',spec:'L{1.4cm}',cell:r=>tlink(r.url)}],
+${table({caption:'Top 10 unique public items by engagement score (deduplicated)',cols:[
+{h:'Type',spec:'L{1.8cm}',cell:r=>tx(r.content_type||'')},{h:'Theme',spec:'L{3.5cm}',cell:r=>tx(pillarLabel(r.pillar||''))},{h:'Likes',spec:'R{1.6cm}',cell:r=>naf(r.likes,r.likes_missing)},{h:'Comments',spec:'R{1.8cm}',cell:r=>fmt(r.comments)},{h:'Views',spec:'R{1.8cm}',cell:r=>naf(r.views,r.views_missing)},{h:'Score',spec:'R{1.8cm}',cell:r=>fmt(r.engagement_score)},{h:'Link',spec:'L{1.4cm}',cell:r=>tlink(r.url)}],
 rows:topByEng.slice(0,10)})}
 
 \\section{Top Posts by Likes}
 ${table({caption:'Top 10 posts by public likes',cols:[
-{h:'Likes',spec:'R{2cm}',cell:r=>fmt(r.likes)},{h:'Comments',spec:'R{2cm}',cell:r=>fmt(r.comments)},{h:'Views',spec:'R{2cm}',cell:r=>fmt(r.views)},{h:'Theme',spec:'L{4cm}',cell:r=>tx(pillarLabel(r.pillar||''))},{h:'Link',spec:'L{1.4cm}',cell:r=>tlink(r.url)}],
+{h:'Likes',spec:'R{2cm}',cell:r=>naf(r.likes,r.likes_missing)},{h:'Comments',spec:'R{2cm}',cell:r=>fmt(r.comments)},{h:'Views',spec:'R{2cm}',cell:r=>naf(r.views,r.views_missing)},{h:'Theme',spec:'L{4cm}',cell:r=>tx(pillarLabel(r.pillar||''))},{h:'Link',spec:'L{1.4cm}',cell:r=>tlink(r.url)}],
 rows:topByLikes.slice(0,10)})}
 
 \\section{Top Posts by Comment Count}
 ${table({caption:'Top 10 posts by public comments',cols:[
-{h:'Comments',spec:'R{2.2cm}',cell:r=>fmt(r.comments)},{h:'Likes',spec:'R{1.8cm}',cell:r=>fmt(r.likes)},{h:'Score',spec:'R{2cm}',cell:r=>fmt(r.engagement_score)},{h:'Theme',spec:'L{4cm}',cell:r=>tx(pillarLabel(r.pillar||''))},{h:'Link',spec:'L{1.4cm}',cell:r=>tlink(r.url)}],
+{h:'Comments',spec:'R{2.2cm}',cell:r=>fmt(r.comments)},{h:'Likes',spec:'R{1.8cm}',cell:r=>naf(r.likes,r.likes_missing)},{h:'Score',spec:'R{2cm}',cell:r=>fmt(r.engagement_score)},{h:'Theme',spec:'L{4cm}',cell:r=>tx(pillarLabel(r.pillar||''))},{h:'Link',spec:'L{1.4cm}',cell:r=>tlink(r.url)}],
 rows:topByComments.slice(0,10)})}
 
 \\section{Top Reels by Views and Plays}
-${table({caption:'Top 10 reels by video views and plays',cols:[
-{h:'Views',spec:'R{2.2cm}',cell:r=>fmt(r.views)},{h:'Likes',spec:'R{1.8cm}',cell:r=>fmt(r.likes)},{h:'Comments',spec:'R{2cm}',cell:r=>fmt(r.comments)},{h:'Score',spec:'R{2cm}',cell:r=>fmt(r.engagement_score)},{h:'Link',spec:'L{1.4cm}',cell:r=>tlink(r.url)}],
+${table({caption:'Top reels by video views and plays (deduplicated owned reels)',cols:[
+{h:'Views',spec:'R{2.2cm}',cell:r=>naf(r.views,r.views_missing)},{h:'Likes',spec:'R{1.8cm}',cell:r=>naf(r.likes,r.likes_missing)},{h:'Comments',spec:'R{2cm}',cell:r=>fmt(r.comments)},{h:'Score',spec:'R{2cm}',cell:r=>fmt(r.engagement_score)},{h:'Link',spec:'L{1.4cm}',cell:r=>tlink(r.url)}],
 rows:topReels.slice(0,10)})}
 
 \\chapter{Strategic Recommendations}
 \\section{Content Strategy}
 \\begin{enumerate}[leftmargin=*]
-  \\item \\textbf{Produce more of the strongest themes:} ${tx(top3Pillars.join(', ')||'the top-performing categories')}. These currently earn the most engagement, so they are the safest place to add volume.
+  \\item \\textbf{Prioritise the proven theme:} \\textbf{${tx(provenTopPillar)}} is the clearest, best-evidenced strength (largest sample and highest mean), so it is the safest place to add volume.${secondaryThemes.length?` Use \\textbf{${tx(secondaryThemes.join(' and '))}} as secondary test themes, strongest when tied to an active project; their averages rest on fewer posts, so treat them as bets to validate rather than certainties.`:''} Categories with very few posts are test slots, not anchors.
   \\item \\textbf{Lean on the proven format.} ${reelsWin && !tooFewReels ? 'Short videos lead on interaction and reach beyond current followers, so expand video output.' : tooFewReels ? 'The account is posts-driven; treat short video as an experiment to extend reach, measured in native Insights.' : 'Feed posts outperform short video here; keep investing in strong post formats and test video for reach.'}
-  \\item \\textbf{Publish on the best days:} ${tx(topDays.join(' and ')||'the strongest observed days')}, which show the highest average engagement.
+  \\item \\textbf{Treat ${tx(topDays.join(' and ')||'the strongest observed days')} as test windows:} they show the highest observed average engagement, but ${anyDaySignificant?'the leading difference is supported by post-hoc tests':'no pairwise day difference survives correction, so confirm against native reach before fixing a schedule'}.
   \\item \\textbf{Convert comments into action.} The most common commercial signal is \\textbf{${tx(topIntent.intent||'audience questions')}}; reply quickly and pin the answer.
   \\item \\textbf{Make captions complete:} one clear hook, one proof point, and one explicit next step (where to watch, how to engage, how to book).
   \\item \\textbf{Reshare third-party mentions} that align with a strong theme, adding the context the original may lack.
@@ -564,7 +602,17 @@ ${smallSample?`\\begin{note}
 \\end{note}
 `:''}
 \\chapter{Methodology and Data Quality}
-All computation runs in a reproducible Node.js pipeline. Monte Carlo simulations use a fixed seed (${cfg.analysis.mc_seed}) and ${fmt(cfg.analysis.mc_iterations)} iterations; an independent analyst re-running the code obtains bit-identical results. After removing duplicate posts that appear in both the posts and reels scrapes, the working dataset comprises \\textbf{${dedupN} unique posts and reels} (${ownedN} published by the account, the remainder features and mentions).
+All computation runs in a reproducible Node.js pipeline. Monte Carlo simulations use a fixed seed (${cfg.analysis.mc_seed}) and ${fmt(cfg.analysis.mc_iterations)} iterations; re-running the same committed code on the same input files, with the same Node version and random seed, reproduces the figures in this report.
+
+\\textbf{One dataset throughout.} Every table in this report (Part~I and Part~II) is built from the same deduplicated, owned-account dataset. The posts and reels scrapes overlap, so records are first deduplicated by shortcode (keeping the most complete copy), then split into the account's own posts versus third-party features and mentions. Descriptive and statistical tables use the \\textbf{owned} set; the owned-versus-third-party comparison and the segment table below are the only places third-party content appears. The record counts reconcile as follows:
+
+${recon.length?longtable({caption:'Data reconciliation: raw collection to working dataset',cols:[
+{h:'Stage',spec:'L{9cm}',cell:r=>tx(r.stage)},{h:'Records',spec:'R{3cm}',cell:r=>fmt(r.records)}],
+rows:recon}):''}
+
+\\textbf{Missing values.} Public metrics the scraper could not read are returned as $-1$. These are treated as missing: they are floored to zero for the engagement score and shown as \\textquotedblleft NA\\textquotedblright{} in tables, never as $-1$ or a misleading $0$.
+
+\\textbf{What reproducibility depends on:} the committed source and \\texttt{package-lock}, the Node version, the fixed seed (${cfg.analysis.mc_seed}), the committed input CSVs, the deduplication key (shortcode), and the missing-value rule above.
 
 \\chapter{Exploratory Data Analysis}
 ${table({caption:'Descriptive statistics by content segment',cols:[
@@ -584,8 +632,8 @@ rows:[...pillarEda].sort((a,b)=>num(b.mean)-num(a.mean))})}
 
 \\chapter{Hypothesis Tests}
 All tests use $\\alpha = ${cfg.analysis.alpha}$; with ${cfg.analysis.bonferroni_tests} parallel tests the Bonferroni threshold is $\\alpha_B = ${r2(cfg.analysis.alpha/cfg.analysis.bonferroni_tests,4)}$.
-${longtable({caption:'Hypothesis test results',cols:[
-{h:'Test',spec:'L{4.5cm}',cell:r=>tx((r.test||'').replace(/_/g,' '))},{h:'Method',spec:'L{3.2cm}',cell:r=>tx(r.method)},{h:'p',spec:'R{1.4cm}',cell:r=>r.p},{h:'Sig.',spec:'R{1.3cm}',cell:r=>r.significant_alpha05==='true'?'Yes':'No'},{h:'Effect/Note',spec:'L{4cm}',cell:r=>tx(r.cohens_d?('d='+r.cohens_d):(r.r?('r='+r.r):(r.H?('H='+r.H):'')))}],
+${longtable({caption:'Hypothesis test results (significance judged against the Bonferroni-corrected threshold)',cols:[
+{h:'Test',spec:'L{4cm}',cell:r=>tx((r.test||'').replace(/_/g,' '))},{h:'Method',spec:'L{3cm}',cell:r=>tx(r.method)},{h:'p',spec:'R{1.6cm}',cell:r=>'$'+fmtP(r.p)+'$'},{h:'Sig. (Bonf.)',spec:'R{1.6cm}',cell:r=>r.significant_bonferroni==='true'?'Yes':'No'},{h:'Effect/Note',spec:'L{3.6cm}',cell:r=>tx(r.cohens_d?('d='+r.cohens_d):(r.r?('r='+r.r):(r.H?('H='+r.H):'')))}],
 rows:hyp})}
 
 \\begin{note}
@@ -593,7 +641,7 @@ rows:hyp})}
   tooFewReels
     ? `With only ${FV.nR} reels after deduplication, the reels-versus-posts test is underpowered and no reliable difference can be claimed. The account is posts-driven; see the format discussion in Part~I.`
     : reelsWin
-      ? `The Welch t-test ($p=${tx(h1w.p||'n/a')}$) and Mann-Whitney U test ($p=${tx(h1m.p||'n/a')}$) are directional in favour of reels but do not both clear significance at this sample size, consistent with the circularity caveat in Part~I.`
+      ? `The Welch t-test ($p${fmtP(h1w.p)}$) and Mann-Whitney U test ($p${fmtP(h1m.p)}$) are directional in favour of reels but do not both clear significance at this sample size, consistent with the circularity caveat in Part~I.`
       : `On this account feed posts lead reels on every metric; any apparent reels effect on the composite score is outweighed once the views term is removed (see Part~I).`
 }
 \\end{note}
@@ -602,22 +650,22 @@ rows:hyp})}
 \\begin{description}[leftmargin=0pt,style=nextline]
 ${hyp.map(r=>{
   const stat = r.t? `$t=${r.t}$, $\\mathrm{df}=${r.df}$` : (r.U!==undefined&&r.U!=='')? `$U=${r.U}$, $z=${r.z}$` : (r.H!==undefined&&r.H!=='')? `$H=${r.H}$, $\\mathrm{df}=${r.df}$` : (r.r!==undefined&&r.r!=='')? `$r=${r.r}$` : '';
-  const sig = r.significant_alpha05==='true';
+  const sig = r.significant_bonferroni==='true';
   const eff = r.cohens_d?` Cohen's $d=${r.cohens_d}$.`:(r.r?` (95\\% CI ${r.r_ci_lo} to ${r.r_ci_hi}).`:'');
-  const reading = sig ? 'Statistically significant at the chosen threshold.' : 'Not statistically significant: insufficient evidence to reject the null at this sample size.';
-  return `  \\item[${tx((r.test||'').replace(/_/g,' '))}] \\textit{H\\textsubscript{0}: ${tx(r.h0||'')}}. ${r.method?tx(r.method)+'; ':''}${stat}, $p=${r.p}$.${eff} \\textbf{${reading}}${r.note?` ${tx(r.note)}`:''}`;
+  const reading = sig ? 'Statistically significant at the Bonferroni-corrected threshold.' : 'Not statistically significant: insufficient evidence to reject the null at the corrected threshold.';
+  return `  \\item[${tx((r.test||'').replace(/_/g,' '))}] \\textit{H\\textsubscript{0}: ${tx(r.h0||'')}}. ${r.method?tx(r.method)+'; ':''}${stat}, $p${fmtP(r.p)}$.${eff} \\textbf{${reading}}${r.note?` ${tx(r.note)}`:''}`;
 }).join('\n')}
 \\end{description}
 
 \\chapter{Bootstrap Confidence Intervals}
-${longtable({caption:'Bootstrap 95\\% confidence intervals',cols:[
+${longtable({caption:'Bootstrap 95% confidence intervals',cols:[
 {h:'Segment / Pillar',spec:'L{5cm}',cell:r=>tx(r.label.replace(/_/g,' '))},{h:'N',spec:'R{1.2cm}',cell:r=>r.n},{h:'Estimate',spec:'R{2cm}',cell:r=>r2(r.estimate)},{h:'Lower',spec:'R{2cm}',cell:r=>r2(r.lower)},{h:'Upper',spec:'R{2cm}',cell:r=>r2(r.upper)},{h:'Incl. 0',spec:'R{1.5cm}',cell:r=>r.includes_zero==='true'?'Yes':'No'}],
 rows:cis})}
 
 \\chapter{Pillar Lift versus Baseline}
-${bar({title:'Content pillar lift relative to overall baseline (percent)',xlabel:'Lift above baseline (\\%)',pct:true,rows:[...lift].sort((a,b)=>num(a.lift_vs_baseline_pct)-num(b.lift_vs_baseline_pct)).map(l=>({label:l.pillar,value:l.lift_vs_baseline_pct})),max:Math.max(...lift.map(l=>num(l.lift_vs_baseline_pct)))})}
+${bar({title:'Content pillar lift relative to overall baseline (percent)',xlabel:'Lift above baseline (%)',pct:true,rows:[...lift].sort((a,b)=>num(a.lift_vs_baseline_pct)-num(b.lift_vs_baseline_pct)).map(l=>({label:l.pillar,value:l.lift_vs_baseline_pct})),max:Math.max(...lift.map(l=>num(l.lift_vs_baseline_pct)))})}
 
-${longtable({caption:'Pillar lift versus baseline with bootstrap 95\\% CI',cols:[
+${longtable({caption:'Pillar lift versus baseline with bootstrap 95% CI',cols:[
 {h:'Pillar',spec:'L{4cm}',cell:r=>tx(pillarLabel(r.pillar))},{h:'N',spec:'R{1.2cm}',cell:r=>r.n},{h:'Avg Score',spec:'R{2cm}',cell:r=>r2(r.avg_engagement_score)},{h:'Lift',spec:'R{2cm}',cell:r=>tx(r.lift_vs_baseline_pct)+'\\%'},{h:'95% CI',spec:'L{3.5cm}',cell:r=>r2(r.ci_low)+' to '+r2(r.ci_high)}],
 rows:[...lift].sort((a,b)=>num(b.avg_engagement_score)-num(a.avg_engagement_score))})}
 
@@ -638,27 +686,37 @@ Correlations are directional and based only on public fields; they do not prove 
 \\section{MC1: Content Strategy Comparison (12 Weeks)}
 ${mcStrat.length?bar({title:'MC1: expected 12-week engagement by strategy (mean of 10,000 simulations)',xlabel:'Total engagement score over 12 weeks',rows:[...mcStrat].sort((a,b)=>num(a.mean)-num(b.mean)).map(r=>({label:String(r.strategy).replace(/_/g,' '),value:r.mean})),max:Math.max(...mcStrat.map(r=>num(r.mean)))}):''}
 
-${table({caption:'MC1 results: 12-week engagement score by strategy',cols:[
-{h:'Strategy',spec:'L{3cm}',cell:r=>tx(r.strategy.replace(/_/g,' '))},{h:'Posts',spec:'R{1.8cm}',cell:r=>r.total_posts},{h:'Mean',spec:'R{2cm}',cell:r=>fmt(r.mean)},{h:'P5',spec:'R{2cm}',cell:r=>fmt(r.p5)},{h:'P95',spec:'R{2cm}',cell:r=>fmt(r.p95)},{h:'Uplift',spec:'R{2cm}',cell:r=>r.uplift_vs_current==='0'?'baseline':('+'+r.uplift_vs_current+'\\%')}],
+${table({caption:'MC1 results: 12-week engagement score by strategy (total and per-post)',cols:[
+{h:'Strategy',spec:'L{2.6cm}',cell:r=>tx(r.strategy.replace(/_/g,' '))},{h:'Posts',spec:'R{1.3cm}',cell:r=>r.total_posts},{h:'Mean Total',spec:'R{2cm}',cell:r=>fmt(r.mean)},{h:'Per Post',spec:'R{1.8cm}',cell:r=>fmt(r.mean_per_post)},{h:'Total Uplift',spec:'R{1.8cm}',cell:r=>r.uplift_vs_current==='0'?'baseline':('+'+r.uplift_vs_current+'\\%')},{h:'Per-Post Uplift',spec:'R{2cm}',cell:r=>r.strategy==='current_mix'?'baseline':((num(r.uplift_per_post_vs_current)>=0?'+':'')+r.uplift_per_post_vs_current+'\\%')}],
 rows:mcStrat})}
+
+\\begin{note}
+\\textbf{Read total and per-post together.} A strategy can raise the 12-week \\emph{total} simply by posting more. The \\textbf{per-post} column isolates content quality from posting volume. Where a higher-volume strategy (for example \\textquotedblleft heavy reels\\textquotedblright{}) leads on total but not per post, its advantage is mostly volume, which costs proportionally more production effort.
+\\end{note}
 
 \\section{MC2: Engagement Forecast}
 ${table({caption:'MC2: engagement forecast at three horizons',cols:[
 {h:'Horizon (days)',spec:'R{2.5cm}',cell:r=>r.horizon_days},{h:'Exp. Posts',spec:'R{2.5cm}',cell:r=>r.expected_posts},{h:'Forecast Mean',spec:'R{3cm}',cell:r=>fmt(r.forecast_mean)},{h:'P10',spec:'R{2.5cm}',cell:r=>fmt(r.forecast_p10)},{h:'P90',spec:'R{2.5cm}',cell:r=>fmt(r.forecast_p90)},{h:'CV',spec:'R{1.5cm}',cell:r=>r2(r.cv,2)}],
 rows:mcFore})}
+\\begin{note}
+The expected-post counts are derived from the account's \\textbf{observed posting rate} over the analysed window (roughly four owned posts per week), projected across each horizon; they are not targets.
+\\end{note}
 
 \\section{MC3: Booking Conversion Pipeline}
 ${table({caption:'MC3: monthly booking pipeline under three conversion scenarios',cols:[
 {h:'Scenario',spec:'L{2.5cm}',cell:r=>tx(r.scenario)},{h:'Contact %',spec:'R{1.8cm}',cell:r=>r.contact_rate_pct},{h:'Booking %',spec:'R{2cm}',cell:r=>r.booking_rate_pct},{h:'P50',spec:'R{1.6cm}',cell:r=>r.bookings_p50},{h:'P90',spec:'R{1.6cm}',cell:r=>r.bookings_p90},{h:'P(0)',spec:'R{1.8cm}',cell:r=>r.prob_0_bookings_pct+'\\%'},{h:'P(3+ bookings)',spec:'R{1.8cm}',cell:r=>r.prob_ge3_bookings_pct+'\\%'}],
 rows:mcConv})}
 \\begin{callout}
-\\textbf{Principal finding from MC3.} At current comment volumes the Instagram comment channel alone cannot reliably drive booking conversions regardless of conversion rate. The binding constraint is comment volume, not the funnel. Increasing reach-oriented content (MC1) raises the top of the funnel; replying immediately to commercial comments is the cheapest operational lever.
+\\textbf{Principal finding from MC3.} In this model the contact rate applies to the comments captured on the account's top posts; because only a minority express commercial intent, the booking counts are optimistic upper bounds. At current comment volumes the Instagram comment channel alone cannot reliably drive booking conversions regardless of conversion rate. The binding constraint is comment volume, not the funnel. Increasing reach-oriented content (MC1) raises the top of the funnel; replying immediately to commercial comments is the cheapest operational lever.
 \\end{callout}
 
 \\section{MC4: Optimal Pillar Mix (Top 10 Allocations)}
 ${longtable({caption:'MC4: top pillar allocations by expected mean engagement',cols:[
 {h:'Allocation',spec:'L{9cm}',cell:r=>tx(r.mix)},{h:'Mean',spec:'R{2.2cm}',cell:r=>fmt(r.mean_engagement)},{h:'P25',spec:'R{1.8cm}',cell:r=>fmt(r.p25)},{h:'P75',spec:'R{1.8cm}',cell:r=>fmt(r.p75)}],
 rows:mcMix.slice(0,10)})}
+\\begin{note}
+The optimiser considers only pillars with at least 10 owned posts, so it never anchors a recommendation on a category whose average rests on one or two posts. Allocations are in posts per week over an 8-week budget. Smaller pillars are better used as occasional test slots than as optimisation anchors.
+\\end{note}
 
 \\section{MC5: Risk Analysis}
 The table reads as: for each strategy and each 12-week engagement target, the share of 10,000 simulated runs that hit the target. P(achieve) near 100\\% means the target is comfortable; near 0\\% means it is out of reach under that strategy; values in between are the genuinely informative \\textquotedblleft stretch\\textquotedblright{} targets.
@@ -680,9 +738,9 @@ ${(() => {
 
 \\chapter{Consolidated Actionable Findings}
 \\begin{enumerate}[leftmargin=*]
-  \\item \\textbf{Lean into the strongest themes:} ${tx(top3Pillars.join(', ')||'the top categories')}. They earn the most engagement and are the safest place to add volume.
+  \\item \\textbf{Lead with the proven theme:} \\textbf{${tx(provenTopPillar)}} is the well-evidenced strength and the safest place to add volume.${secondaryThemes.length?` Validate \\textbf{${tx(secondaryThemes.join(' and '))}} as secondary test themes; small-sample pillars stay as test slots.`:''}
   \\item \\textbf{Format:} ${reelsWin && !tooFewReels ? 'short videos lead and reach new audiences, so expand them.' : tooFewReels ? 'the account is posts-driven; short video is an untested reach opportunity, not a proven channel.' : 'feed posts lead; keep investing in them and test video for reach.'}
-  \\item \\textbf{Timing:} ${topDays.length?`publish priority content on ${tx(topDays.join(' and '))}.`:'no strong day effect; keep testing posting times against native reach data.'}
+  \\item \\textbf{Timing:} ${topDays.length?`treat ${tx(topDays.join(' and '))} as test windows${anyDaySignificant?' (supported by post-hoc tests)':' (highest observed average, not yet statistically distinguishable)'}.`:'no strong day effect; keep testing posting times against native reach data.'}
   \\item \\textbf{Comments are a warm channel:} the most common commercial signal is \\textbf{${tx(topIntent.intent||'audience questions')}}; fast, consistent replies convert it.
   \\item \\textbf{Engagement is concentrated} in a small number of posts (see the top-posts tables and the bootstrap intervals); maintain a backlog of high-potential content to smooth the peaks and troughs.
   \\item \\textbf{Measure what this analysis cannot see:} pair these public findings with native Instagram reach, saves, shares, and profile actions before committing budget.
@@ -690,12 +748,15 @@ ${(() => {
 
 \\chapter{Limitations and Ethics}
 \\section{Statistical Scope and Validity}
-This study is \\textbf{exploratory and hypothesis-generating}, not confirmatory, and is fully reproducible (fixed seed, committed data, deterministic pipeline). Bounds on interpretation:
+This study is \\textbf{exploratory and hypothesis-generating}, not confirmatory, and is reproducible (fixed seed, committed data, deterministic pipeline). Bounds on interpretation:
 \\begin{enumerate}[leftmargin=*]
 \\item \\textbf{Composite-metric circularity.} The engagement score embeds a views term available to video but not to many image posts; composite-score reels-versus-posts comparisons overstate the advantage, so likes-and-comments comparisons are reported alongside.
-\\item \\textbf{Small samples.} Several pillars and the deduplicated reel set rest on few posts; confidence intervals are wide and rankings are indicative.
-\\item \\textbf{Observational, not causal.} Day, pillar, and format are correlated with each other and with campaign timing; no causal claim is made.
-\\item \\textbf{Scenarios, not forecasts.} Monte Carlo projections assume independence, stationarity, and no saturation.
+\\item \\textbf{Small samples.} Several pillars and the deduplicated reel set rest on few posts; confidence intervals are wide and rankings are indicative. Pillars below ten posts are treated as test slots, not ranked recommendations.
+\\item \\textbf{One dataset, reconciled.} Raw and deduplicated record counts are distinct; every table in this report uses the single deduplicated owned dataset, reconciled in the Methodology chapter, so figures do not mix bases.
+\\item \\textbf{Missing public metrics.} Values the scraper returns as $-1$ are treated as missing (floored to zero for the score, shown as NA), never as genuine zeros.
+\\item \\textbf{Deduplicated top content.} A post that also appears as a reel is counted once; the top-content tables list unique items.
+\\item \\textbf{Observational, not causal.} Day, pillar, and format are correlated with each other and with campaign timing; no causal claim is made. The day-of-week effect is reported with post-hoc correction.
+\\item \\textbf{Scenarios, not forecasts.} Monte Carlo projections assume independence, stationarity, and no saturation, and report totals alongside per-post figures to separate quality from volume.
 \\item \\textbf{Selection effects.} Comments are drawn from high-engagement posts; mentions are a non-random sample.
 \\end{enumerate}
 Used to prioritise content experiments and size uncertainty, the analysis is sound; used as proof of fixed effects, it would overreach.
