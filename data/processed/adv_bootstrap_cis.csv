@@ -16,10 +16,3 @@ estimate,lower,upper,n,width,label,includes_zero,note
 103.22,29.76,189.64,5,159.88,pillar_date_night_romance_mean,false,
 35.54,35.54,35.54,1,0,pillar_reservations_bookings_mean,false,"n=1: observed value, no interval"
 133.41,133.41,133.41,1,0,pillar_birthdays_celebrations_mean,false,"n=1: observed value, no interval"
-192.87,53.45,422.07,11,368.62,day_Monday_mean,false,
-119.43,35.53,238.54,28,203.01,day_Tuesday_mean,false,
-81.93,31.21,146.31,15,115.11,day_Wednesday_mean,false,
-120.73,24.2,267.84,22,243.64,day_Thursday_mean,false,
-127.08,40.68,288.4,23,247.72,day_Friday_mean,false,
-57.29,45.35,69.94,5,24.59,day_Saturday_mean,false,
-54.15,36,83.24,3,47.24,day_Sunday_mean,false,

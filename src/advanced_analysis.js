@@ -936,8 +936,10 @@ function main() {
 
   for (const [p, xs] of Object.entries(ownedPillarDist))
     addCi(`pillar_${p.replace(/[/ ]/g, '_')}_mean`, xs, mean);
-  for (const d of DAYS)
-    addCi(`day_${d}_mean`, dayMap[d] || [], mean);
+  // Per-day bootstrap CIs are intentionally omitted from this table: day-level
+  // uncertainty is already conveyed by the timing analysis and the Kruskal-Wallis
+  // omnibus test with Holm-corrected pairwise post-hoc. Keeping the table to
+  // segments, the reels-minus-posts difference, and pillars keeps it to one page.
 
   writeCsv('data/processed/adv_bootstrap_cis.csv', ciRows);
   console.log('✓ Bootstrap CIs written');

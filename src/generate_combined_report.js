@@ -342,8 +342,7 @@ ${table({caption:'Data coverage: raw collection through to the analysed owned-ac
 {a:'Comments analysed',c:counts.comments||0},
 {a:'Followers at collection time',c:profile.followers_count||0}]})}
 
-${C.bio?`Profile biography: \\textit{${tx(C.bio)}}\n`:''}
-\\needspace{6\\baselineskip}\\smallskip\\noindent\\textbf{Data limitation.} This analysis covers public Instagram data only. It does not include private account analytics such as reach, impressions, saves, shares, profile visits, link clicks, story taps, ad spend, or completed bookings. All conclusions are directional rather than absolute. Combine these findings with ${tx(C.name)}'s native Instagram analytics, sales or booking records, and campaign context.\\smallskip
+${C.bio?`Profile biography: \\textit{${tx(C.bio)}}`:''}
 ${smallSample?`
 \\section{How to Read This Report (Sample Size)}
 \\begin{callout}
@@ -628,6 +627,8 @@ rows:recon}):''}
 \\textbf{Missing values.} Public metrics the scraper could not read are returned as $-1$. These are treated as missing: they are floored to zero for the engagement score and shown as \\textquotedblleft NA\\textquotedblright{} in tables, never as $-1$ or a misleading $0$.
 
 \\textbf{What reproducibility depends on:} the committed source and \\texttt{package-lock}, the Node version, the fixed seed (${cfg.analysis.mc_seed}), the committed input CSVs, the deduplication key (shortcode), and the missing-value rule above.
+
+\\textbf{Data limitation.} This analysis covers public Instagram data only. It does not include private account analytics such as reach, impressions, saves, shares, profile visits, link clicks, story taps, ad spend, or completed bookings. All conclusions are directional rather than absolute. Combine these findings with ${tx(C.name)}'s native Instagram analytics, sales or booking records, and campaign context.
 
 \\chapter{Exploratory Data Analysis}
 ${table({caption:'Descriptive statistics by content segment',cols:[
