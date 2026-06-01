@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-01T00:12:19.595Z",
+  "generated_at": "2026-06-01T10:15:05.939Z",
   "counts": {
     "posts": 135,
     "reels": 84,
@@ -7,6 +7,8 @@
     "comments": 106,
     "deduplicated_unique": 150,
     "owned": 107,
+    "owned_posts": 100,
+    "owned_reels": 7,
     "third_party": 43,
     "deduplicated_reels": 16
   },
@@ -25,19 +27,27 @@
       "records": 219
     },
     {
-      "stage": "Deduplicated unique records",
+      "stage": "Deduplicated unique records (full public dataset)",
       "records": 150
     },
     {
-      "stage": "Owned-account records",
+      "stage": "Owned-account records (basis for main analysis)",
       "records": 107
+    },
+    {
+      "stage": "    of which owned feed posts",
+      "records": 100
+    },
+    {
+      "stage": "    of which owned reels",
+      "records": 7
     },
     {
       "stage": "Third-party / feature records",
       "records": 43
     },
     {
-      "stage": "Deduplicated reels",
+      "stage": "Reels in full deduplicated dataset (owned + third-party)",
       "records": 16
     }
   ],

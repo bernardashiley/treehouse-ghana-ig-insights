@@ -2,7 +2,9 @@ stage,records
 Raw feed-post records,135
 Raw reel records,84
 Raw total (pre-deduplication),219
-Deduplicated unique records,150
-Owned-account records,107
+Deduplicated unique records (full public dataset),150
+Owned-account records (basis for main analysis),107
+    of which owned feed posts,100
+    of which owned reels,7
 Third-party / feature records,43
-Deduplicated reels,16
+Reels in full deduplicated dataset (owned + third-party),16

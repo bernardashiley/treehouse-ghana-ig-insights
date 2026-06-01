@@ -14,7 +14,7 @@
 const fs = require('fs');
 const path = require('path');
 const { ROOT, loadConfig } = require('./config');
-const { commentNextStep } = require('./utils');
+const { commentNextStep, dedupeByShortcode, splitOwned } = require('./utils');
 
 // ── CSV / JSON readers ────────────────────────────────────────────────────────
 function parseLine(line){const o=[];let c='',q=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"'){if(q&&line[i+1]==='"'){c+='"';i++;}else q=!q;}else if(ch===','&&!q){o.push(c);c='';}else c+=ch;}o.push(c);return o;}
@@ -75,9 +75,10 @@ const followers = fmt(profile.followers_count || 0);
 // of assuming the Treehouse (reels-leaning) result.
 function fmtVerdict(){
   const cl=readCsv('data/processed/posts_clean.csv').concat(readCsv('data/processed/reels_clean.csv'));
-  const seen=new Map();
-  for(const r of cl){const k=r.shortcode||r.id;if(!seen.has(k)||num(r.engagement_score)>num(seen.get(k).engagement_score))seen.set(k,r);}
-  const all=[...seen.values()];
+  // Deduplicate AND restrict to owned content, identical to the rest of the report,
+  // so the reels count here (owned reels) matches the EDA and reconciliation table
+  // (avoids the 4-owned-vs-9-deduplicated reels contradiction).
+  const all=splitOwned(dedupeByShortcode(cl),(C.handle||C.short_name||'')).owned;
   const P=all.filter(r=>r.content_type==='post'), R=all.filter(r=>r.content_type==='reel');
   const m=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:0;
   const v=a=>{if(a.length<2)return 0;const mu=m(a);return a.reduce((s,x)=>s+(x-mu)**2,0)/(a.length-1);};
@@ -314,7 +315,7 @@ All metrics are derived entirely from public data. Private account analytics (re
 \\begin{callout}
 \\begin{tabularx}{\\linewidth}{@{}L{4.2cm} X@{}}
   \\textbf{Followers}            & ${tx(followers)} at time of collection \\\\[4pt]
-  \\textbf{Records analysed}     & ${fmt((counts.posts||0)+(counts.reels||0))} raw records collected (${counts.posts||0} posts, ${counts.reels||0} reels); after de-duplication, ${counts.deduplicated_unique||0} unique items, of which \\textbf{${counts.owned||0} are owned-account posts} (${counts.deduplicated_reels||0} reels). All tables use the owned set; see the reconciliation table in Methodology. \\\\[4pt]
+  \\textbf{Records analysed}     & This report uses \\textbf{${counts.owned||0} deduplicated owned-account records} for the main analysis: ${counts.owned_posts||0} feed posts and ${counts.owned_reels||0} reels. The full deduplicated public dataset contains ${counts.deduplicated_unique||0} unique items, including third-party features and mentions.${num(counts.owned_reels)<30?` Because only ${counts.owned_reels||0} owned reels remain after deduplication, format comparisons are exploratory only.`:''} \\\\[4pt]
   \\textbf{Top content category} & ${tx(pillarLabel(topPillar.pillar||''))} (average engagement score: ${fmt(topPillar.avg_engagement_score)}) \\\\[4pt]
   \\textbf{Best observed day}    & ${tx(bestDay.period||'')} (highest average engagement score: ${fmt(bestDay.avg_engagement_score)}; see the post-hoc note before treating as a rule) \\\\[4pt]
   \\textbf{Format signal}        & ${formatSignalRow} \\\\
@@ -604,7 +605,7 @@ ${smallSample?`\\begin{note}
 \\chapter{Methodology and Data Quality}
 All computation runs in a reproducible Node.js pipeline. Monte Carlo simulations use a fixed seed (${cfg.analysis.mc_seed}) and ${fmt(cfg.analysis.mc_iterations)} iterations; re-running the same committed code on the same input files, with the same Node version and random seed, reproduces the figures in this report.
 
-\\textbf{One dataset throughout.} Every table in this report (Part~I and Part~II) is built from the same deduplicated, owned-account dataset. The posts and reels scrapes overlap, so records are first deduplicated by shortcode (keeping the most complete copy), then split into the account's own posts versus third-party features and mentions. Descriptive and statistical tables use the \\textbf{owned} set; the owned-versus-third-party comparison and the segment table below are the only places third-party content appears. The record counts reconcile as follows:
+\\textbf{One dataset throughout.} This report uses \\textbf{${counts.owned||0} deduplicated owned-account records for the main analysis: ${counts.owned_posts||0} feed posts and ${counts.owned_reels||0} reels.} The full deduplicated public dataset contains ${counts.deduplicated_unique||0} unique items, including third-party features and mentions.${num(counts.owned_reels)<30?` Because only ${counts.owned_reels||0} owned reels remain after deduplication, \\textbf{format (reels-versus-posts) comparisons are exploratory only.}`:''} The posts and reels scrapes overlap, so records are first deduplicated by shortcode (keeping the most complete copy), then split into the account's own posts versus third-party features and mentions. Descriptive and statistical tables use the \\textbf{owned} set; the owned-versus-third-party comparison and the segment table below are the only places third-party content appears. The record counts reconcile as follows:
 
 ${recon.length?longtable({caption:'Data reconciliation: raw collection to working dataset',cols:[
 {h:'Stage',spec:'L{9cm}',cell:r=>tx(r.stage)},{h:'Records',spec:'R{3cm}',cell:r=>fmt(r.records)}],

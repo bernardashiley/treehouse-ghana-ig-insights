@@ -56,10 +56,10 @@ All metrics are derived entirely from public data. Private account analytics (re
 \begin{callout}
 \begin{tabularx}{\linewidth}{@{}L{4.2cm} X@{}}
   \textbf{Followers}            & 27,386 at time of collection \\[4pt]
-  \textbf{Records analysed}     & 219 raw records collected (135 posts, 84 reels); after de-duplication, 150 unique items, of which \textbf{107 are owned-account posts} (16 reels). All tables use the owned set; see the reconciliation table in Methodology. \\[4pt]
+  \textbf{Records analysed}     & This report uses \textbf{107 deduplicated owned-account records} for the main analysis: 100 feed posts and 7 reels. The full deduplicated public dataset contains 150 unique items, including third-party features and mentions. Because only 7 owned reels remain after deduplication, format comparisons are exploratory only. \\[4pt]
   \textbf{Top content category} & Events and Live Music (average engagement score: 416) \\[4pt]
   \textbf{Best observed day}    & Monday (highest average engagement score: 193; see the post-hoc note before treating as a rule) \\[4pt]
-  \textbf{Format signal}        & Only 16 reels in the analysed window: too few to compare; this account is posts-driven \\
+  \textbf{Format signal}        & Only 7 reels in the analysed window: too few to compare; this account is posts-driven \\
 \end{tabularx}
 \end{callout}
 
@@ -168,7 +168,7 @@ Each category is read against the overall average engagement score (127). \textq
 
 \chapter{Short Videos versus Feed Posts}
 \section{Comparative Performance}\label{sec:reelsposts}
-This account has \textbf{134 feed posts and 16 reels} in the analysed window. The engagement score embeds a views term available to video but not to many image posts (49\% of feed posts here record zero views), so the comparison is shown three ways: on the composite score, and on likes-and-comments and likes alone, which remove that mechanical advantage.
+This account has \textbf{100 feed posts and 7 reels} in the analysed window. The engagement score embeds a views term available to video but not to many image posts (55\% of feed posts here record zero views), so the comparison is shown three ways: on the composite score, and on likes-and-comments and likes alone, which remove that mechanical advantage.
 
 \begin{table}[htbp]
 \centering
@@ -177,15 +177,15 @@ This account has \textbf{134 feed posts and 16 reels} in the analysed window. Th
 \toprule
 \textbf{Metric} & \textbf{Reel mean} & \textbf{Post mean} & \textbf{MWU p-value} \\
 \midrule
-Engagement score (includes views) & 248 & 112 & 0.054 \\
-Likes + comments only (no views) & 121 & 71 & 0.179 \\
-Likes only & 103 & 62 & 0.557 \\
+Engagement score (includes views) & 350 & 103 & 0.068 \\
+Likes + comments only (no views) & 172 & 57 & 0.09 \\
+Likes only & 167 & 55 & 0.09 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{callout}
-\textbf{Honest reading.} With only 16 reels in the window, this comparison cannot be made meaningfully: the account is currently \textbf{posts-driven}. Feed posts (carousels and image posts) carry essentially all of the engagement. The opportunity is to test short video as an under-used format and measure reach with native Instagram analytics, not to assume it will replicate the performance of the existing posts.
+\textbf{Honest reading.} With only 7 reels in the window, this comparison cannot be made meaningfully: the account is currently \textbf{posts-driven}. Feed posts (carousels and image posts) carry essentially all of the engagement. The opportunity is to test short video as an under-used format and measure reach with native Instagram analytics, not to assume it will replicate the performance of the existing posts.
 \end{callout}
 
 \chapter{Timing Analysis}
@@ -553,7 +553,7 @@ A starting cadence built around the account's strongest themes; adjust to the li
 \chapter{Methodology and Data Quality}
 All computation runs in a reproducible Node.js pipeline. Monte Carlo simulations use a fixed seed (20260530) and 10,000 iterations; re-running the same committed code on the same input files, with the same Node version and random seed, reproduces the figures in this report.
 
-\textbf{One dataset throughout.} Every table in this report (Part~I and Part~II) is built from the same deduplicated, owned-account dataset. The posts and reels scrapes overlap, so records are first deduplicated by shortcode (keeping the most complete copy), then split into the account's own posts versus third-party features and mentions. Descriptive and statistical tables use the \textbf{owned} set; the owned-versus-third-party comparison and the segment table below are the only places third-party content appears. The record counts reconcile as follows:
+\textbf{One dataset throughout.} This report uses \textbf{107 deduplicated owned-account records for the main analysis: 100 feed posts and 7 reels.} The full deduplicated public dataset contains 150 unique items, including third-party features and mentions. Because only 7 owned reels remain after deduplication, \textbf{format (reels-versus-posts) comparisons are exploratory only.} The posts and reels scrapes overlap, so records are first deduplicated by shortcode (keeping the most complete copy), then split into the account's own posts versus third-party features and mentions. Descriptive and statistical tables use the \textbf{owned} set; the owned-versus-third-party comparison and the segment table below are the only places third-party content appears. The record counts reconcile as follows:
 
 \begin{longtable}{@{}L{9cm} R{3cm}@{}}
 \caption{Data reconciliation: raw collection to working dataset} \\
@@ -573,10 +573,12 @@ All computation runs in a reproducible Node.js pipeline. Monte Carlo simulations
 Raw feed-post records & 135 \\
 Raw reel records & 84 \\
 Raw total (pre-deduplication) & 219 \\
-Deduplicated unique records & 150 \\
-Owned-account records & 107 \\
+Deduplicated unique records (full public dataset) & 150 \\
+Owned-account records (basis for main analysis) & 107 \\
+of which owned feed posts & 100 \\
+of which owned reels & 7 \\
 Third-party / feature records & 43 \\
-Deduplicated reels & 16 \\
+Reels in full deduplicated dataset (owned + third-party) & 16 \\
 \end{longtable}
 
 \textbf{Missing values.} Public metrics the scraper could not read are returned as $-1$. These are treated as missing: they are floored to zero for the engagement score and shown as \textquotedblleft NA\textquotedblright{} in tables, never as $-1$ or a misleading $0$.
@@ -661,7 +663,7 @@ H6 top pillar vs rest & Welch t-test & $=0.7443$ & No & d=0.12 \\
 \end{longtable}
 
 \begin{note}
-\textbf{Reels vs posts.} With only 16 reels after deduplication, the reels-versus-posts test is underpowered and no reliable difference can be claimed. The account is posts-driven; see the format discussion in Part~I.
+\textbf{Reels vs posts.} With only 7 reels after deduplication, the reels-versus-posts test is underpowered and no reliable difference can be claimed. The account is posts-driven; see the format discussion in Part~I.
 \end{note}
 
 \section{Test-by-Test Detail}

@@ -538,15 +538,18 @@ function main() {
   const ownedContent = owned;
   const dedupedReels = deduped.filter((row) => row.content_type === "reel");
   const ownedReels = owned.filter((row) => row.content_type === "reel");
+  const ownedPosts = owned.filter((row) => row.content_type === "post");
 
   const reconciliation = [
     { stage: "Raw feed-post records", records: rawPosts.length },
     { stage: "Raw reel records", records: rawReels.length },
     { stage: "Raw total (pre-deduplication)", records: rawPosts.length + rawReels.length },
-    { stage: "Deduplicated unique records", records: deduped.length },
-    { stage: "Owned-account records", records: owned.length },
+    { stage: "Deduplicated unique records (full public dataset)", records: deduped.length },
+    { stage: "Owned-account records (basis for main analysis)", records: owned.length },
+    { stage: "    of which owned feed posts", records: ownedPosts.length },
+    { stage: "    of which owned reels", records: ownedReels.length },
     { stage: "Third-party / feature records", records: thirdParty.length },
-    { stage: "Deduplicated reels", records: dedupedReels.length },
+    { stage: "Reels in full deduplicated dataset (owned + third-party)", records: dedupedReels.length },
   ];
 
   const profileRows = profileSummary(profile, {
@@ -603,6 +606,8 @@ function main() {
       comments: comments.length,
       deduplicated_unique: deduped.length,
       owned: owned.length,
+      owned_posts: ownedPosts.length,
+      owned_reels: ownedReels.length,
       third_party: thirdParty.length,
       deduplicated_reels: dedupedReels.length,
     },

@@ -481,6 +481,7 @@ function makeMarkdown(data) {
   const edaGet = (lbl) => eda.find(r => r.label === lbl) || {};
   const postMean = num(edaGet('posts').mean), reelMean = num(edaGet('reels').mean);
   const reelN    = num(edaGet('reels').n) || reelsCt;
+  const ownedPostsN = num(edaGet('posts').n);
   const ownedN   = num(edaGet('owned_account').n);
   const dedupN   = num(edaGet('all_content_deduplicated').n);
   const smallSample = ownedN > 0 && ownedN < 40;
@@ -500,7 +501,7 @@ function makeMarkdown(data) {
     : `This account has a healthy, active following. Its strongest content is **${topLbl.toLowerCase()}**. The biggest opportunity is posting more ${top3Lbl} content with clear calls to action.`;
 
   return `# Treehouse Ghana: Instagram Performance Report
-*Prepared ${new Date().toISOString().slice(0,10)} · Based on ${Number(posts).toLocaleString()} posts, ${reelsCt} reels, ${mentCt} external mentions and ${commCt} audience comments*
+*Prepared ${new Date().toISOString().slice(0,10)} · Based on ${ownedN} deduplicated owned-account records (${ownedPostsN} feed posts, ${reelN} reels), plus ${mentCt} external mentions and ${commCt} audience comments*
 
 ---
 ${smallSample ? `
@@ -513,7 +514,7 @@ ${smallSample ? `
 | | |
 |---|---|
 | 👥 **Followers** | **${followers}** at time of analysis |
-| 📊 **Posts analysed** | ${posts} feed posts + ${reelsCt} short videos |
+| 📊 **Records analysed** | ${ownedPostsN} owned feed posts + ${reelN} reels (deduplicated; ${Number(posts).toLocaleString()} posts and ${reelsCt} reels were collected before removing duplicates) |
 | 🏆 **Best-performing content type** | ${topLbl} (avg score ${round(num(topPillar.avg_engagement_score), 0)}) |
 | 📅 **Best day to post** | **${topDay.period}** (avg score ${round(num(topDay.avg_engagement_score), 0)}) |
 | 🎬 **Posts vs short videos** | ${formatRow} |
@@ -698,6 +699,7 @@ function makeLatex(data) {
   const reelMean  = num(eda.find(r => r.label === 'reels')?.mean  || 0);
   const postMean  = num(eda.find(r => r.label === 'posts')?.mean  || 0);
   const reelN     = num(eda.find(r => r.label === 'reels')?.n) || (prof.scraped_reels || 0);
+  const ownedPostsN = num(eda.find(r => r.label === 'posts')?.n) || 0;
   const ownedN    = num(eda.find(r => r.label === 'owned_account')?.n) || 0;
   const smallSample = ownedN > 0 && ownedN < 40;
   // Below ~30 reels the comparison is underpowered; frame video as a test, not a winner.
@@ -823,7 +825,7 @@ function makeLatex(data) {
 \\node[draw=tregreen,fill=trelight,rounded corners=6pt,inner sep=12pt,text width=\\linewidth-26pt]{%
   \\begin{tabular}{@{}llll@{}}
     \\textbf{${tx(followers)}} followers &
-    \\textbf{${tx(posts.toString())}} posts analysed &
+    \\textbf{${tx(String(ownedN))}} owned records (${tx(String(ownedPostsN))} posts, ${tx(String(reelN))} reels) &
     \\textbf{${tx(topPillar.pillar ? (topPillar.pillar.replace(/[\\{}$&#_%^~<>]/g,'')) : 'top category')} is \\#1} &
     \\textbf{${tx(topDay.period||'Monday')} best day}\\\\
   \\end{tabular}
@@ -835,7 +837,7 @@ function makeLatex(data) {
 \\section*{\\color{tregreen}Executive Summary}
 
 Treehouse Ghana has ${tx(followers)} followers.
-This report analyses ${tx(posts.toString())} posts and short videos published over the past 18 months.
+This report analyses ${tx(String(ownedN))} deduplicated owned-account records (${tx(String(ownedPostsN))} feed posts and ${tx(String(reelN))} reels) published over the period.${reelN<30?` Because only ${tx(String(reelN))} reels remain after deduplication, comparisons between reels and feed posts are exploratory only.`:''}
 ${smallSample ? `\\textbf{It is a descriptive content audit, not a statistical forecast:} with ${ownedN} owned posts the figures reliably describe what has worked and point to opportunities to test, but are not guarantees. ` : ''}Key findings:
 
 \\begin{enumerate}

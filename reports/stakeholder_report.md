@@ -1,5 +1,5 @@
 # Treehouse Ghana: Instagram Performance Report
-*Prepared 2026-06-01 · Based on 135 posts, 84 reels, 21 external mentions and 106 audience comments*
+*Prepared 2026-06-01 · Based on 107 deduplicated owned-account records (100 feed posts, 7 reels), plus 21 external mentions and 106 audience comments*
 
 ---
 
@@ -8,7 +8,7 @@
 | | |
 |---|---|
 | 👥 **Followers** | **27,386** at time of analysis |
-| 📊 **Posts analysed** | 135 feed posts + 84 short videos |
+| 📊 **Records analysed** | 100 owned feed posts + 7 reels (deduplicated; 135 posts and 84 reels were collected before removing duplicates) |
 | 🏆 **Best-performing content type** | Events & Live Music (avg score 416) |
 | 📅 **Best day to post** | **Monday** (avg score 193) |
 | 🎬 **Posts vs short videos** | Only 7 short videos posted: this account is **posts-driven**; feed posts carry the engagement |
