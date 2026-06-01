@@ -303,7 +303,7 @@ function chartIntents(intents) {
   // Commercial = any specific, high-intent comment type (anything that is not a
   // generic reaction, unclear, or pure praise). Defined as a predicate so the
   // chart highlights the right bars for ANY client, not just a fixed list.
-  const isCommercial = (intent) => !/generic|unclear|praise/i.test(String(intent || ''));
+  const isCommercial = (intent) => !/generic|unclear|praise|hype|congrat|support/i.test(String(intent || ''));
 
   let bars = '';
   rows.forEach((r, i) => {
@@ -601,7 +601,7 @@ Most comments are light praise: lovely, but not where business comes from. The v
 | Comment type (and how often) | What to do about it |
 |---|---|
 ${(() => {
-  const commercial = [...intents].filter(i=>!/generic|unclear|praise/i.test(i.intent) && num(i.count)>0).sort((a,b)=>num(b.count)-num(a.count));
+  const commercial = [...intents].filter(i=>!/generic|unclear|praise|hype|congrat|support/i.test(i.intent) && num(i.count)>0).sort((a,b)=>num(b.count)-num(a.count));
   const rowsToShow = (commercial.length ? commercial : [...intents].sort((a,b)=>num(b.count)-num(a.count))).slice(0,5);
   return rowsToShow.map(i => `| **${i.intent}** (${i.count}, ${i.percentage}%) | ${commentNextStep(i.intent, num(i.percentage))} |`).join('\n');
 })()}
@@ -631,7 +631,7 @@ We simulated three content approaches by drawing on your past performance. Each 
 Take these steps in order. Each one builds on the last, and every one is drawn from what your own data shows above.
 
 ${(() => {
-  const commercial = [...intents].filter(i=>!/generic|unclear|praise/i.test(i.intent) && num(i.count)>0).sort((a,b)=>num(b.count)-num(a.count));
+  const commercial = [...intents].filter(i=>!/generic|unclear|praise|hype|congrat|support/i.test(i.intent) && num(i.count)>0).sort((a,b)=>num(b.count)-num(a.count));
   const topIntent = commercial[0];
   const topPillarName = (PILLAR_LABELS[topPillar.pillar] || topPillar.pillar || 'your strongest content type');
   const bestDay = topDay.period || 'your best-performing day';
@@ -722,7 +722,7 @@ function makeLatex(data) {
 
   // Data-driven commercial signal + next-step prose (industry-agnostic).
   const commercialIntents = [...intents]
-    .filter(i => !/generic|unclear|praise/i.test(i.intent) && num(i.count) > 0)
+    .filter(i => !/generic|unclear|praise|hype|congrat|support/i.test(i.intent) && num(i.count) > 0)
     .sort((a, b) => num(b.count) - num(a.count));
   const topCommercial = commercialIntents[0] || null;
   const topCommercialTxt = topCommercial

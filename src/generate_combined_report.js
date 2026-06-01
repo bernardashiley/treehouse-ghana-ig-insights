@@ -245,12 +245,18 @@ const wellPoweredPillars = sortedPillars.filter(p=>num(p.posts_count)>=10);
 const top3Pillars  = (wellPoweredPillars.length?wellPoweredPillars:sortedPillars).slice(0,3).map(p=>pillarLabel(p.pillar));
 const provenTopPillar = top3Pillars[0] || 'the top category';
 const secondaryThemes = top3Pillars.slice(1);
-const baselineMean = num((edaBy.all_content_deduplicated||{}).mean) || num((edaBy.owned_account||{}).mean) || 0;
+// Pillar lift is computed against the OWNED-account mean (the analysis basis), so
+// the baseline shown here must be the owned mean too, not the full 305-item mean.
+const baselineMean = num((edaBy.owned_account||{}).mean) || num((edaBy.all_content_deduplicated||{}).mean) || 0;
 const pillarEda    = eda.filter(r=>/^pillar:/.test(r.label)).map(r=>({...r,name:pillarLabel(r.label.replace(/^pillar:/,''))}));
 const sortedDays   = [...dayRows];
 const topDays      = sortedDays.slice(0,2).map(d=>d.period).filter(Boolean);
-// commercial comment intents (exclude generic/unclear/praise) ranked by count
-const commercialIntents = [...intents].filter(i=>!/generic|unclear|praise/i.test(i.intent) && num(i.count)>0).sort((a,b)=>num(b.count)-num(a.count));
+// Actionable, non-generic comment intents ranked by count. Excludes warm sentiment
+// (praise/hype, congratulations/support) and generic/unclear: those are social
+// proof, NOT commercial intent, so they must not be reported as a commercial signal.
+const commercialIntents = [...intents].filter(i=>!/generic|unclear|praise|hype|congrat|support/i.test(i.intent) && num(i.count)>0).sort((a,b)=>num(b.count)-num(a.count));
+// Largest warm-response category (praise/congratulations), for honest framing.
+const warmIntents = [...intents].filter(i=>/praise|hype|congrat|support/i.test(i.intent) && num(i.count)>0).sort((a,b)=>num(b.count)-num(a.count));
 const topIntent    = (commercialIntents[0]||intents[0]||{});
 const tlink = u => u ? `\\href{${u}}{view}` : '';
 // Static glossary asset (generic statistical terms) injected before sign-off.
@@ -323,8 +329,18 @@ All metrics are derived entirely from public data. Private account analytics (re
 \\end{callout}
 
 \\section{Data Coverage}
-${table({caption:'Summary of data collected for analysis',cols:[{h:'Area',spec:'L{7cm}',cell:r=>r.a},{h:'Count',spec:'R{4cm}',cell:r=>r.c}],rows:[
-{a:'Owned feed posts analysed',c:counts.posts||0},{a:'Reels analysed',c:counts.reels||0},{a:'Third-party mentions analysed',c:counts.mentions||0},{a:'Comments analysed',c:counts.comments||0},{a:'Followers at collection time',c:followers}]})}
+${table({caption:'Data coverage: raw collection through to the analysed owned-account dataset',cols:[{h:'Area',spec:'L{9.5cm}',cell:r=>tx(r.a)},{h:'Count',spec:'R{4cm}',cell:r=>fmt(r.c)}],rows:[
+{a:'Raw feed-post records collected',c:counts.posts||0},
+{a:'Raw reel records collected',c:counts.reels||0},
+{a:'Raw total before deduplication',c:(counts.posts||0)+(counts.reels||0)},
+{a:'Deduplicated unique public records',c:counts.deduplicated_unique||0},
+{a:'Owned-account records used in main analysis',c:counts.owned||0},
+{a:'   of which owned feed posts',c:counts.owned_posts||0},
+{a:'   of which owned reels',c:counts.owned_reels||0},
+{a:'Third-party / feature records',c:counts.third_party||0},
+{a:'Public mention records reviewed',c:counts.mentions||0},
+{a:'Comments analysed',c:counts.comments||0},
+{a:'Followers at collection time',c:profile.followers_count||0}]})}
 
 ${C.bio?`Profile biography: \\textit{${tx(C.bio)}}\n`:''}
 \\begin{note}
@@ -370,7 +386,7 @@ rows:[...pillars].sort((a,b)=>num(b.avg_engagement_score)-num(a.avg_engagement_s
 \\end{note}
 
 \\section{Business Interpretation by Pillar}
-Each category is read against the overall average engagement score (${fmt(baselineMean)}). \\textquotedblleft Above\\textquotedblright{} means the category tends to outperform a typical post; sample size ($n$) signals how reliable that read is.
+Each category is read against the owned-account average engagement score (${fmt(baselineMean)}). \\textquotedblleft Above\\textquotedblright{} means the category tends to outperform a typical post; sample size ($n$) signals how reliable that read is.
 \\begin{itemize}[leftmargin=*]
 ${sortedPillars.slice(0,8).map(p=>{
   const liftRow=(lift.find(l=>l.pillar===p.pillar)||{});
@@ -442,12 +458,10 @@ ${(() => {
   const total = intents.reduce((s,i)=>s+num(i.count),0) || 1;
   const generic = intents.filter(i=>/generic|unclear/i.test(i.intent)).reduce((s,i)=>s+num(i.count),0);
   const genericPct = Math.round(100*generic/total);
+  const warm = warmIntents[0];
   const lead = commercialIntents[0];
-  const direct = commercialIntents.find(i=>/book|collab|enquir|hire|work with/i.test(i.intent));
-  const directClause = direct && (!lead || direct.intent!==lead.intent)
-    ? ` The largest \\emph{actionable} category is one thing; the strongest \\emph{direct commercial} signal is \\textbf{${tx(direct.intent)}} (${direct.count} comment${num(direct.count)===1?'':'s'}), which matters far more per occurrence even though it appears rarely.`
-    : '';
-  return `Most comments on any creator account are light reactions, and this one is no exception: roughly ${genericPct}\\% are emoji or one-word praise. That is healthy brand warmth, but it is not where revenue comes from. The commercial value sits in the smaller, specific categories below: the people effectively raising their hand.${lead?` Here the largest actionable signal is \\textbf{${tx(lead.intent)}} (${lead.count} comments, ${tx(lead.percentage)}\\% of all comments), so it is the first thing to make frictionless.`:''}${directClause}`;
+  const directVisible = commercialIntents.some(i=>/book|collab|enquir|hire|work with/i.test(i.intent) && num(i.count)>=3);
+  return `The comment sample is dominated by low-intent warmth: roughly ${genericPct}\\% are emoji or one-word reactions.${warm?` The largest warm-response category is \\textbf{${tx(warm.intent)}} (${warm.count} comments).`:''} This is healthy brand warmth and useful as social proof, but it is not commercial intent.${lead?` The clearest \\emph{actionable}, non-generic signal is \\textbf{${tx(lead.intent)}} (${lead.count} comments, ${tx(lead.percentage)}\\% of all comments).`:''} ${directVisible?'Direct booking or collaboration intent does appear and should be answered immediately.':'Direct booking or collaboration intent is not materially visible in the public comment sample, so the goal is to convert warm attention into enquiries with clearer calls to action.'}`;
 })()}
 
 \\begin{itemize}[leftmargin=*]
@@ -550,7 +564,7 @@ rows:topReels.slice(0,10)})}
   \\item \\textbf{Prioritise the proven theme:} \\textbf{${tx(provenTopPillar)}} is the clearest, best-evidenced strength (largest sample and highest mean), so it is the safest place to add volume.${secondaryThemes.length?` Use \\textbf{${tx(secondaryThemes.join(' and '))}} as secondary test themes, strongest when tied to an active project; their averages rest on fewer posts, so treat them as bets to validate rather than certainties.`:''} Categories with very few posts are test slots, not anchors.
   \\item \\textbf{Lean on the proven format.} ${reelsWin && !tooFewReels ? 'Short videos lead on interaction and reach beyond current followers, so expand video output.' : tooFewReels ? 'The account is posts-driven; treat short video as an experiment to extend reach, measured in native Insights.' : 'Feed posts outperform short video here; keep investing in strong post formats and test video for reach.'}
   \\item \\textbf{Treat ${tx(topDays.join(' and ')||'the strongest observed days')} as test windows:} they show the highest observed average engagement, but ${anyDaySignificant?'the leading difference is supported by post-hoc tests':'no pairwise day difference survives correction, so confirm against native reach before fixing a schedule'}.
-  \\item \\textbf{Convert comments into action.} The most common commercial signal is \\textbf{${tx(topIntent.intent||'audience questions')}}; reply quickly and pin the answer.
+  \\item \\textbf{Convert comments into action.} The clearest actionable, non-generic signal is \\textbf{${tx((commercialIntents[0]||{}).intent||'project/release interest')}}; direct commercial booking intent is not yet strong in the public comment sample. Use clearer calls to action, pinned answers, and bio links to turn warm attention into enquiries.
   \\item \\textbf{Make captions complete:} one clear hook, one proof point, and one explicit next step (where to watch, how to engage, how to book).
   \\item \\textbf{Reshare third-party mentions} that align with a strong theme, adding the context the original may lack.
   \\item \\textbf{Track theme performance monthly} so the team can see which categories are pulling weight and rebalance.
@@ -634,7 +648,7 @@ rows:[...pillarEda].sort((a,b)=>num(b.mean)-num(a.mean))})}
 \\chapter{Hypothesis Tests}
 All tests use $\\alpha = ${cfg.analysis.alpha}$; with ${cfg.analysis.bonferroni_tests} parallel tests the Bonferroni threshold is $\\alpha_B = ${r2(cfg.analysis.alpha/cfg.analysis.bonferroni_tests,4)}$.
 ${longtable({caption:'Hypothesis test results (significance judged against the Bonferroni-corrected threshold)',cols:[
-{h:'Test',spec:'L{4cm}',cell:r=>tx((r.test||'').replace(/_/g,' '))},{h:'Method',spec:'L{3cm}',cell:r=>tx(r.method)},{h:'p',spec:'R{1.6cm}',cell:r=>'$'+fmtP(r.p)+'$'},{h:'Sig. (Bonf.)',spec:'R{1.6cm}',cell:r=>r.significant_bonferroni==='true'?'Yes':'No'},{h:'Effect/Note',spec:'L{3.6cm}',cell:r=>tx(r.cohens_d?('d='+r.cohens_d):(r.r?('r='+r.r):(r.H?('H='+r.H):'')))}],
+{h:'Test',spec:'L{4cm}',cell:r=>tx((r.test||'').replace(/_/g,' '))},{h:'Method',spec:'L{3cm}',cell:r=>tx(r.method)},{h:'p',spec:'R{1.6cm}',cell:r=>'$'+fmtP(r.p).replace(/^=/,'')+'$'},{h:'Sig. (Bonf.)',spec:'R{1.6cm}',cell:r=>r.significant_bonferroni==='true'?'Yes':'No'},{h:'Effect/Note',spec:'L{3.6cm}',cell:r=>tx(r.cohens_d?('d='+r.cohens_d):(r.r?('r='+r.r):(r.H?('H='+r.H):'')))}],
 rows:hyp})}
 
 \\begin{note}
@@ -660,8 +674,11 @@ ${hyp.map(r=>{
 
 \\chapter{Bootstrap Confidence Intervals}
 ${longtable({caption:'Bootstrap 95% confidence intervals',cols:[
-{h:'Segment / Pillar',spec:'L{5cm}',cell:r=>tx(r.label.replace(/_/g,' '))},{h:'N',spec:'R{1.2cm}',cell:r=>r.n},{h:'Estimate',spec:'R{2cm}',cell:r=>r2(r.estimate)},{h:'Lower',spec:'R{2cm}',cell:r=>r2(r.lower)},{h:'Upper',spec:'R{2cm}',cell:r=>r2(r.upper)},{h:'Incl. 0',spec:'R{1.5cm}',cell:r=>r.includes_zero==='true'?'Yes':'No'}],
+{h:'Segment / Pillar',spec:'L{5cm}',cell:r=>tx(r.label.replace(/_/g,' '))},{h:'N',spec:'R{1.2cm}',cell:r=>r.n},{h:'Estimate',spec:'R{2cm}',cell:r=>r2(r.estimate)},{h:'Lower',spec:'R{2cm}',cell:r=>r2(r.lower)},{h:'Upper',spec:'R{2cm}',cell:r=>r2(r.upper)},{h:'CI incl. 0?',spec:'R{1.8cm}',cell:r=>/minus|diff|vs/i.test(r.label)?(r.includes_zero==='true'?'Yes':'No'):'n/a'}],
 rows:cis})}
+\\begin{note}
+The \\textquotedblleft CI includes 0?\\textquotedblright{} test is only meaningful for difference estimates (such as reels minus posts), where it indicates whether the difference could plausibly be zero. For single means and medians, engagement is non-negative, so the column is marked n/a.
+\\end{note}
 
 \\chapter{Pillar Lift versus Baseline}
 ${bar({title:'Content pillar lift relative to overall baseline (percent)',xlabel:'Lift above baseline (%)',pct:true,rows:[...lift].sort((a,b)=>num(a.lift_vs_baseline_pct)-num(b.lift_vs_baseline_pct)).map(l=>({label:l.pillar,value:l.lift_vs_baseline_pct})),max:Math.max(...lift.map(l=>num(l.lift_vs_baseline_pct)))})}
@@ -708,7 +725,7 @@ ${table({caption:'MC3: monthly booking pipeline under three conversion scenarios
 {h:'Scenario',spec:'L{2.5cm}',cell:r=>tx(r.scenario)},{h:'Contact %',spec:'R{1.8cm}',cell:r=>r.contact_rate_pct},{h:'Booking %',spec:'R{2cm}',cell:r=>r.booking_rate_pct},{h:'P50',spec:'R{1.6cm}',cell:r=>r.bookings_p50},{h:'P90',spec:'R{1.6cm}',cell:r=>r.bookings_p90},{h:'P(0)',spec:'R{1.8cm}',cell:r=>r.prob_0_bookings_pct+'\\%'},{h:'P(3+ bookings)',spec:'R{1.8cm}',cell:r=>r.prob_ge3_bookings_pct+'\\%'}],
 rows:mcConv})}
 \\begin{callout}
-\\textbf{Principal finding from MC3.} In this model the contact rate applies to the comments captured on the account's top posts; because only a minority express commercial intent, the booking counts are optimistic upper bounds. At current comment volumes the Instagram comment channel alone cannot reliably drive booking conversions regardless of conversion rate. The binding constraint is comment volume, not the funnel. Increasing reach-oriented content (MC1) raises the top of the funnel; replying immediately to commercial comments is the cheapest operational lever.
+\\textbf{Principal finding from MC3.} In this model the contact rate applies to the comments captured on the account's top posts; because only a minority express commercial intent, the booking counts should be treated as optimistic \\emph{upper bounds} rather than expected outcomes. The comment channel may generate enquiries under generous assumptions, but it should not be treated as a stable booking engine without clearer commercial calls to action, native analytics, and actual enquiry and booking records. Increasing reach-oriented content (MC1) raises the top of the funnel; replying immediately to commercial comments is the cheapest operational lever.
 \\end{callout}
 
 \\section{MC4: Optimal Pillar Mix (Top 10 Allocations)}
@@ -732,9 +749,9 @@ ${(() => {
   const atT=mcRisk.filter(r=>num(r.target_12wk_engagement)===bestT).sort((a,b)=>num(b.prob_achieving_pct)-num(a.prob_achieving_pct));
   if(!atT.length) return '';
   const win=atT[0],lose=atT[atT.length-1];
-  return `\\begin{callout}
-\\textbf{Implication.} The strategies separate most clearly at a target of ${fmt(bestT)}: the \\textbf{${tx(win.strategy.replace(/_/g,' '))}} plan reaches it in ${win.prob_achieving_pct}\\% of simulations versus ${lose.prob_achieving_pct}\\% for \\textbf{${tx(lose.strategy.replace(/_/g,' '))}}. In plain terms, the choice of content mix changes not just the \\emph{average} outcome but the \\emph{odds} of clearing an ambitious goal, which is what matters when setting a quarter's target. Set the goal where your chosen strategy sits around 50--80\\%: ambitious but realistic, not a coin-flip.
-\\end{callout}`;
+  // Plain paragraph (not a boxed callout): a tall mdframed box cannot break across
+  // a page boundary and was forcing an almost-blank page before the implication.
+  return `\\medskip\\noindent\\textbf{Implication.} The strategies separate most clearly at a target of ${fmt(bestT)}: the \\textbf{${tx(win.strategy.replace(/_/g,' '))}} plan reaches it in ${win.prob_achieving_pct}\\% of simulations versus ${lose.prob_achieving_pct}\\% for \\textbf{${tx(lose.strategy.replace(/_/g,' '))}}. In plain terms, the choice of content mix changes not just the \\emph{average} outcome but the \\emph{odds} of clearing an ambitious goal, which is what matters when setting a quarter's target. Set the goal where your chosen strategy sits around 50--80\\%: ambitious but realistic, not a coin-flip.\\medskip`;
 })()}
 
 \\chapter{Consolidated Actionable Findings}
@@ -742,7 +759,7 @@ ${(() => {
   \\item \\textbf{Lead with the proven theme:} \\textbf{${tx(provenTopPillar)}} is the well-evidenced strength and the safest place to add volume.${secondaryThemes.length?` Validate \\textbf{${tx(secondaryThemes.join(' and '))}} as secondary test themes; small-sample pillars stay as test slots.`:''}
   \\item \\textbf{Format:} ${reelsWin && !tooFewReels ? 'short videos lead and reach new audiences, so expand them.' : tooFewReels ? 'the account is posts-driven; short video is an untested reach opportunity, not a proven channel.' : 'feed posts lead; keep investing in them and test video for reach.'}
   \\item \\textbf{Timing:} ${topDays.length?`treat ${tx(topDays.join(' and '))} as test windows${anyDaySignificant?' (supported by post-hoc tests)':' (highest observed average, not yet statistically distinguishable)'}.`:'no strong day effect; keep testing posting times against native reach data.'}
-  \\item \\textbf{Comments are a warm channel:} the most common commercial signal is \\textbf{${tx(topIntent.intent||'audience questions')}}; fast, consistent replies convert it.
+  \\item \\textbf{Comments are warm but mostly low-intent:} \\textbf{${tx((commercialIntents[0]||{}).intent||'project/release interest')}} is the clearest actionable signal; direct commercial intent should be grown through clearer calls to action and faster response routes.
   \\item \\textbf{Engagement is concentrated} in a small number of posts (see the top-posts tables and the bootstrap intervals); maintain a backlog of high-potential content to smooth the peaks and troughs.
   \\item \\textbf{Measure what this analysis cannot see:} pair these public findings with native Instagram reach, saves, shares, and profile actions before committing budget.
 \\end{enumerate}

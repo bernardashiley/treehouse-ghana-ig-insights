@@ -66,14 +66,20 @@ All metrics are derived entirely from public data. Private account analytics (re
 \section{Data Coverage}
 \begin{table}[htbp]
 \centering
-\caption{Summary of data collected for analysis}
-\begin{tabular}{@{}L{7cm} R{4cm}@{}}
+\caption{Data coverage: raw collection through to the analysed owned-account dataset}
+\begin{tabular}{@{}L{9.5cm} R{4cm}@{}}
 \toprule
 \textbf{Area} & \textbf{Count} \\
 \midrule
-Owned feed posts analysed & 135 \\
-Reels analysed & 84 \\
-Third-party mentions analysed & 21 \\
+Raw feed-post records collected & 135 \\
+Raw reel records collected & 84 \\
+Raw total before deduplication & 219 \\
+Deduplicated unique public records & 150 \\
+Owned-account records used in main analysis & 107 \\
+   of which owned feed posts & 100 \\
+   of which owned reels & 7 \\
+Third-party / feature records & 43 \\
+Public mention records reviewed & 21 \\
 Comments analysed & 106 \\
 Followers at collection time & 27,386 \\
 \bottomrule
@@ -154,7 +160,7 @@ general brand/content & 14 & 17.5 & 0.14 & 643 & 24.64 \\
 \end{note}
 
 \section{Business Interpretation by Pillar}
-Each category is read against the overall average engagement score (127). \textquotedblleft Above\textquotedblright{} means the category tends to outperform a typical post; sample size ($n$) signals how reliable that read is.
+Each category is read against the owned-account average engagement score (119). \textquotedblleft Above\textquotedblright{} means the category tends to outperform a typical post; sample size ($n$) signals how reliable that read is.
 \begin{itemize}[leftmargin=*]
   \item \textbf{Events and Live Music} ($n=4$, avg 416, +249.7\% above baseline): small sample, so treat as a hypothesis to test with more posts.
   \item \textbf{Cocktails and Drinks} ($n=5$, avg 208, +75.2\% above baseline): small sample, so treat as a hypothesis to test with more posts.
@@ -323,7 +329,7 @@ Each comment is assigned its single \textbf{primary} intent, so the counts sum t
 \end{note}
 
 \section{What the Comments Are Telling You}
-Most comments on any creator account are light reactions, and this one is no exception: roughly 84\% are emoji or one-word praise. That is healthy brand warmth, but it is not where revenue comes from. The commercial value sits in the smaller, specific categories below: the people effectively raising their hand. Here the largest actionable signal is \textbf{location/access question} (4 comments, 3.8\% of all comments), so it is the first thing to make frictionless. The largest \emph{actionable} category is one thing; the strongest \emph{direct commercial} signal is \textbf{booking/reservation intent} (1 comment), which matters far more per occurrence even though it appears rarely.
+The comment sample is dominated by low-intent warmth: roughly 84\% are emoji or one-word reactions. The largest warm-response category is \textbf{positive ambience praise} (4 comments). This is healthy brand warmth and useful as social proof, but it is not commercial intent. The clearest \emph{actionable}, non-generic signal is \textbf{location/access question} (4 comments, 3.8\% of all comments). Direct booking or collaboration intent is not materially visible in the public comment sample, so the goal is to convert warm attention into enquiries with clearer calls to action.
 
 \begin{itemize}[leftmargin=*]
   \item \textbf{location/access question} (4, 3.8\%): Logistics questions. Pin the address, date or ticket link in captions and a "Find Us / Events" Highlight so the answer is always one tap away.
@@ -492,7 +498,7 @@ post & Food and Dining & 240 & 0 & 15,001 & 390 & \href{https://www.instagram.co
   \item \textbf{Prioritise the proven theme:} \textbf{Dinner and Nightlife} is the clearest, best-evidenced strength (largest sample and highest mean), so it is the safest place to add volume. Use \textbf{Food and Dining and general brand/content} as secondary test themes, strongest when tied to an active project; their averages rest on fewer posts, so treat them as bets to validate rather than certainties. Categories with very few posts are test slots, not anchors.
   \item \textbf{Lean on the proven format.} The account is posts-driven; treat short video as an experiment to extend reach, measured in native Insights.
   \item \textbf{Treat Monday and Friday as test windows:} they show the highest observed average engagement, but no pairwise day difference survives correction, so confirm against native reach before fixing a schedule.
-  \item \textbf{Convert comments into action.} The most common commercial signal is \textbf{location/access question}; reply quickly and pin the answer.
+  \item \textbf{Convert comments into action.} The clearest actionable, non-generic signal is \textbf{location/access question}; direct commercial booking intent is not yet strong in the public comment sample. Use clearer calls to action, pinned answers, and bio links to turn warm attention into enquiries.
   \item \textbf{Make captions complete:} one clear hook, one proof point, and one explicit next step (where to watch, how to engage, how to book).
   \item \textbf{Reshare third-party mentions} that align with a strong theme, adding the context the original may lack.
   \item \textbf{Track theme performance monthly} so the team can see which categories are pulling weight and rebalance.
@@ -653,13 +659,13 @@ All tests use $\alpha = 0.05$; with 6 parallel tests the Bonferroni threshold is
 \endfoot
 \bottomrule
 \endlastfoot
-H1a reels vs posts welch & Welch t-test & $=0.1363$ & No & d=0.73 \\
-H1b reels vs posts mwu & Mann-Whitney U (non-parametric) & $=0.0677$ & No &  \\
-H2 day of week kruskal wallis & Kruskal-Wallis H-test (omnibus) + Holm post-hoc & $=0.0226$ & No & H=14.7121 \\
-H3 owned vs third party & Welch t-test & $=0.5134$ & No & d=-0.111 \\
-H4 caption length pearson & Pearson r + t-test & $=0.4308$ & No & r=0.0768 \\
-H5 hashtag count pearson & Pearson r + t-test & $=0.1917$ & No & r=0.1269 \\
-H6 top pillar vs rest & Welch t-test & $=0.7443$ & No & d=0.12 \\
+H1a reels vs posts welch & Welch t-test & $0.1363$ & No & d=0.73 \\
+H1b reels vs posts mwu & Mann-Whitney U (non-parametric) & $0.0677$ & No &  \\
+H2 day of week kruskal wallis & Kruskal-Wallis H-test (omnibus) + Holm post-hoc & $0.0226$ & No & H=14.7121 \\
+H3 owned vs third party & Welch t-test & $0.5134$ & No & d=-0.111 \\
+H4 caption length pearson & Pearson r + t-test & $0.4308$ & No & r=0.0768 \\
+H5 hashtag count pearson & Pearson r + t-test & $0.1917$ & No & r=0.1269 \\
+H6 top pillar vs rest & Welch t-test & $0.7443$ & No & d=0.12 \\
 \end{longtable}
 
 \begin{note}
@@ -670,54 +676,57 @@ H6 top pillar vs rest & Welch t-test & $=0.7443$ & No & d=0.12 \\
 \begin{description}[leftmargin=0pt,style=nextline]
   \item[H1a reels vs posts welch] \textit{H\textsubscript{0}: μ(reels) = μ(posts)}. Welch t-test; $t=1.6289$, $\mathrm{df}=6.4$, $p=0.1363$. Cohen's $d=0.73$. \textbf{Not statistically significant: insufficient evidence to reject the null at the corrected threshold.} After dedup, reels/posts are non-overlapping subsets of unique posts. Use MWU as primary test given high skewness.
   \item[H1b reels vs posts mwu] \textit{H\textsubscript{0}: Rank distribution(reels) = Rank distribution(posts)}. Mann-Whitney U (non-parametric); $U=205$, $z=-1.8268$, $p=0.0677$. \textbf{Not statistically significant: insufficient evidence to reject the null at the corrected threshold.}
-  \item[H2 day of week kruskal wallis] \textit{H\textsubscript{0}: Engagement distributions equal across all posting days}. Kruskal-Wallis H-test (omnibus) + Holm post-hoc; $H=14.7121$, $\mathrm{df}=6$, $p=0.0226$. \textbf{Not statistically significant: insufficient evidence to reject the null at the corrected threshold.} some day groups n<5 (low power); no pairwise day difference survives Holm correction: day-of-week effect is directional only
+  \item[H2 day of week kruskal wallis] \textit{H\textsubscript{0}: Engagement distributions equal across all posting days}. Kruskal-Wallis H-test (omnibus) + Holm post-hoc; $H=14.7121$, $\mathrm{df}=6$, $p=0.0226$. \textbf{Not statistically significant: insufficient evidence to reject the null at the corrected threshold.} Some day groups have n<5 (low power). No pairwise day difference survives Holm correction; the day-of-week effect is directional only.
   \item[H3 owned vs third party] \textit{H\textsubscript{0}: μ(owned) = μ(third-party)}. Welch t-test; $t=-0.6542$, $\mathrm{df}=103.8$, $p=0.5134$. Cohen's $d=-0.111$. \textbf{Not statistically significant: insufficient evidence to reject the null at the corrected threshold.}
   \item[H4 caption length pearson] \textit{H\textsubscript{0}: ρ(caption\_length, engagement) = 0}. Pearson r + t-test; $t=0.789$, $\mathrm{df}=105$, $p=0.4308$. (95\% CI -0.1148 to 0.2628). \textbf{Not statistically significant: insufficient evidence to reject the null at the corrected threshold.}
   \item[H5 hashtag count pearson] \textit{H\textsubscript{0}: ρ(hashtag\_count, engagement) = 0}. Pearson r + t-test; $t=1.311$, $\mathrm{df}=105$, $p=0.1917$. (95\% CI -0.0645 to 0.3093). \textbf{Not statistically significant: insufficient evidence to reject the null at the corrected threshold.}
-  \item[H6 top pillar vs rest] \textit{H\textsubscript{0}: μ(dinner/nightlife) = μ(other owned content)}. Welch t-test; $t=0.327$, $\mathrm{df}=10.1$, $p=0.7443$. Cohen's $d=0.12$. \textbf{Not statistically significant: insufficient evidence to reject the null at the corrected threshold.} independent groups: top pillar vs all other owned content
+  \item[H6 top pillar vs rest] \textit{H\textsubscript{0}: μ(dinner/nightlife) = μ(other owned content)}. Welch t-test; $t=0.327$, $\mathrm{df}=10.1$, $p=0.7443$. Cohen's $d=0.12$. \textbf{Not statistically significant: insufficient evidence to reject the null at the corrected threshold.} The groups are independent: dinner/nightlife is compared with all other owned content.
 \end{description}
 
 \chapter{Bootstrap Confidence Intervals}
-\begin{longtable}{@{}L{5cm} R{1.2cm} R{2cm} R{2cm} R{2cm} R{1.5cm}@{}}
+\begin{longtable}{@{}L{5cm} R{1.2cm} R{2cm} R{2cm} R{2cm} R{1.8cm}@{}}
 \caption{Bootstrap 95\% confidence intervals} \\
 \toprule
-\textbf{Segment / Pillar} & \textbf{N} & \textbf{Estimate} & \textbf{Lower} & \textbf{Upper} & \textbf{Incl. 0} \\
+\textbf{Segment / Pillar} & \textbf{N} & \textbf{Estimate} & \textbf{Lower} & \textbf{Upper} & \textbf{CI incl. 0?} \\
 \midrule
 \endfirsthead
 \multicolumn{6}{c}{\tablename\ \thetable{} (continued)} \\
 \toprule
-\textbf{Segment / Pillar} & \textbf{N} & \textbf{Estimate} & \textbf{Lower} & \textbf{Upper} & \textbf{Incl. 0} \\
+\textbf{Segment / Pillar} & \textbf{N} & \textbf{Estimate} & \textbf{Lower} & \textbf{Upper} & \textbf{CI incl. 0?} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
 \bottomrule
 \endlastfoot
-all mean & 150 & 126.83 & 88.04 & 171.21 & No \\
-all median & 150 & 38.87 & 35 & 48.5 & No \\
-posts mean & 100 & 102.72 & 57.69 & 161.87 & No \\
-reels mean & 7 & 350.05 & 126.59 & 643.85 & No \\
-owned mean & 107 & 118.9 & 71.13 & 176.68 & No \\
-third party mean & 43 & 146.58 & 89.17 & 215.9 & No \\
+all mean & 150 & 126.83 & 88.04 & 171.21 & n/a \\
+all median & 150 & 38.87 & 35 & 48.5 & n/a \\
+posts mean & 100 & 102.72 & 57.69 & 161.87 & n/a \\
+reels mean & 7 & 350.05 & 126.59 & 643.85 & n/a \\
+owned mean & 107 & 118.9 & 71.13 & 176.68 & n/a \\
+third party mean & 43 & 146.58 & 89.17 & 215.9 & n/a \\
 reels minus posts & 107 & 247.33 & 7.78 & 561.92 & No \\
-pillar food mean & 63 & 113.96 & 55.14 & 195 & No \\
-pillar general brand content mean & 14 & 24.64 & 15.2 & 36.06 & No \\
-pillar dinner nightlife mean & 10 & 154 & 30.88 & 387.47 & No \\
-pillar cocktails drinks mean & 5 & 208.29 & 11.6 & 575.35 & No \\
-pillar events live music DJ mean & 4 & 415.83 & 48.54 & 885.22 & No \\
-pillar promotions offers mean & 1 & 143.81 & 143.81 & 143.81 & No \\
-pillar ambience decor vibe mean & 3 & 41.33 & 35 & 53 & No \\
-pillar date night romance mean & 5 & 103.22 & 29.76 & 189.64 & No \\
-pillar reservations bookings mean & 1 & 35.54 & 35.54 & 35.54 & No \\
-pillar birthdays celebrations mean & 1 & 133.41 & 133.41 & 133.41 & No \\
-day Monday mean & 11 & 192.87 & 53.45 & 422.07 & No \\
-day Tuesday mean & 28 & 119.43 & 35.53 & 238.54 & No \\
-day Wednesday mean & 15 & 81.93 & 31.21 & 146.31 & No \\
-day Thursday mean & 22 & 120.73 & 24.2 & 267.84 & No \\
-day Friday mean & 23 & 127.08 & 40.68 & 288.4 & No \\
-day Saturday mean & 5 & 57.29 & 45.35 & 69.94 & No \\
-day Sunday mean & 3 & 54.15 & 36 & 83.24 & No \\
+pillar food mean & 63 & 113.96 & 55.14 & 195 & n/a \\
+pillar general brand content mean & 14 & 24.64 & 15.2 & 36.06 & n/a \\
+pillar dinner nightlife mean & 10 & 154 & 30.88 & 387.47 & n/a \\
+pillar cocktails drinks mean & 5 & 208.29 & 11.6 & 575.35 & n/a \\
+pillar events live music DJ mean & 4 & 415.83 & 48.54 & 885.22 & n/a \\
+pillar promotions offers mean & 1 & 143.81 & 143.81 & 143.81 & n/a \\
+pillar ambience decor vibe mean & 3 & 41.33 & 35 & 53 & n/a \\
+pillar date night romance mean & 5 & 103.22 & 29.76 & 189.64 & n/a \\
+pillar reservations bookings mean & 1 & 35.54 & 35.54 & 35.54 & n/a \\
+pillar birthdays celebrations mean & 1 & 133.41 & 133.41 & 133.41 & n/a \\
+day Monday mean & 11 & 192.87 & 53.45 & 422.07 & n/a \\
+day Tuesday mean & 28 & 119.43 & 35.53 & 238.54 & n/a \\
+day Wednesday mean & 15 & 81.93 & 31.21 & 146.31 & n/a \\
+day Thursday mean & 22 & 120.73 & 24.2 & 267.84 & n/a \\
+day Friday mean & 23 & 127.08 & 40.68 & 288.4 & n/a \\
+day Saturday mean & 5 & 57.29 & 45.35 & 69.94 & n/a \\
+day Sunday mean & 3 & 54.15 & 36 & 83.24 & n/a \\
 \end{longtable}
+\begin{note}
+The \textquotedblleft CI includes 0?\textquotedblright{} test is only meaningful for difference estimates (such as reels minus posts), where it indicates whether the difference could plausibly be zero. For single means and medians, engagement is non-negative, so the column is marked n/a.
+\end{note}
 
 \chapter{Pillar Lift versus Baseline}
 \begin{figure}[htbp]
@@ -877,7 +886,7 @@ optimistic & 20 & 45 & 0 & 0 & 100\% & 0\% \\
 \end{tabular}
 \end{table}
 \begin{callout}
-\textbf{Principal finding from MC3.} In this model the contact rate applies to the comments captured on the account's top posts; because only a minority express commercial intent, the booking counts are optimistic upper bounds. At current comment volumes the Instagram comment channel alone cannot reliably drive booking conversions regardless of conversion rate. The binding constraint is comment volume, not the funnel. Increasing reach-oriented content (MC1) raises the top of the funnel; replying immediately to commercial comments is the cheapest operational lever.
+\textbf{Principal finding from MC3.} In this model the contact rate applies to the comments captured on the account's top posts; because only a minority express commercial intent, the booking counts should be treated as optimistic \emph{upper bounds} rather than expected outcomes. The comment channel may generate enquiries under generous assumptions, but it should not be treated as a stable booking engine without clearer commercial calls to action, native analytics, and actual enquiry and booking records. Increasing reach-oriented content (MC1) raises the top of the funnel; replying immediately to commercial comments is the cheapest operational lever.
 \end{callout}
 
 \section{MC4: Optimal Pillar Mix (Top 10 Allocations)}
@@ -941,16 +950,14 @@ heavy reels & 9,000 & 90\% & 12,489 \\
 heavy reels & 10,000 & 80.9\% & 12,489 \\
 heavy reels & 15,000 & 18.2\% & 12,489 \\
 \end{longtable}
-\begin{callout}
-\textbf{Implication.} The strategies separate most clearly at a target of 9,000: the \textbf{heavy reels} plan reaches it in 90\% of simulations versus 20.5\% for \textbf{current mix}. In plain terms, the choice of content mix changes not just the \emph{average} outcome but the \emph{odds} of clearing an ambitious goal, which is what matters when setting a quarter's target. Set the goal where your chosen strategy sits around 50--80\%: ambitious but realistic, not a coin-flip.
-\end{callout}
+\medskip\noindent\textbf{Implication.} The strategies separate most clearly at a target of 9,000: the \textbf{heavy reels} plan reaches it in 90\% of simulations versus 20.5\% for \textbf{current mix}. In plain terms, the choice of content mix changes not just the \emph{average} outcome but the \emph{odds} of clearing an ambitious goal, which is what matters when setting a quarter's target. Set the goal where your chosen strategy sits around 50--80\%: ambitious but realistic, not a coin-flip.\medskip
 
 \chapter{Consolidated Actionable Findings}
 \begin{enumerate}[leftmargin=*]
   \item \textbf{Lead with the proven theme:} \textbf{Dinner and Nightlife} is the well-evidenced strength and the safest place to add volume. Validate \textbf{Food and Dining and general brand/content} as secondary test themes; small-sample pillars stay as test slots.
   \item \textbf{Format:} the account is posts-driven; short video is an untested reach opportunity, not a proven channel.
   \item \textbf{Timing:} treat Monday and Friday as test windows (highest observed average, not yet statistically distinguishable).
-  \item \textbf{Comments are a warm channel:} the most common commercial signal is \textbf{location/access question}; fast, consistent replies convert it.
+  \item \textbf{Comments are warm but mostly low-intent:} \textbf{location/access question} is the clearest actionable signal; direct commercial intent should be grown through clearer calls to action and faster response routes.
   \item \textbf{Engagement is concentrated} in a small number of posts (see the top-posts tables and the bootstrap intervals); maintain a backlog of high-potential content to smooth the peaks and troughs.
   \item \textbf{Measure what this analysis cannot see:} pair these public findings with native Instagram reach, saves, shares, and profile actions before committing budget.
 \end{enumerate}

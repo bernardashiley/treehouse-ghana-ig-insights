@@ -835,8 +835,12 @@ function main() {
     { H: h2Kw?.H, k: h2Kw?.k, n: h2Kw?.n,
       posthoc_significant_pairs: posthoc.filter(r => r.significant_holm).length,
       any_day_significant: anyDaySignificant,
-      note: (dayGroups.some(g => g.length < 5) ? 'some day groups n<5 (low power); ' : '') +
-        (anyDaySignificant ? 'at least one pairwise day difference survives Holm correction' : 'no pairwise day difference survives Holm correction: day-of-week effect is directional only') });
+      note: [
+        dayGroups.some(g => g.length < 5) ? 'Some day groups have n<5 (low power).' : '',
+        anyDaySignificant
+          ? 'At least one pairwise day difference survives Holm correction.'
+          : 'No pairwise day difference survives Holm correction; the day-of-week effect is directional only.'
+      ].filter(Boolean).join(' ') });
 
   // H3: Owned vs third-party
   const h3 = welchTest(ownedScores, thirdPartyScores, 'owned', 'third_party');
@@ -879,7 +883,9 @@ function main() {
   addHt('H6_top_pillar_vs_rest', 'Welch t-test',
     `μ(${topPillarName}) = μ(other owned content)`,
     h6,
-    { pillar: topPillarName, note: topPillarScores.length < 10 ? `${topPillarName} n=${topPillarScores.length}, low power` : 'independent groups: top pillar vs all other owned content' });
+    { pillar: topPillarName, note: topPillarScores.length < 10
+        ? `Underpowered: ${topPillarName} has n=${topPillarScores.length}.`
+        : `The groups are independent: ${topPillarName} is compared with all other owned content.` });
 
   writeCsv('data/processed/adv_hypothesis_tests.csv', htRows);
   console.log('✓ Hypothesis tests written');
