@@ -88,7 +88,7 @@ Followers at collection time & 27,386 \\
 
 Profile biography: \textit{Al fresco dining in the heart of Accra. Open daily from noon to 11pm.}
 
-\smallskip\noindent\textbf{Data limitation.} This analysis covers public Instagram data only. It does not include private account analytics such as reach, impressions, saves, shares, profile visits, link clicks, story taps, ad spend, or completed bookings. All conclusions are directional rather than absolute. Combine these findings with Treehouse Ghana's native Instagram analytics, sales or booking records, and campaign context.\smallskip
+\needspace{6\baselineskip}\smallskip\noindent\textbf{Data limitation.} This analysis covers public Instagram data only. It does not include private account analytics such as reach, impressions, saves, shares, profile visits, link clicks, story taps, ad spend, or completed bookings. All conclusions are directional rather than absolute. Combine these findings with Treehouse Ghana's native Instagram analytics, sales or booking records, and campaign context.\smallskip
 
 
 \chapter{Content Performance}
@@ -503,6 +503,17 @@ post & Food and Dining & 240 & 0 & 15,001 & 390 & \href{https://www.instagram.co
   \item \textbf{Track theme performance monthly} so the team can see which categories are pulling weight and rebalance.
 \end{enumerate}
 
+\needspace{9\baselineskip}
+\section{Suggested Monthly KPIs}
+\begin{itemize}[leftmargin=*]
+  \item Public engagement score by theme (are the strong themes still strong?)
+  \item Reels/video plays and watch-through where native analytics expose them
+  \item Comment volume and the count of commercial-intent comments
+  \item Response time to commercial comments and direct messages
+  \item Number of third-party mentions reused as social proof
+  \item Follower growth read alongside the above (reach is only visible in native Insights)
+\end{itemize}
+
 \section{Four-Week Content Calendar}
 A starting cadence built around the account's strongest themes; adjust to the live schedule.
 \begin{table}[htbp]
@@ -519,17 +530,6 @@ A starting cadence built around the account's strongest themes; adjust to the li
 \bottomrule
 \end{tabular}
 \end{table}
-
-\needspace{9\baselineskip}
-\section{Suggested Monthly KPIs}
-\begin{itemize}[leftmargin=*]
-  \item Public engagement score by theme (are the strong themes still strong?)
-  \item Reels/video plays and watch-through where native analytics expose them
-  \item Comment volume and the count of commercial-intent comments
-  \item Response time to commercial comments and direct messages
-  \item Number of third-party mentions reused as social proof
-  \item Follower growth read alongside the above (reach is only visible in native Insights)
-\end{itemize}
 
 \section{Immediate Actions (This Week)}
 \begin{enumerate}[leftmargin=*]
@@ -684,6 +684,8 @@ H6 top pillar vs rest & Welch t-test & $0.7443$ & No & d=0.12 \\
 \end{description}
 
 \chapter{Bootstrap Confidence Intervals}
+\noindent A 95\% bootstrap confidence interval shows the plausible range for each estimate. The \textquotedblleft CI includes 0?\textquotedblright{} column is only meaningful for difference estimates (such as reels minus posts), where it indicates whether the difference could plausibly be zero; for single means and medians, engagement is non-negative, so the column is marked n/a.
+\smallskip
 \begin{longtable}{@{}L{5cm} R{1.2cm} R{2cm} R{2cm} R{2cm} R{1.8cm}@{}}
 \caption{Bootstrap 95\% confidence intervals} \\
 \toprule
@@ -724,18 +726,17 @@ day Friday mean & 23 & 127.08 & 40.68 & 288.4 & n/a \\
 day Saturday mean & 5 & 57.29 & 45.35 & 69.94 & n/a \\
 day Sunday mean & 3 & 54.15 & 36 & 83.24 & n/a \\
 \end{longtable}
-\smallskip\noindent The \textquotedblleft CI includes 0?\textquotedblright{} test is only meaningful for difference estimates (such as reels minus posts), where it indicates whether the difference could plausibly be zero. For single means and medians, engagement is non-negative, so the column is marked n/a.
 
 \chapter{Pillar Lift versus Baseline}
 \begin{figure}[htbp]
 \centering
-\caption{Content pillar lift relative to overall baseline (percent)}
+\caption{Content pillar lift relative to owned-account baseline (percent)}
 \begin{tikzpicture}
 \begin{axis}[
   xbar, xmin=-88, xmax=288,
   xtick distance=100, scaled x ticks=false,
   width=13.5cm, height=9.5cm, bar width=12pt,
-  xlabel={\small Lift above baseline (\%)},
+  xlabel={\small Lift above owned-account baseline (\%)},
   symbolic y coords={general brand content,Reservations and Bookings,Ambience and Vibe,Date Night and Romance,Food and Dining,Birthdays and Celebrations,Promotions and Offers,Dinner and Nightlife,Cocktails and Drinks,Events and Live Music}, ytick=data,
   y tick label style={font=\small, align=right, text width=3.8cm},
   x tick label style={font=\footnotesize},
@@ -1216,9 +1217,9 @@ reduce the chance that at least one result appears significant purely by acciden
 
 \textbf{Lift vs Baseline} &
 The percentage difference between a pillar's average engagement score and the
-overall average. A lift of +100\% for a pillar means that, on average, a post in
-that pillar attracted twice the engagement of a typical post across all
-categories. \\[4pt]
+owned-account average (the mean across the account's own deduplicated posts). A
+lift of +100\% for a pillar means that, on average, a post in that pillar
+attracted twice the engagement of a typical owned post. \\[4pt]
 
 \textbf{P(achieve)} &
 In the Monte Carlo risk tables, this is the probability (expressed as a

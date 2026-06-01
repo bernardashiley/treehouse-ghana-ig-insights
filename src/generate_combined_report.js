@@ -343,7 +343,7 @@ ${table({caption:'Data coverage: raw collection through to the analysed owned-ac
 {a:'Followers at collection time',c:profile.followers_count||0}]})}
 
 ${C.bio?`Profile biography: \\textit{${tx(C.bio)}}\n`:''}
-\\smallskip\\noindent\\textbf{Data limitation.} This analysis covers public Instagram data only. It does not include private account analytics such as reach, impressions, saves, shares, profile visits, link clicks, story taps, ad spend, or completed bookings. All conclusions are directional rather than absolute. Combine these findings with ${tx(C.name)}'s native Instagram analytics, sales or booking records, and campaign context.\\smallskip
+\\needspace{6\\baselineskip}\\smallskip\\noindent\\textbf{Data limitation.} This analysis covers public Instagram data only. It does not include private account analytics such as reach, impressions, saves, shares, profile visits, link clicks, story taps, ad spend, or completed bookings. All conclusions are directional rather than absolute. Combine these findings with ${tx(C.name)}'s native Instagram analytics, sales or booking records, and campaign context.\\smallskip
 ${smallSample?`
 \\section{How to Read This Report (Sample Size)}
 \\begin{callout}
@@ -569,14 +569,6 @@ rows:topReels.slice(0,10)})}
   \\item \\textbf{Track theme performance monthly} so the team can see which categories are pulling weight and rebalance.
 \\end{enumerate}
 
-\\section{Four-Week Content Calendar}
-A starting cadence built around the account's strongest themes; adjust to the live schedule.
-${table({caption:'Suggested four-week content calendar',cols:[{h:'Week',spec:'C{1.5cm}',cell:r=>r.w},{h:'Focus',spec:'L{4cm}',cell:r=>tx(r.f)},{h:'Suggested Content',spec:'L{8cm}',cell:r=>tx(r.c)}],rows:[
-{w:'1',f:top3Pillars[0]||'Top theme',c:`2 posts in the strongest theme (${top3Pillars[0]||'top category'}), 1 carousel, 1 story poll asking the audience what they want next`},
-{w:'2',f:top3Pillars[1]||'Second theme',c:`2 posts in the second theme (${top3Pillars[1]||'second category'}), 1 short video test, 1 reshared mention with context`},
-{w:'3',f:top3Pillars[2]||'Third theme',c:`1 feature/collaboration post, 1 behind-the-scenes piece, 1 caption with a clear next step`},
-{w:'4',f:'Proof + recap',c:'2 reshares/social-proof stories, 1 recap of the month, 1 Highlight refresh (key questions answered)'}]})}
-
 \\needspace{9\\baselineskip}
 \\section{Suggested Monthly KPIs}
 \\begin{itemize}[leftmargin=*]
@@ -587,6 +579,14 @@ ${table({caption:'Suggested four-week content calendar',cols:[{h:'Week',spec:'C{
   \\item Number of third-party mentions reused as social proof
   \\item Follower growth read alongside the above (reach is only visible in native Insights)
 \\end{itemize}
+
+\\section{Four-Week Content Calendar}
+A starting cadence built around the account's strongest themes; adjust to the live schedule.
+${table({caption:'Suggested four-week content calendar',cols:[{h:'Week',spec:'C{1.5cm}',cell:r=>r.w},{h:'Focus',spec:'L{4cm}',cell:r=>tx(r.f)},{h:'Suggested Content',spec:'L{8cm}',cell:r=>tx(r.c)}],rows:[
+{w:'1',f:top3Pillars[0]||'Top theme',c:`2 posts in the strongest theme (${top3Pillars[0]||'top category'}), 1 carousel, 1 story poll asking the audience what they want next`},
+{w:'2',f:top3Pillars[1]||'Second theme',c:`2 posts in the second theme (${top3Pillars[1]||'second category'}), 1 short video test, 1 reshared mention with context`},
+{w:'3',f:top3Pillars[2]||'Third theme',c:`1 feature/collaboration post, 1 behind-the-scenes piece, 1 caption with a clear next step`},
+{w:'4',f:'Proof + recap',c:'2 reshares/social-proof stories, 1 recap of the month, 1 Highlight refresh (key questions answered)'}]})}
 
 \\section{Immediate Actions (This Week)}
 \\begin{enumerate}[leftmargin=*]
@@ -673,13 +673,14 @@ ${hyp.map(r=>{
 \\end{description}
 
 \\chapter{Bootstrap Confidence Intervals}
+\\noindent A 95\\% bootstrap confidence interval shows the plausible range for each estimate. The \\textquotedblleft CI includes 0?\\textquotedblright{} column is only meaningful for difference estimates (such as reels minus posts), where it indicates whether the difference could plausibly be zero; for single means and medians, engagement is non-negative, so the column is marked n/a.
+\\smallskip
 ${longtable({caption:'Bootstrap 95% confidence intervals',cols:[
 {h:'Segment / Pillar',spec:'L{5cm}',cell:r=>tx(r.label.replace(/_/g,' '))},{h:'N',spec:'R{1.2cm}',cell:r=>r.n},{h:'Estimate',spec:'R{2cm}',cell:r=>r2(r.estimate)},{h:'Lower',spec:'R{2cm}',cell:r=>r2(r.lower)},{h:'Upper',spec:'R{2cm}',cell:r=>r2(r.upper)},{h:'CI incl. 0?',spec:'R{1.8cm}',cell:r=>/minus|diff|vs/i.test(r.label)?(r.includes_zero==='true'?'Yes':'No'):'n/a'}],
 rows:cis})}
-\\smallskip\\noindent The \\textquotedblleft CI includes 0?\\textquotedblright{} test is only meaningful for difference estimates (such as reels minus posts), where it indicates whether the difference could plausibly be zero. For single means and medians, engagement is non-negative, so the column is marked n/a.
 
 \\chapter{Pillar Lift versus Baseline}
-${bar({title:'Content pillar lift relative to overall baseline (percent)',xlabel:'Lift above baseline (%)',pct:true,rows:[...lift].sort((a,b)=>num(a.lift_vs_baseline_pct)-num(b.lift_vs_baseline_pct)).map(l=>({label:l.pillar,value:l.lift_vs_baseline_pct})),max:Math.max(...lift.map(l=>num(l.lift_vs_baseline_pct)))})}
+${bar({title:'Content pillar lift relative to owned-account baseline (percent)',xlabel:'Lift above owned-account baseline (%)',pct:true,rows:[...lift].sort((a,b)=>num(a.lift_vs_baseline_pct)-num(b.lift_vs_baseline_pct)).map(l=>({label:l.pillar,value:l.lift_vs_baseline_pct})),max:Math.max(...lift.map(l=>num(l.lift_vs_baseline_pct)))})}
 
 ${longtable({caption:'Pillar lift versus baseline with bootstrap 95% CI',cols:[
 {h:'Pillar',spec:'L{4cm}',cell:r=>tx(pillarLabel(r.pillar))},{h:'N',spec:'R{1.2cm}',cell:r=>r.n},{h:'Avg Score',spec:'R{2cm}',cell:r=>r2(r.avg_engagement_score)},{h:'Lift',spec:'R{2cm}',cell:r=>tx(r.lift_vs_baseline_pct)+'\\%'},{h:'95% CI',spec:'L{3.5cm}',cell:r=>r2(r.ci_low)+' to '+r2(r.ci_high)}],
