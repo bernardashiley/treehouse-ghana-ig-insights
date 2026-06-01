@@ -274,7 +274,7 @@ return `%% ============================================================
 \\usepackage[T1]{fontenc}\\usepackage[utf8]{inputenc}\\usepackage{lmodern}\\usepackage{microtype}
 \\usepackage{xcolor}\\usepackage{booktabs}\\usepackage{longtable}\\usepackage{array}\\usepackage{tabularx}
 \\usepackage{parskip}\\usepackage{titlesec}\\usepackage{fancyhdr}\\usepackage{pgfplots}\\usepackage{tikz}
-\\usepackage{hyperref}\\usepackage{enumitem}\\usepackage{caption}\\usepackage{mdframed}\\usepackage{amsmath}
+\\usepackage{hyperref}\\usepackage{enumitem}\\usepackage{caption}\\usepackage{mdframed}\\usepackage{amsmath}\\usepackage{needspace}
 \\pgfplotsset{compat=1.18}
 \\definecolor{tggreen}{HTML}{${B.primary_hex}}\\definecolor{tgmid}{HTML}{${B.mid_hex}}
 \\definecolor{tglight}{HTML}{${B.light_hex}}\\definecolor{tggold}{HTML}{${B.accent_hex}}
@@ -343,9 +343,7 @@ ${table({caption:'Data coverage: raw collection through to the analysed owned-ac
 {a:'Followers at collection time',c:profile.followers_count||0}]})}
 
 ${C.bio?`Profile biography: \\textit{${tx(C.bio)}}\n`:''}
-\\begin{note}
-\\textbf{Data limitation.} This analysis covers public Instagram data only. It does not include private account analytics such as reach, impressions, saves, shares, profile visits, link clicks, story taps, ad spend, or completed bookings. All conclusions are directional rather than absolute. Combine these findings with ${tx(C.name)}'s native Instagram analytics, sales or booking records, and campaign context.
-\\end{note}
+\\smallskip\\noindent\\textbf{Data limitation.} This analysis covers public Instagram data only. It does not include private account analytics such as reach, impressions, saves, shares, profile visits, link clicks, story taps, ad spend, or completed bookings. All conclusions are directional rather than absolute. Combine these findings with ${tx(C.name)}'s native Instagram analytics, sales or booking records, and campaign context.\\smallskip
 ${smallSample?`
 \\section{How to Read This Report (Sample Size)}
 \\begin{callout}
@@ -472,6 +470,7 @@ ${(commercialIntents.length?commercialIntents:intents.slice(0,4)).slice(0,5).map
 \\textbf{Why this matters (and what the simulation showed).} The booking/enquiry pipeline analysis (MC3, Part~II) found that at current comment volumes the comment channel alone converts slowly: the binding constraint is \\emph{how many} commercial comments arrive, not the reply rate. So the move is two-fold: keep raising reach (more of the high-performing content) to grow the top of the funnel, and remove every step of friction for the commercial comments you already get, starting with the largest category above.
 \\end{note}
 
+\\needspace{6\\baselineskip}
 \\section{Repeated Opportunities}
 \\begin{itemize}[leftmargin=*]
   \\item Reply to every commercial comment quickly. A fast, consistent response turns a public comment into a direct conversation.
@@ -578,6 +577,7 @@ ${table({caption:'Suggested four-week content calendar',cols:[{h:'Week',spec:'C{
 {w:'3',f:top3Pillars[2]||'Third theme',c:`1 feature/collaboration post, 1 behind-the-scenes piece, 1 caption with a clear next step`},
 {w:'4',f:'Proof + recap',c:'2 reshares/social-proof stories, 1 recap of the month, 1 Highlight refresh (key questions answered)'}]})}
 
+\\needspace{9\\baselineskip}
 \\section{Suggested Monthly KPIs}
 \\begin{itemize}[leftmargin=*]
   \\item Public engagement score by theme (are the strong themes still strong?)
@@ -676,9 +676,7 @@ ${hyp.map(r=>{
 ${longtable({caption:'Bootstrap 95% confidence intervals',cols:[
 {h:'Segment / Pillar',spec:'L{5cm}',cell:r=>tx(r.label.replace(/_/g,' '))},{h:'N',spec:'R{1.2cm}',cell:r=>r.n},{h:'Estimate',spec:'R{2cm}',cell:r=>r2(r.estimate)},{h:'Lower',spec:'R{2cm}',cell:r=>r2(r.lower)},{h:'Upper',spec:'R{2cm}',cell:r=>r2(r.upper)},{h:'CI incl. 0?',spec:'R{1.8cm}',cell:r=>/minus|diff|vs/i.test(r.label)?(r.includes_zero==='true'?'Yes':'No'):'n/a'}],
 rows:cis})}
-\\begin{note}
-The \\textquotedblleft CI includes 0?\\textquotedblright{} test is only meaningful for difference estimates (such as reels minus posts), where it indicates whether the difference could plausibly be zero. For single means and medians, engagement is non-negative, so the column is marked n/a.
-\\end{note}
+\\smallskip\\noindent The \\textquotedblleft CI includes 0?\\textquotedblright{} test is only meaningful for difference estimates (such as reels minus posts), where it indicates whether the difference could plausibly be zero. For single means and medians, engagement is non-negative, so the column is marked n/a.
 
 \\chapter{Pillar Lift versus Baseline}
 ${bar({title:'Content pillar lift relative to overall baseline (percent)',xlabel:'Lift above baseline (%)',pct:true,rows:[...lift].sort((a,b)=>num(a.lift_vs_baseline_pct)-num(b.lift_vs_baseline_pct)).map(l=>({label:l.pillar,value:l.lift_vs_baseline_pct})),max:Math.max(...lift.map(l=>num(l.lift_vs_baseline_pct)))})}
@@ -770,7 +768,7 @@ This study is \\textbf{exploratory and hypothesis-generating}, not confirmatory,
 \\begin{enumerate}[leftmargin=*]
 \\item \\textbf{Composite-metric circularity.} The engagement score embeds a views term available to video but not to many image posts; composite-score reels-versus-posts comparisons overstate the advantage, so likes-and-comments comparisons are reported alongside.
 \\item \\textbf{Small samples.} Several pillars and the deduplicated reel set rest on few posts; confidence intervals are wide and rankings are indicative. Pillars below ten posts are treated as test slots, not ranked recommendations.
-\\item \\textbf{One dataset, reconciled.} Raw and deduplicated record counts are distinct; every table in this report uses the single deduplicated owned dataset, reconciled in the Methodology chapter, so figures do not mix bases.
+\\item \\textbf{One dataset, reconciled.} Raw and deduplicated record counts are distinct. Main content-performance and strategy tables use the deduplicated owned-account dataset; reconciliation, the EDA segment table, and owned-versus-third-party checks are explicitly labelled where they use broader data. Figures are not mixed across bases without a label.
 \\item \\textbf{Missing public metrics.} Values the scraper returns as $-1$ are treated as missing (floored to zero for the score, shown as NA), never as genuine zeros.
 \\item \\textbf{Deduplicated top content.} A post that also appears as a reel is counted once; the top-content tables list unique items.
 \\item \\textbf{Observational, not causal.} Day, pillar, and format are correlated with each other and with campaign timing; no causal claim is made. The day-of-week effect is reported with post-hoc correction.
